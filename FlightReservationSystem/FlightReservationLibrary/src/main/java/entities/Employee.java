@@ -41,4 +41,9 @@ public class Employee implements Serializable {
     @Size(min = 3, max = 255)
     @Column(nullable = false)
     private String password;
+
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private EmployeeRole employeeRole;
 }
