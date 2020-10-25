@@ -6,6 +6,7 @@
     <persistence-unit name="rcbs">
         <jta-data-source>jdbc/mysql</jta-data-source>
         <class>entities.Customer</class>
+        <class>entities.Employee</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
         </properties>

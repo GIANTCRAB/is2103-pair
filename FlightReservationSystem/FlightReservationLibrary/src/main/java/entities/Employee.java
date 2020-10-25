@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -16,12 +15,12 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer implements Serializable {
+public class Employee implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+    private Long employeeId;
 
     @Size(min = 1, max = 64)
     @Column(length = 64, nullable = false)
@@ -33,25 +32,13 @@ public class Customer implements Serializable {
     @NotNull
     private String lastName;
 
-    /**
-     * Email needs to be length of 255 as max size cannot exceed 254. See RFC 5321
-     */
-    @Size(min = 3, max = 254)
-    @Column(nullable = false, unique = true)
     @NotNull
-    @Email
-    private String email;
+    @Size(min = 3, max = 127)
+    @Column(length = 127, nullable = false, unique = true)
+    private String username;
 
     @NotNull
     @Size(min = 3, max = 255)
     @Column(nullable = false)
     private String password;
-
-    @Column(length = 64, nullable = false)
-    @NotNull
-    private String phoneNumber;
-
-    @Column(length = 127, nullable = false)
-    @NotNull
-    private String address;
 }
