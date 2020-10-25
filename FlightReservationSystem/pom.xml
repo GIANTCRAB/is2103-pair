@@ -15,6 +15,7 @@
         <module>FlightReservationLibrary</module>
         <module>FlightReservation-ejb</module>
         <module>FlightReservationClient</module>
+        <module>FlightManagementClient</module>
     </modules>
     <build>
         <pluginManagement>

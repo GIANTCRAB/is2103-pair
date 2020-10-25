@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightManagementClient/FlightManagementClient.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightManagementClient/FlightManagementClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/FlightReservation-ejb.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/FlightReservation-ejb.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationClient/FlightReservationClient.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationClient/FlightReservationClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" />
