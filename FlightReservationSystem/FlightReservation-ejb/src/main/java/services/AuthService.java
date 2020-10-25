@@ -1,7 +1,9 @@
 package services;
 
 import entities.Employee;
+import entities.EmployeeRole;
 import exceptions.IncorrectCredentialsException;
+import exceptions.NotAuthenticatedException;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -41,5 +43,14 @@ public class AuthService {
         }
 
         throw new IncorrectCredentialsException();
+    }
+
+    public void checkPermission(Employee employee, EmployeeRole employeeRoleNeeded) throws NotAuthenticatedException {
+        final Employee foundEmployee = this.em.find(Employee.class, employee.getEmployeeId());
+        if (foundEmployee != null && foundEmployee.getEmployeeRole().equals(employeeRoleNeeded)) {
+            return;
+        }
+
+        throw new NotAuthenticatedException();
     }
 }

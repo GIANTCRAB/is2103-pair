@@ -1,0 +1,42 @@
+package controllers;
+
+import entities.Airport;
+import entities.Employee;
+import entities.EmployeeRole;
+import entities.FlightRoute;
+import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
+import exceptions.NotAuthenticatedException;
+import services.AirportService;
+import services.AuthService;
+import services.FlightRouteService;
+
+import javax.ejb.Stateful;
+import javax.inject.Inject;
+
+@Stateful
+public class FlightRouteSessionBean implements FlightRouteBeanRemote {
+    @Inject
+    AuthService authService;
+    @Inject
+    AirportService airportService;
+    @Inject
+    FlightRouteService flightRouteService;
+
+    private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.ROUTE_PLANNER;
+
+    @Override
+    public FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        final Airport originAirport = this.airportService.findAirportByCode(origin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
+
+        return this.flightRouteService.create(originAirport, destinationAirport);
+    }
+
+    @Override
+    public FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+        return null;
+    }
+}
