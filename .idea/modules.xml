@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationSystem.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/is2103-pair.iml" filepath="$PROJECT_DIR$/.idea/is2103-pair.iml" />
+    </modules>
+  </component>
+</project>
