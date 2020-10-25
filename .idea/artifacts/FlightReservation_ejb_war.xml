@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="RetailCoreBankingSystem-ejb.war">
+    <root id="archive" name="FlightReservation-ejb.war">
       <element id="artifact" artifact-name="FlightReservation-ejb:war exploded" />
     </root>
   </artifact>

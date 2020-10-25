@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="FlightReservation-ejb:war exploded">
-    <output-path>$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/target/RetailCoreBankingSystem-ejb</output-path>
+    <output-path>$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/target/FlightReservation-ejb</output-path>
     <properties id="maven-jee-properties">
       <options>
         <exploded>true</exploded>
@@ -21,7 +21,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/target/RetailCoreBankingSystem-ejb/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/target/FlightReservation-ejb/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="FlightReservation-ejb/web/Web" />
     </root>
