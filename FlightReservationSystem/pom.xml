@@ -9,11 +9,12 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <glassfish.version>5.1</glassfish.version>
+        <glassfish.version>5.0</glassfish.version>
     </properties>
     <modules>
         <module>FlightReservationLibrary</module>
         <module>FlightReservation-ejb</module>
+        <module>FlightReservationClient</module>
     </modules>
     <build>
         <pluginManagement>

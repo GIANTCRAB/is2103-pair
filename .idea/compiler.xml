@@ -7,11 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="FlightReservationLibrary" />
+        <module name="FlightReservationClient" />
         <module name="FlightReservation-ejb" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FlightReservation-ejb" target="1.8" />
+      <module name="FlightReservationClient" target="1.8" />
       <module name="FlightReservationLibrary" target="1.8" />
       <module name="FlightReservationSystem" target="1.5" />
     </bytecodeTargetLevel>
