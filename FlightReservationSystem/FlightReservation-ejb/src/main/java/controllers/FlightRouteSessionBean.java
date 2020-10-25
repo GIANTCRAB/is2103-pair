@@ -12,6 +12,8 @@ import services.AuthService;
 import services.FlightRouteService;
 
 import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 @Stateful
@@ -36,7 +38,16 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
-        return null;
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        final Airport originAirport = this.airportService.findAirportByCode(origin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
+
+        final FlightRoute flightRoute = this.flightRouteService.create(originAirport, destinationAirport);
+        this.flightRouteService.create(destinationAirport, originAirport);
+
+        return flightRoute;
     }
 }

@@ -2,6 +2,9 @@ package org.example;
 
 import controllers.FlightRouteBeanRemote;
 import entities.Employee;
+import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
+import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +21,7 @@ public class FlightRouteClient implements SystemClient {
 
     @Override
     public void runApp() {
-
+        this.displayFlightRoutePlannerMenu();
     }
 
     private void displayFlightRoutePlannerMenu() {
@@ -35,8 +38,10 @@ public class FlightRouteClient implements SystemClient {
             switch (option) {
                 case 1:
                     this.displayCreateFlightRouteMenu();
+                    break;
                 case 4:
                 default:
+                    System.out.println("Exiting...");
                     loop = false;
                     break;
             }
@@ -44,6 +49,33 @@ public class FlightRouteClient implements SystemClient {
     }
 
     private void displayCreateFlightRouteMenu() {
+        System.out.println("*** Create Flight Route ***");
+        System.out.println("Enter origin airport code:");
+        final String originCode = this.scanner.next();
+        System.out.println("Enter destination airport code:");
+        final String destinationCode = this.scanner.next();
+        System.out.println("Type 1 if you want to create a round trip, else, type 2:");
+        final int roundTrip = this.scanner.nextInt();
 
+        try {
+            if (roundTrip == 1) {
+                this.flightRouteBeanRemote.createRoundTrip(this.authenticatedEmployee, originCode, destinationCode);
+            } else {
+                this.flightRouteBeanRemote.create(this.authenticatedEmployee, originCode, destinationCode);
+            }
+        } catch (InvalidConstraintException e) {
+            this.displayConstraintErrorMessage(e);
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid airport codes.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+
+
+    }
+
+    private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
+        System.out.println("There were some validation errors!");
+        System.out.println(invalidConstraintException.toString());
     }
 }
