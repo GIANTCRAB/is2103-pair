@@ -1,6 +1,7 @@
 package org.example;
 
 import controllers.EmployeeAuthBeanRemote;
+import controllers.FlightRouteBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
 import lombok.AccessLevel;
@@ -8,11 +9,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.io.IOException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.validation.constraints.NotNull;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
-public class ManagementClient {
+public class ManagementClient implements SystemClient {
+    @NotNull
+    private final InitialContext initialContext;
     @NonNull
     private final EmployeeAuthBeanRemote employeeAuthBeanRemote;
 
@@ -21,6 +26,7 @@ public class ManagementClient {
     @Setter(AccessLevel.PRIVATE)
     private Employee authenticatedEmployee;
 
+    @Override
     public void runApp() {
         this.scanner = new Scanner(System.in);
 
@@ -53,11 +59,31 @@ public class ManagementClient {
                 this.authenticatedEmployee = this.employeeAuthBeanRemote.login(username, password);
                 System.out.println("Logged in as " + this.authenticatedEmployee.getFirstName() + " (ID: " + this.authenticatedEmployee.getEmployeeId() + ")");
                 System.out.println("Employee Role: " + this.getEmployeeRoleName());
+                this.createSystemBasedOnRole();
                 loginLoop = false;
             } catch (IncorrectCredentialsException e) {
                 System.out.println("Incorrect credentials! Try again!");
+            } catch (NamingException e) {
+                System.out.println("Server error, please try again!");
             }
         }
+    }
+
+    private SystemClient createSystemBasedOnRole() throws NamingException {
+        if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
+            switch (this.authenticatedEmployee.getEmployeeRole()) {
+                case FLEET_MANAGER:
+                    break;
+                case ROUTE_PLANNER:
+                    final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
+                    return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
+                case SALES_MANAGER:
+                    break;
+                default:
+            }
+        }
+
+        return null;
     }
 
     private String getEmployeeRoleName() {

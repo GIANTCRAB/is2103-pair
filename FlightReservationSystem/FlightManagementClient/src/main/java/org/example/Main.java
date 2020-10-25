@@ -10,7 +10,7 @@ public class Main {
         final InitialContext ic = new InitialContext();
         final EmployeeAuthBeanRemote employeeAuthBeanRemote = (EmployeeAuthBeanRemote) ic.lookup(EmployeeAuthBeanRemote.class.getName());
 
-        final ManagementClient managementClient = new ManagementClient(employeeAuthBeanRemote);
+        final ManagementClient managementClient = new ManagementClient(ic, employeeAuthBeanRemote);
 
         managementClient.runApp();
     }
