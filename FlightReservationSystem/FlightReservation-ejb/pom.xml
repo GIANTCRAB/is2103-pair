@@ -26,7 +26,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>RetailCoreBankingSystem-ejb</finalName>
+        <finalName>FlightReservation-ejb</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
