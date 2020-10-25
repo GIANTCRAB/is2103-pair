@@ -11,7 +11,6 @@ Java EE application using (Glassfish + MySQL).
 
 ### Run FlightManagementClient
 
-TODO
 Command: `./run-management.sh`
 
 ### Run FlightReservationClient
