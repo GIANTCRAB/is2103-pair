@@ -51,11 +51,29 @@ public class ManagementClient {
             final String password = this.scanner.next();
             try {
                 this.authenticatedEmployee = this.employeeAuthBeanRemote.login(username, password);
-                System.out.println("Logged in as " + this.authenticatedEmployee.getFirstName() + " (ID: " + this.authenticatedEmployee.getEmployeeId() + " )");
+                System.out.println("Logged in as " + this.authenticatedEmployee.getFirstName() + " (ID: " + this.authenticatedEmployee.getEmployeeId() + ")");
+                System.out.println("Employee Role: " + this.getEmployeeRoleName());
                 loginLoop = false;
             } catch (IncorrectCredentialsException e) {
                 System.out.println("Incorrect credentials! Try again!");
             }
         }
+    }
+
+    private String getEmployeeRoleName() {
+        if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
+            switch (this.authenticatedEmployee.getEmployeeRole()) {
+                case FLEET_MANAGER:
+                    return "Fleet Manager";
+                case ROUTE_PLANNER:
+                    return "Route Planner";
+                case SALES_MANAGER:
+                    return "Sales Manager";
+                default:
+                    return "Unknown";
+            }
+        }
+
+        return null;
     }
 }
