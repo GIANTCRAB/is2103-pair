@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FlightReservationSystem" />
+        <module name="FlightReservationLibrary" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FlightReservationSystem" target="1.8" />
+      <module name="FlightReservationLibrary" target="1.8" />
+      <module name="FlightReservationSystem" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
