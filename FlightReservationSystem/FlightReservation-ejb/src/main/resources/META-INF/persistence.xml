@@ -5,6 +5,7 @@
              version="2.2">
     <persistence-unit name="rcbs">
         <jta-data-source>jdbc/mysql</jta-data-source>
+        <class>entities.Airport</class>
         <class>entities.Customer</class>
         <class>entities.Employee</class>
         <properties>
