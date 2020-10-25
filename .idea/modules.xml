@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/FlightReservation-ejb.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservation-ejb/FlightReservation-ejb.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationLibrary/FlightReservationLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlightReservationSystem/FlightReservationSystem.iml" filepath="$PROJECT_DIR$/FlightReservationSystem/FlightReservationSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/is2103-pair.iml" filepath="$PROJECT_DIR$/.idea/is2103-pair.iml" />

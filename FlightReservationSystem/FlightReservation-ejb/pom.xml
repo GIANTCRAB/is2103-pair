@@ -9,8 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>FlightReservationLibrary</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>FlightReservation-ejb</artifactId>
+
+    <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -18,10 +19,13 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <build>
+        <finalName>RetailCoreBankingSystem-ejb</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+            </plugin>
         </plugins>
     </build>
-
 </project>
