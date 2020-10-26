@@ -15,6 +15,7 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import java.util.List;
 
 @Stateful
 public class FlightRouteSessionBean implements FlightRouteBeanRemote {
@@ -49,5 +50,12 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
         this.flightRouteService.create(destinationAirport, originAirport);
 
         return flightRoute;
+    }
+
+    @Override
+    public List<FlightRoute> getFlightRoutes(Employee employee) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        return this.flightRouteService.getFlightRoutes();
     }
 }

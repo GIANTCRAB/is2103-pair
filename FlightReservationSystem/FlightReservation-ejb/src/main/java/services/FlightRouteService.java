@@ -8,10 +8,12 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 @LocalBean
@@ -36,5 +38,11 @@ public class FlightRouteService {
         this.em.flush();
 
         return flightRoute;
+    }
+
+    public List<FlightRoute> getFlightRoutes() {
+        final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr", FlightRoute.class);
+
+        return searchQuery.getResultList();
     }
 }
