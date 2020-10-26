@@ -22,7 +22,7 @@ public class AuthService {
     @Inject
     private Pbkdf2PasswordHash passwordHash;
 
-    public Employee login(String username, String password) throws IncorrectCredentialsException {
+    public Employee employeeLogin(String username, String password) throws IncorrectCredentialsException {
         final TypedQuery<Employee> searchQuery = this.em.createQuery("select e from Employee e where e.username = ?1", Employee.class)
                 .setParameter(1, username);
 

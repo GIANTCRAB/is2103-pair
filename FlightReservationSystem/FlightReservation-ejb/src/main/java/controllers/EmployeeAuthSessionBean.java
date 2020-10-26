@@ -17,6 +17,6 @@ public class EmployeeAuthSessionBean implements EmployeeAuthBeanRemote {
 
     @Override
     public Employee login(String username, String password) throws IncorrectCredentialsException {
-        return this.authService.login(username, password);
+        return this.authService.employeeLogin(username, password);
     }
 }
