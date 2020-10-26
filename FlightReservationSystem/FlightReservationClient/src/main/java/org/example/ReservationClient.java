@@ -46,6 +46,9 @@ public class ReservationClient implements SystemClient {
                 case 1:
                     displayRegistrationMenu();
                     break;
+                case 2:
+                    displayLoginMenu();
+                    break;
                 case 4:
                 default:
                     loop = false;
