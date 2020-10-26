@@ -2,12 +2,14 @@ package org.example;
 
 import controllers.FlightRouteBeanRemote;
 import entities.Employee;
+import entities.FlightRoute;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
@@ -38,6 +40,9 @@ public class FlightRouteClient implements SystemClient {
             switch (option) {
                 case 1:
                     this.displayCreateFlightRouteMenu();
+                    break;
+                case 2:
+                    this.displayFlightRouteMenu();
                     break;
                 case 4:
                 default:
@@ -70,8 +75,17 @@ public class FlightRouteClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
+    }
 
+    private void displayFlightRouteMenu() {
+        System.out.println("*** View All Flight Routes ***");
 
+        try {
+            final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes(this.authenticatedEmployee);
+            flightRouteList.forEach(flightRoute -> System.out.println(flightRoute.getOrigin() + " -> " + flightRoute.getDest()));
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
