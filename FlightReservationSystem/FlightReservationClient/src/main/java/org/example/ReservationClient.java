@@ -2,6 +2,7 @@ package org.example;
 
 import controllers.VisitorBeanRemote;
 import entities.Customer;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -70,7 +71,6 @@ public class ReservationClient implements SystemClient {
             System.out.println("Enter Address:");
             final String address = this.scanner.next();
 
-
             try {
                 final Customer customer = this.visitorBeanRemote.register(firstName, lastName, email, password, phoneNumber, address);
                 System.out.println("Successfully registered as " + customer.getFirstName() + " (ID: " + customer.getCustomerId() + ")");
@@ -80,6 +80,26 @@ public class ReservationClient implements SystemClient {
             }
         }
 
+    }
+
+    private void displayLoginMenu() {
+        boolean loop = true;
+
+        while (loop) {
+            System.out.println("Enter Email:");
+            final String email = this.scanner.next();
+            System.out.println("Enter Password:");
+            final String password = this.scanner.next();
+
+            try {
+                final Customer customer = this.visitorBeanRemote.login(email, password);
+                System.out.println("Logged in as " + customer.getFirstName() + " (ID: " + customer.getCustomerId() + ")");
+                //TODO: establish new customer bean
+                loop = false;
+            } catch (IncorrectCredentialsException e) {
+                System.out.println("Invalid login details!");
+            }
+        }
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {

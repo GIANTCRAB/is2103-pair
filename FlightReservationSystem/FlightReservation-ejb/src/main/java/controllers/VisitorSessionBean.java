@@ -1,7 +1,9 @@
 package controllers;
 
 import entities.Customer;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
+import services.AuthService;
 import services.CustomerService;
 
 import javax.ejb.Stateful;
@@ -11,6 +13,8 @@ import javax.inject.Inject;
 public class VisitorSessionBean implements VisitorBeanRemote {
     @Inject
     CustomerService customerService;
+    @Inject
+    AuthService authService;
 
     @Override
     public Customer register(String firstName,
@@ -20,5 +24,10 @@ public class VisitorSessionBean implements VisitorBeanRemote {
                              String phoneNumber,
                              String address) throws InvalidConstraintException {
         return this.customerService.create(firstName, lastName, email, password, phoneNumber, address);
+    }
+
+    @Override
+    public Customer login(String email, String password) throws IncorrectCredentialsException {
+        return this.authService.customerLogin(email, password);
     }
 }
