@@ -25,6 +25,7 @@ public class ReservationClient implements SystemClient {
     @Override
     public void runApp() {
         this.scanner = new Scanner(System.in);
+        this.scanner.useDelimiter("\n");
         this.displayVisitorMenu();
         this.scanner.close();
     }
