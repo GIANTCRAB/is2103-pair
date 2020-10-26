@@ -1,5 +1,6 @@
 package services;
 
+import entities.Customer;
 import entities.Employee;
 import entities.EmployeeRole;
 import exceptions.IncorrectCredentialsException;
@@ -21,6 +22,29 @@ public class AuthService {
     private EntityManager em;
     @Inject
     private Pbkdf2PasswordHash passwordHash;
+
+    public Customer customerLogin(String email, String password) throws IncorrectCredentialsException {
+        final TypedQuery<Customer> searchQuery = this.em.createQuery("select c from Customer c where c.email = ?1", Customer.class)
+                .setParameter(1, email);
+
+        try {
+            final Customer searchResult = searchQuery.getSingleResult();
+
+            // WARNING: If password isn't hashed, just allow it to compare anyways. Don't do this in real world! Always hash your passwords
+            try {
+                if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
+                    return searchResult;
+                }
+            } catch (IllegalArgumentException e) {
+                if (password.equals(searchResult.getPassword())) {
+                    return searchResult;
+                }
+            }
+        } catch (NoResultException ignored) {
+        }
+
+        throw new IncorrectCredentialsException();
+    }
 
     public Employee employeeLogin(String username, String password) throws IncorrectCredentialsException {
         final TypedQuery<Employee> searchQuery = this.em.createQuery("select e from Employee e where e.username = ?1", Employee.class)
