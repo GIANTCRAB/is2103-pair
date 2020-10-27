@@ -43,6 +43,7 @@ public class AircraftConfiguration implements Serializable {
     @Column(nullable = false)
     private int noOfCabinClasses;
     
+    @NotNull
     @OneToMany(mappedBy =  "aircraftConfiguration")
     private List<CabinClass> cabinClasses;
     
