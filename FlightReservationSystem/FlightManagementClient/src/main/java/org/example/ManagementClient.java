@@ -2,6 +2,7 @@ package org.example;
 
 import controllers.EmployeeAuthBeanRemote;
 import controllers.FlightRouteBeanRemote;
+import controllers.AdminBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
 import lombok.AccessLevel;
@@ -59,7 +60,7 @@ public class ManagementClient implements SystemClient {
                 this.authenticatedEmployee = this.employeeAuthBeanRemote.login(username, password);
                 System.out.println("Logged in as " + this.authenticatedEmployee.getFirstName() + " (ID: " + this.authenticatedEmployee.getEmployeeId() + ")");
                 System.out.println("Employee Role: " + this.getEmployeeRoleName());
-                this.createSystemBasedOnRole();
+                this.createSystemBasedOnRole().runApp();
                 loginLoop = false;
             } catch (IncorrectCredentialsException e) {
                 System.out.println("Incorrect credentials! Try again!");
@@ -79,7 +80,11 @@ public class ManagementClient implements SystemClient {
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SALES_MANAGER:
                     break;
+                case SYSTEM_ADMIN:
+                    final AdminBeanRemote adminBeanRemote = (AdminBeanRemote) this.initialContext.lookup(AdminBeanRemote.class.getName());
+                    return new AdminClient(this.scanner, this.authenticatedEmployee, adminBeanRemote);
                 default:
+                    break;
             }
         }
 
@@ -95,6 +100,8 @@ public class ManagementClient implements SystemClient {
                     return "Route Planner";
                 case SALES_MANAGER:
                     return "Sales Manager";
+                case SYSTEM_ADMIN:
+                    return "System Administrator";
                 default:
                     return "Unknown";
             }
