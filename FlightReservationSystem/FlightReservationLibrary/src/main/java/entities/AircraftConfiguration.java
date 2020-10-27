@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -46,4 +48,8 @@ public class AircraftConfiguration implements Serializable {
     
     @OneToMany(mappedBy = "aircraftConfiguration")
     private List<Flight> flights;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private AircraftType aircraftType;
 }

@@ -9,11 +9,13 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -40,4 +42,6 @@ public class AircraftType implements Serializable {
     @Column(nullable = false)
     private int maxCapacity;
     
+    @OneToMany(mappedBy = "aircraftType")
+    private List<AircraftConfiguration> aircraftConfigurations;
 }
