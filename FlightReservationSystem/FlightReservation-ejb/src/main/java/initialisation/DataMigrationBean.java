@@ -1,6 +1,9 @@
 package initialisation;
 
 import entities.Airport;
+import entities.AircraftType;
+import entities.Employee;
+import entities.EmployeeRole;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -17,6 +20,8 @@ public class DataMigrationBean {
     @PostConstruct
     public void init() {
         this.initAirportData();
+        this.initAircraftTypeData();
+        this.initEmployeeData();
     }
 
     private void initAirportData() {
@@ -36,6 +41,32 @@ public class DataMigrationBean {
         sfoAirport.setStateName("California");
         em.persist(sfoAirport);
 
+        em.flush();
+    }
+    
+    private void initAircraftTypeData() {
+        final AircraftType boeingFirstType = new AircraftType();
+        boeingFirstType.setAircraftTypeName("Boeing 737");
+        boeingFirstType.setMaxCapacity(204);
+        em.persist(boeingFirstType);
+        
+        final AircraftType boeingSecondType = new AircraftType();
+        boeingSecondType.setAircraftTypeName("Boeing 747");
+        boeingSecondType.setMaxCapacity(660);
+        em.persist(boeingSecondType);
+        
+        em.flush();
+    }
+    
+    private void initEmployeeData() {
+        final Employee adminEmployee = new Employee();
+        adminEmployee.setEmployeeRole(EmployeeRole.SYSTEM_ADMIN);
+        adminEmployee.setFirstName("John");
+        adminEmployee.setLastName("Doe");
+        adminEmployee.setPassword("123");
+        adminEmployee.setUsername("admin");
+        em.persist(adminEmployee);
+        
         em.flush();
     }
 }
