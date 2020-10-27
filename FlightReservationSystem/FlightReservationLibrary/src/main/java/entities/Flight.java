@@ -32,10 +32,15 @@ public class Flight implements Serializable {
     private BigDecimal totalAmountPaid;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumns({
             @JoinColumn(name = "routeOrigin", referencedColumnName = "originId"),
             @JoinColumn(name = "routeDest", referencedColumnName = "destId")
     })
     private FlightRoute flightRoute;
+    
+    @NotNull
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private AircraftConfiguration aircraftConfiguration;
 }

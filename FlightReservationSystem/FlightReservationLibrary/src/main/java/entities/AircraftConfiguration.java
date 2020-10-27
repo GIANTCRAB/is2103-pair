@@ -9,14 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -46,4 +43,7 @@ public class AircraftConfiguration implements Serializable {
     
     @OneToMany(mappedBy =  "aircraftConfiguration")
     private List<CabinClass> cabinClasses;
+    
+    @OneToMany(mappedBy = "aircraftConfiguration")
+    private List<Flight> flights;
 }
