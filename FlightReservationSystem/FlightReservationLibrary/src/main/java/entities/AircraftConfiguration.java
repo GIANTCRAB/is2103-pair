@@ -5,20 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 @Entity
 @Getter
@@ -39,12 +31,17 @@ public class AircraftConfiguration implements Serializable {
 
     @NotNull
     @OneToMany(mappedBy = "aircraftConfiguration")
-    private List<CabinClass> cabinClasses;
+    private List<CabinClass> cabinClasses = new ArrayList<>();
 
     @OneToMany(mappedBy = "aircraftConfiguration")
-    private List<Flight> flights;
+    private List<Flight> flights = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private AircraftType aircraftType;
+
+    @Transient
+    public Integer getNoOfCabinClasses() {
+        return this.cabinClasses.size();
+    }
 }
