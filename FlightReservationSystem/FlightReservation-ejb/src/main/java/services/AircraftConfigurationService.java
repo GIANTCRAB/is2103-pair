@@ -26,27 +26,33 @@ public class AircraftConfigurationService {
 
     //TODO: Accept parameters for cabin classes and create cabin classes by invoking CabinClassService
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public AircraftConfiguration create(String aircraftConfigurationName,
-                                        List<CabinClass> cabinClassList,
-                                        AircraftType aircraftType) throws InvalidEntityIdException {
+    public AircraftConfiguration create(String aircraftConfigurationName, AircraftType aircraftType) {
+        final AircraftConfiguration newAircraftConfiguration = new AircraftConfiguration();
+        newAircraftConfiguration.setAircraftConfigurationName(aircraftConfigurationName);
+        newAircraftConfiguration.setAircraftType(aircraftType);
+        this.em.persist(newAircraftConfiguration);
+        this.em.flush();
+
+        return newAircraftConfiguration;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public AircraftConfiguration associateWithCabinClass(AircraftConfiguration aircraftConfiguration, List<CabinClass> cabinClassList) throws InvalidEntityIdException {
         if (cabinClassList.size() < MIN_CABIN_CLASS_SIZE || cabinClassList.size() > MAX_CABIN_CLASS_SIZE) {
             throw new InvalidEntityIdException();
         }
 
-        final AircraftConfiguration newAircraftConfiguration = new AircraftConfiguration();
-        newAircraftConfiguration.setAircraftConfigurationName(aircraftConfigurationName);
-        newAircraftConfiguration.setCabinClasses(cabinClassList);
-        newAircraftConfiguration.setAircraftType(aircraftType);
-        this.em.persist(newAircraftConfiguration);
+        aircraftConfiguration.setCabinClasses(cabinClassList);
+        this.em.persist(aircraftConfiguration);
 
         for (CabinClass cabinClass : cabinClassList) {
-            cabinClass.setAircraftConfiguration(newAircraftConfiguration);
+            cabinClass.setAircraftConfiguration(aircraftConfiguration);
             this.em.persist(cabinClass);
         }
 
         this.em.flush();
 
-        return newAircraftConfiguration;
+        return aircraftConfiguration;
     }
 
     public List<AircraftConfiguration> getAircraftConfigurations() {
