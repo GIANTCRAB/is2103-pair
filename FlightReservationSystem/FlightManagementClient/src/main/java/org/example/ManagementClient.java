@@ -1,9 +1,11 @@
 package org.example;
 
+import controllers.AircraftConfigurationBeanRemote;
 import controllers.EmployeeAuthBeanRemote;
 import controllers.FlightRouteBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
+import exceptions.NotAuthenticatedException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -65,15 +67,19 @@ public class ManagementClient implements SystemClient {
                 System.out.println("Incorrect credentials! Try again!");
             } catch (NamingException e) {
                 System.out.println("Server error, please try again!");
+            } catch (NotAuthenticatedException e) {
+                System.out.println("Invalid role in system. Please try again");
+                this.authenticatedEmployee = null;
             }
         }
     }
 
-    private SystemClient createSystemBasedOnRole() throws NamingException {
+    private SystemClient createSystemBasedOnRole() throws NamingException, NotAuthenticatedException {
         if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
             switch (this.authenticatedEmployee.getEmployeeRole()) {
                 case FLEET_MANAGER:
-                    break;
+                    final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
+                    return new AircraftConfigurationClient(this.scanner, this.authenticatedEmployee, aircraftConfigurationBeanRemote);
                 case ROUTE_PLANNER:
                     final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
@@ -84,7 +90,7 @@ public class ManagementClient implements SystemClient {
             }
         }
 
-        return null;
+        throw new NotAuthenticatedException();
     }
 
     private String getEmployeeRoleName() {
