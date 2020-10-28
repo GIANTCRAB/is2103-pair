@@ -6,17 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -56,4 +50,7 @@ public class CabinClass implements Serializable {
     @OneToMany(mappedBy = "cabinClass")
     private List<Fare> fares;
 
+    // Used only in delivering data from client to ejb
+    @Transient
+    private CabinClassType temporaryCabinClassType;
 }
