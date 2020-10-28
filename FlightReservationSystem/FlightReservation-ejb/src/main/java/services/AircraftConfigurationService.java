@@ -8,6 +8,8 @@ import exceptions.InvalidEntityIdException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -21,6 +23,7 @@ public class AircraftConfigurationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AircraftConfiguration create(String aircraftConfigurationName, List<CabinClass> cabinClassList, AircraftType aircraftType) throws InvalidEntityIdException {
         if (cabinClassList.size() < MIN_CABIN_CLASS_SIZE || cabinClassList.size() > MAX_CABIN_CLASS_SIZE) {
             throw new InvalidEntityIdException();
@@ -30,8 +33,13 @@ public class AircraftConfigurationService {
         newAircraftConfiguration.setAircraftConfigurationName(aircraftConfigurationName);
         newAircraftConfiguration.setCabinClasses(cabinClassList);
         newAircraftConfiguration.setAircraftType(aircraftType);
-
         this.em.persist(newAircraftConfiguration);
+
+        for (CabinClass cabinClass : cabinClassList) {
+            cabinClass.setAircraftConfiguration(newAircraftConfiguration);
+            this.em.persist(cabinClass);
+        }
+
         this.em.flush();
 
         return newAircraftConfiguration;
