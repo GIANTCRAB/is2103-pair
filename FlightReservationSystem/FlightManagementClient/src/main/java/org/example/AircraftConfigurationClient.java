@@ -66,7 +66,7 @@ public class AircraftConfigurationClient implements SystemClient {
         System.out.println("Enter number of cabin classes: (1 to " + MAX_CABIN_CLASS_COUNT + ")");
         final int cabinClassCount = this.scanner.nextInt();
 
-        if (cabinClassCount > MIN_CABIN_CLASS_COUNT && cabinClassCount < MAX_CABIN_CLASS_COUNT) {
+        if (cabinClassCount >= MIN_CABIN_CLASS_COUNT && cabinClassCount < MAX_CABIN_CLASS_COUNT) {
             final List<CabinClass> cabinClassList = new ArrayList<>();
             for (int i = 0; i < cabinClassCount; i++) {
                 System.out.println("Creating Cabin Class No. " + (i + 1) + "/" + (cabinClassCount + 1));
