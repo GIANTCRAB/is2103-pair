@@ -47,4 +47,12 @@ public class CabinClassService {
 
         return cabinClass;
     }
+
+    public CabinClass create(CabinClass cabinClass, AircraftConfiguration aircraftConfiguration) throws InvalidConstraintException {
+        return this.create(cabinClass.getTemporaryCabinClassType(),
+                cabinClass.getNoOfAisles(),
+                cabinClass.getNoOfRows(),
+                cabinClass.getSeatConfiguration(),
+                aircraftConfiguration);
+    }
 }

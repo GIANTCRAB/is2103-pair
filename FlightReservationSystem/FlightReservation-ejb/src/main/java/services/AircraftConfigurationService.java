@@ -24,7 +24,6 @@ public class AircraftConfigurationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
-    //TODO: Accept parameters for cabin classes and create cabin classes by invoking CabinClassService
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AircraftConfiguration create(String aircraftConfigurationName, AircraftType aircraftType) {
         final AircraftConfiguration newAircraftConfiguration = new AircraftConfiguration();
