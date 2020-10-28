@@ -26,8 +26,8 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AircraftConfiguration implements Serializable {
-
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long aircraftConfigurationId;
@@ -36,20 +36,20 @@ public class AircraftConfiguration implements Serializable {
     @Size(min = 1, max = 32)
     @Column(length = 32, nullable = false)
     private String aircraftConfigurationName;
-    
+
     @NotNull
     @Min(1)
     @Max(4)
     @Column(nullable = false)
-    private int noOfCabinClasses;
-    
+    private Integer noOfCabinClasses;
+
     @NotNull
-    @OneToMany(mappedBy =  "aircraftConfiguration")
+    @OneToMany(mappedBy = "aircraftConfiguration")
     private List<CabinClass> cabinClasses;
-    
+
     @OneToMany(mappedBy = "aircraftConfiguration")
     private List<Flight> flights;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private AircraftType aircraftType;
