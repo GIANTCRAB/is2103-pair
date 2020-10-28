@@ -2,7 +2,6 @@ package org.example;
 
 import controllers.EmployeeAuthBeanRemote;
 import controllers.FlightRouteBeanRemote;
-import controllers.AdminBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
 import lombok.AccessLevel;
@@ -80,9 +79,6 @@ public class ManagementClient implements SystemClient {
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SALES_MANAGER:
                     break;
-                case SYSTEM_ADMIN:
-                    final AdminBeanRemote adminBeanRemote = (AdminBeanRemote) this.initialContext.lookup(AdminBeanRemote.class.getName());
-                    return new AdminClient(this.scanner, this.authenticatedEmployee, adminBeanRemote);
                 default:
                     break;
             }
