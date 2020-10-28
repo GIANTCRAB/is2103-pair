@@ -39,7 +39,7 @@ public class Fare implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumns({
         @JoinColumn(name = "cabinClassType", referencedColumnName = "cabinClassType"),
-        @JoinColumn(name = "cabinClassType", referencedColumnName = "aircraftConfigurationId")})
+        @JoinColumn(name = "aircraftConfigurationId", referencedColumnName = "aircraftConfigurationId")})
     private CabinClass cabinClass;
         
 }

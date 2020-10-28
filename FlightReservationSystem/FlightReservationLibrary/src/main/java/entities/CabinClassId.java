@@ -20,6 +20,7 @@ public class CabinClassId implements Serializable {
     
     @Enumerated(EnumType.STRING)
     private CabinClassType cabinClassType;
+    
     private Long aircraftConfigurationId;
     
 }
