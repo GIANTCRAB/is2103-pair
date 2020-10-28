@@ -13,11 +13,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -31,34 +26,34 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CabinClass implements Serializable {
-    
+
     @EmbeddedId
     private CabinClassId cabinClassId;
-    
+
     @NotNull
     @Min(1)
     @Max(2)
     @Column(nullable = false)
-    private int noOfAisles;
-    
+    private Integer noOfAisles;
+
     @NotNull
     @Min(1)
     @Max(99)
     @Column(nullable = false)
-    private int noOfRows;
-    
+    private Integer noOfRows;
+
     @NotNull
     @Size(min = 5, max = 8)
     @Column(length = 8, nullable = false)
     private String seatConfiguration;
-    
+
     @NotNull
     @MapsId("aircraftConfigurationId")
     @ManyToOne
     @JoinColumn(name = "aircraftConfigurationId", nullable = false)
     private AircraftConfiguration aircraftConfiguration;
-    
+
     @OneToMany(mappedBy = "cabinClass")
     private List<Fare> fares;
-    
+
 }
