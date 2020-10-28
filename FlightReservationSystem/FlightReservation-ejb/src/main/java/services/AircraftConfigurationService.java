@@ -3,6 +3,7 @@ package services;
 import entities.AircraftConfiguration;
 import entities.CabinClass;
 import entities.AircraftType;
+import entities.CabinClassType;
 import exceptions.InvalidEntityIdException;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class AircraftConfigurationService {
     private final int MIN_CABIN_CLASS_SIZE = 1;
-    private final int MAX_CABIN_CLASS_SIZE = 4;
+    private final int MAX_CABIN_CLASS_SIZE = CabinClassType.values().length;
 
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
