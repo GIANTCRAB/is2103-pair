@@ -24,8 +24,11 @@ public class AircraftConfigurationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
+    //TODO: Accept parameters for cabin classes and create cabin classes by invoking CabinClassService
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public AircraftConfiguration create(String aircraftConfigurationName, List<CabinClass> cabinClassList, AircraftType aircraftType) throws InvalidEntityIdException {
+    public AircraftConfiguration create(String aircraftConfigurationName,
+                                        List<CabinClass> cabinClassList,
+                                        AircraftType aircraftType) throws InvalidEntityIdException {
         if (cabinClassList.size() < MIN_CABIN_CLASS_SIZE || cabinClassList.size() > MAX_CABIN_CLASS_SIZE) {
             throw new InvalidEntityIdException();
         }
