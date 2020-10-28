@@ -96,8 +96,6 @@ public class ManagementClient implements SystemClient {
                     return "Route Planner";
                 case SALES_MANAGER:
                     return "Sales Manager";
-                case SYSTEM_ADMIN:
-                    return "System Administrator";
                 default:
                     return "Unknown";
             }
