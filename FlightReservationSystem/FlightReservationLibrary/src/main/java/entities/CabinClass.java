@@ -53,4 +53,8 @@ public class CabinClass implements Serializable {
     // Used only in delivering data from client to ejb
     @Transient
     private CabinClassType temporaryCabinClassType;
+    
+    // Used to check if max capacity has exceeded
+    @Transient
+    private Integer maxCapacity;
 }

@@ -6,6 +6,7 @@ import entities.Employee;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import exceptions.MaximumCapacityExceededException;
 
 import javax.ejb.Remote;
 import java.util.List;
@@ -15,5 +16,5 @@ public interface AircraftConfigurationBeanRemote {
     AircraftConfiguration createConfiguration(Employee employee,
                                               String aircraftConfigurationName,
                                               Long aircraftTypeId,
-                                              List<CabinClass> cabinClassList) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException;
+                                              List<CabinClass> cabinClassList) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException, MaximumCapacityExceededException;
 }

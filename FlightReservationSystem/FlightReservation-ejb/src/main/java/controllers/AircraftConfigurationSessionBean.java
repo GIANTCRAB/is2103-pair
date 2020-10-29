@@ -4,6 +4,7 @@ import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import exceptions.MaximumCapacityExceededException;
 import services.AircraftConfigurationService;
 import services.AircraftTypeService;
 import services.AuthService;
@@ -15,6 +16,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 @Stateful
 public class AircraftConfigurationSessionBean implements AircraftConfigurationBeanRemote {
@@ -34,7 +37,7 @@ public class AircraftConfigurationSessionBean implements AircraftConfigurationBe
     public AircraftConfiguration createConfiguration(Employee employee,
                                                      String aircraftConfigurationName,
                                                      Long aircraftTypeId,
-                                                     List<CabinClass> cabinClassList) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException {
+                                                     List<CabinClass> cabinClassList) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException, MaximumCapacityExceededException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
         // Create base empty aircraft configuration
@@ -43,11 +46,18 @@ public class AircraftConfigurationSessionBean implements AircraftConfigurationBe
 
         // These are managed entities
         final List<CabinClass> managedCabinClassList = new ArrayList<>();
-
+                
         for (CabinClass cabinClass : cabinClassList) {
             managedCabinClassList.add(this.cabinClassService.create(cabinClass, aircraftConfiguration));
         }
-
-        return this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration, managedCabinClassList);
+        
+        // Check if max capacity of AircraftType is exceeded
+        int totalCapacity = managedCabinClassList.stream().map(c -> c.getMaxCapacity()).mapToInt(Integer::intValue).sum();
+        
+        if (totalCapacity > aircraftType.getMaxCapacity()) {
+            throw new MaximumCapacityExceededException("Maximum seat capacity exceeded!");
+        } else {
+            return this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration, managedCabinClassList);
+        }
     }
 }

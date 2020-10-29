@@ -14,6 +14,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @LocalBean
 @Stateless
@@ -36,6 +38,7 @@ public class CabinClassService {
         cabinClass.setNoOfAisles(noOfAisles);
         cabinClass.setNoOfRows(noOfRows);
         cabinClass.setSeatConfiguration(seatConfiguration);
+        cabinClass.setMaxCapacity(this.calculateMaxCapacity(noOfRows, seatConfiguration));
 
         Set<ConstraintViolation<CabinClass>> violations = this.validator.validate(cabinClass);
         // There are invalid data
@@ -54,5 +57,22 @@ public class CabinClassService {
                 cabinClass.getNoOfRows(),
                 cabinClass.getSeatConfiguration(),
                 aircraftConfiguration);
+    }
+    
+    private int calculateMaxCapacity(int noOfRows, String seatConfiguration) throws InvalidConstraintException {
+        Pattern pattern = Pattern.compile("([0-9][0-9]?)-([0-9][0-9]?)(-([0-9][0-9]?))?");
+        Matcher matcher = pattern.matcher(seatConfiguration);
+        
+        // This is a little inefficient
+        int maxCapacity = 0;
+        if (matcher.matches()) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                maxCapacity += Integer.parseInt(matcher.group(i));
+            }
+        } else {
+            throw new InvalidConstraintException("Invalid seat configuration!");
+        }
+        
+        return maxCapacity;
     }
 }

@@ -8,6 +8,7 @@ import entities.Employee;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import exceptions.MaximumCapacityExceededException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +46,6 @@ public class AircraftConfigurationClient implements SystemClient {
                 case 1:
                     this.displayAircraftConfigurationCreatorMenu();
                     break;
-                case 4:
                 default:
                     System.out.println("Exiting...");
                     loop = false;
@@ -69,13 +69,13 @@ public class AircraftConfigurationClient implements SystemClient {
         if (cabinClassCount >= MIN_CABIN_CLASS_COUNT && cabinClassCount < MAX_CABIN_CLASS_COUNT) {
             final List<CabinClass> cabinClassList = new ArrayList<>();
             for (int i = 0; i < cabinClassCount; i++) {
-                System.out.println("Creating Cabin Class No. " + (i + 1) + "/" + (cabinClassCount + 1));
+                System.out.println("Creating Cabin Class No. " + (i + 1) + "/" + (cabinClassCount));
 
                 final CabinClass cabinClass = new CabinClass();
                 System.out.println("Enter cabin class type: (" + Arrays.toString(CabinClassType.values()) + ")");
                 final String cabinClassType = this.scanner.next();
                 cabinClass.setTemporaryCabinClassType(CabinClassType.valueOf(cabinClassType));
-                System.out.println("Enter seat configuration: (3-4-3)");
+                System.out.println("Enter seat configuration: e.g. (3-4-3)");
                 final String seatConfiguration = this.scanner.next();
                 cabinClass.setSeatConfiguration(seatConfiguration);
                 System.out.println("Enter number of aisles: ");
@@ -96,6 +96,8 @@ public class AircraftConfigurationClient implements SystemClient {
             } catch (InvalidConstraintException e) {
                 this.displayConstraintErrorMessage(e);
             } catch (InvalidEntityIdException e) {
+                e.printStackTrace();
+            } catch (MaximumCapacityExceededException e) {
                 e.printStackTrace();
             }
         } else {
