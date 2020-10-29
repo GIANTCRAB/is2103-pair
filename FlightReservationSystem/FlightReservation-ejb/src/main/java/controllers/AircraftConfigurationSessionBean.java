@@ -58,4 +58,25 @@ public class AircraftConfigurationSessionBean implements AircraftConfigurationBe
             return this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration, managedCabinClassList);
         }
     }
+    
+    @Override
+    public List<Object[]> getAircraftConfigurations(Employee employee) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        return this.aircraftConfigurationService.getAircraftConfigurations();
+    }
+    
+    @Override
+    public AircraftConfiguration getAircraftConfigurationById(Employee employee, Long id) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        return this.aircraftConfigurationService.getAircraftConfigurationById(id);
+    }
+    
+    @Override
+    public AircraftConfiguration getAircraftConfigurationByName(Employee employee, String name) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        return this.aircraftConfigurationService.getAircraftConfigurationByName(name);
+    }
 }

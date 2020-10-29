@@ -13,6 +13,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 @LocalBean
@@ -40,29 +41,41 @@ public class AircraftConfigurationService {
         if (cabinClassList.size() < MIN_CABIN_CLASS_SIZE || cabinClassList.size() > MAX_CABIN_CLASS_SIZE) {
             throw new InvalidEntityIdException();
         }
-
-        aircraftConfiguration.setCabinClasses(cabinClassList);
-        this.em.persist(aircraftConfiguration);
-
+        
+        AircraftConfiguration managedAircraftConfiguration = em.find(AircraftConfiguration.class, aircraftConfiguration.getAircraftConfigurationId());
+        
         for (CabinClass cabinClass : cabinClassList) {
-            cabinClass.setAircraftConfiguration(aircraftConfiguration);
-            this.em.persist(cabinClass);
+            CabinClass managedCabinClass = em.find(CabinClass.class, cabinClass.getCabinClassId());
+            managedCabinClass.setAircraftConfiguration(aircraftConfiguration);
+            managedAircraftConfiguration.getCabinClasses().add(cabinClass);
         }
 
         this.em.flush();
 
-        return aircraftConfiguration;
+        return managedAircraftConfiguration;
     }
-
-    public List<AircraftConfiguration> getAircraftConfigurations() {
-        final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery("SELECT ac from AircraftConfiguration ac", AircraftConfiguration.class);
+    
+    public List<Object[]> getAircraftConfigurations() {
+        final Query searchQuery = this.em.createQuery("SELECT a.aircraftTypeName, ac.aircraftConfigurationName FROM " +
+                                                                                  "AircraftConfiguration ac JOIN ac.aircraftType a " +
+                                                                                  "ORDER BY a.aircraftTypeName, ac.aircraftConfigurationName", AircraftConfiguration.class);
 
         return searchQuery.getResultList();
     }
-
-    public AircraftConfiguration findAircraftConfigurationByName(String name) {
+    
+    public AircraftConfiguration getAircraftConfigurationById(Long id) {
+        // Not sure why JOIN FETCH does not work
         final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery(
-                "SELECT ac from AircraftConfiguration ac WHERE ac.aircraftConfigurationName LIKE ?1", AircraftConfiguration.class)
+                "SELECT ac FROM AircraftConfiguration ac JOIN FETCH ac.cabinClasses WHERE ac.aircraftConfigurationId = :id", AircraftConfiguration.class)
+                .setParameter("id", id);
+
+        return searchQuery.getSingleResult();
+    }
+    
+    // Need to ensure that name is unique if using this
+    public AircraftConfiguration getAircraftConfigurationByName(String name) {
+        final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery(
+                "SELECT ac from AircraftConfiguration ac JOIN FETCH ac.cabinClasses WHERE ac.aircraftConfigurationName LIKE ?1", AircraftConfiguration.class)
                 .setParameter(1, name);
 
         return searchQuery.getSingleResult();

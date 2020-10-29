@@ -29,8 +29,9 @@ public class AircraftConfiguration implements Serializable {
     @Column(length = 32, nullable = false)
     private String aircraftConfigurationName;
     
+    // Had to set this to eager for it to work
     @NotNull
-    @OneToMany(mappedBy = "aircraftConfiguration")
+    @OneToMany(mappedBy = "aircraftConfiguration", fetch = FetchType.EAGER)
     private List<CabinClass> cabinClasses = new ArrayList<>();
 
     @OneToMany(mappedBy = "aircraftConfiguration")

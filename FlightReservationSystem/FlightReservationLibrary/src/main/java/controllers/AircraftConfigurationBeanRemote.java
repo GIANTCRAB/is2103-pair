@@ -17,4 +17,10 @@ public interface AircraftConfigurationBeanRemote {
                                               String aircraftConfigurationName,
                                               Long aircraftTypeId,
                                               List<CabinClass> cabinClassList) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException, MaximumCapacityExceededException;
+    
+    public List<Object[]> getAircraftConfigurations(Employee employee) throws NotAuthenticatedException;
+    
+    public AircraftConfiguration getAircraftConfigurationById(Employee employee, Long id) throws NotAuthenticatedException;
+    
+    public AircraftConfiguration getAircraftConfigurationByName(Employee employee, String name) throws NotAuthenticatedException; 
 }

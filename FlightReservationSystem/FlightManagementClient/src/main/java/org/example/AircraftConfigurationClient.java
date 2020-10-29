@@ -36,7 +36,7 @@ public class AircraftConfigurationClient implements SystemClient {
         while (loop) {
             System.out.println("*** Aircraft Configurator ***");
             System.out.println("1: Create Aircraft Configuration");
-            System.out.println("2: View All Aircraft Configuration");
+            System.out.println("2: View All Aircraft Configurations");
             System.out.println("3: View Aircraft Configuration Details");
             System.out.println("4: Exit");
 
@@ -45,6 +45,12 @@ public class AircraftConfigurationClient implements SystemClient {
             switch (option) {
                 case 1:
                     this.displayAircraftConfigurationCreatorMenu();
+                    break;
+                case 2:
+                    this.displayViewAircraftConfigurationsMenu();
+                    break;
+                case 3:
+                    this.displayViewAircraftConfigurationDetailsMenu();
                     break;
                 default:
                     System.out.println("Exiting...");
@@ -58,7 +64,7 @@ public class AircraftConfigurationClient implements SystemClient {
         final int MIN_CABIN_CLASS_COUNT = 1;
         final int MAX_CABIN_CLASS_COUNT = CabinClassType.values().length;
 
-        System.out.println("Create Aircraft Configuration");
+        System.out.println("*** Create Aircraft Configuration ***");
         System.out.println("Enter Aircraft Configuration name: ");
         final String aircraftConfigurationName = this.scanner.next();
         System.out.println("Enter Aircraft Type ID:");
@@ -105,5 +111,39 @@ public class AircraftConfigurationClient implements SystemClient {
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
         System.out.println("There were some validation errors!");
         System.out.println(invalidConstraintException.toString());
+    }
+    
+    private void displayViewAircraftConfigurationsMenu() {
+        System.out.println("*** View All Aircraft Configurations ***");
+
+        try {
+            final List<Object[]> resultList = this.aircraftConfigurationBeanRemote.getAircraftConfigurations(this.authenticatedEmployee);
+            resultList.forEach(result -> System.out.println("Aircraft Type: " + result[0] + ", Aircraft Configuration: " + result[1]));
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayViewAircraftConfigurationDetailsMenu() {
+        System.out.println("*** View Aircraft Configuration Details ***");
+        System.out.println("Enter the ID of the aircraft configuration details you would like to view:");
+        long aircraftConfigurationId = this.scanner.nextLong();
+
+        try {
+            // 
+            final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.getAircraftConfigurationById(this.authenticatedEmployee, aircraftConfigurationId);
+            final List<CabinClass> cabinClassList = aircraftConfiguration.getCabinClasses();
+            
+            System.out.println("Viewing details for aircraft configuration: " + aircraftConfiguration.getAircraftConfigurationName() + "\n");
+            System.out.println("Total no. of cabin classes: " + cabinClassList.size());
+            System.out.println("-----------------");
+            cabinClassList.forEach(cabinClass -> System.out.println("Cabin class type: " + cabinClass.getCabinClassId().getCabinClassType() + "\n" +
+                                                                    "Seating configuration: " + cabinClass.getSeatConfiguration() + "\n" +
+                                                                    "No. of aisles: " + cabinClass.getNoOfAisles() + "\n" +
+                                                                    "No. of rows: " + cabinClass.getNoOfRows() + "\n" +
+                                                                    "--------------------"));
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
     }
 }
