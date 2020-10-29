@@ -16,4 +16,6 @@ public interface FlightRouteBeanRemote {
     FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
 
     List<FlightRoute> getFlightRoutes(Employee employee) throws NotAuthenticatedException;
+
+    void deleteFlightRoute(Employee employee, FlightRoute flightRoute) throws InvalidEntityIdException, NotAuthenticatedException;
 }

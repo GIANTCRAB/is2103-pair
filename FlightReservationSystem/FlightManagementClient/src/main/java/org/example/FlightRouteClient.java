@@ -3,6 +3,7 @@ package org.example;
 import controllers.FlightRouteBeanRemote;
 import entities.Employee;
 import entities.FlightRoute;
+import entities.FlightRouteId;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -44,6 +45,9 @@ public class FlightRouteClient implements SystemClient {
                 case 2:
                     this.displayFlightRouteMenu();
                     break;
+                case 3:
+                    this.displayDeleteFlightRouteMenu();
+                    break;
                 case 4:
                 default:
                     System.out.println("Exiting...");
@@ -82,7 +86,30 @@ public class FlightRouteClient implements SystemClient {
 
         try {
             final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes(this.authenticatedEmployee);
-            flightRouteList.forEach(flightRoute -> System.out.println(flightRoute.getOrigin() + " -> " + flightRoute.getDest()));
+            flightRouteList.forEach(flightRoute -> System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode()));
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
+
+    private void displayDeleteFlightRouteMenu() {
+        System.out.println("*** Delete Flight Route");
+        System.out.println("Enter origin airport code:");
+        final String originCode = this.scanner.next();
+        System.out.println("Enter destination airport code:");
+        final String destinationCode = this.scanner.next();
+
+        final FlightRouteId flightRouteId = new FlightRouteId();
+        flightRouteId.setOriginId(originCode);
+        flightRouteId.setDestId(destinationCode);
+        final FlightRoute flightRoute = new FlightRoute();
+        flightRoute.setFlightRouteId(flightRouteId);
+
+        try {
+            this.flightRouteBeanRemote.deleteFlightRoute(this.authenticatedEmployee, flightRoute);
+            System.out.println("Route deleted successfully.");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Flight route does not exists");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }

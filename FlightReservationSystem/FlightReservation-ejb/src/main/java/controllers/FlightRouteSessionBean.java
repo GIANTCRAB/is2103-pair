@@ -58,4 +58,13 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
         return this.flightRouteService.getFlightRoutes();
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteFlightRoute(Employee employee, FlightRoute flightRoute) throws InvalidEntityIdException, NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+
+        final FlightRoute managedFlightRoute = this.flightRouteService.retrieveManagedEntity(flightRoute);
+        this.flightRouteService.delete(managedFlightRoute);
+    }
 }

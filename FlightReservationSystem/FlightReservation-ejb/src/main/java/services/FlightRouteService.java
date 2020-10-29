@@ -3,9 +3,13 @@ package services;
 import entities.Airport;
 import entities.FlightRoute;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -21,6 +25,9 @@ import java.util.Set;
 public class FlightRouteService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
+
+    @Inject
+    FlightService flightService;
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
@@ -44,5 +51,21 @@ public class FlightRouteService {
         final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr", FlightRoute.class);
 
         return searchQuery.getResultList();
+    }
+
+    public FlightRoute retrieveManagedEntity(FlightRoute flightRoute) throws InvalidEntityIdException {
+        final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
+
+        if (managedFlightRoute == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return managedFlightRoute;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void delete(FlightRoute flightRoute) {
+        flightRoute.getFlights().forEach(flight -> this.flightService.delete(flight));
+        this.em.remove(flightRoute);
     }
 }
