@@ -78,9 +78,6 @@ public class AircraftConfigurationClient implements SystemClient {
                 System.out.println("Enter seat configuration: e.g. (3-4-3)");
                 final String seatConfiguration = this.scanner.next();
                 cabinClass.setSeatConfiguration(seatConfiguration);
-                System.out.println("Enter number of aisles: ");
-                final int noOfAisles = this.scanner.nextInt();
-                cabinClass.setNoOfAisles(noOfAisles);
                 System.out.println("Enter number of rows: ");
                 final int noOfRows = this.scanner.nextInt();
                 cabinClass.setNoOfRows(noOfRows);

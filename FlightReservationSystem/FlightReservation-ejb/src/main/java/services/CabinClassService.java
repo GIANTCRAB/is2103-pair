@@ -28,14 +28,13 @@ public class CabinClassService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public CabinClass create(CabinClassType cabinClassType,
-                             Integer noOfAisles,
                              Integer noOfRows,
                              String seatConfiguration,
                              AircraftConfiguration aircraftConfiguration) throws InvalidConstraintException {
         final CabinClass cabinClass = new CabinClass();
         cabinClass.setAircraftConfiguration(aircraftConfiguration);
         cabinClass.setCabinClassId(new CabinClassId(cabinClassType, aircraftConfiguration.getAircraftConfigurationId()));
-        cabinClass.setNoOfAisles(noOfAisles);
+        cabinClass.setNoOfAisles(this.calculateNoOfAisles(seatConfiguration));
         cabinClass.setNoOfRows(noOfRows);
         cabinClass.setSeatConfiguration(seatConfiguration);
         cabinClass.setMaxCapacity(this.calculateMaxCapacity(noOfRows, seatConfiguration));
@@ -53,10 +52,14 @@ public class CabinClassService {
 
     public CabinClass create(CabinClass cabinClass, AircraftConfiguration aircraftConfiguration) throws InvalidConstraintException {
         return this.create(cabinClass.getTemporaryCabinClassType(),
-                cabinClass.getNoOfAisles(),
                 cabinClass.getNoOfRows(),
                 cabinClass.getSeatConfiguration(),
                 aircraftConfiguration);
+    }
+    
+    private int calculateNoOfAisles(String seatConfiguration) throws InvalidConstraintException {
+        int count = (int) seatConfiguration.chars().filter(ch -> ch == '-').count();
+        return count;
     }
     
     private int calculateMaxCapacity(int noOfRows, String seatConfiguration) throws InvalidConstraintException {
