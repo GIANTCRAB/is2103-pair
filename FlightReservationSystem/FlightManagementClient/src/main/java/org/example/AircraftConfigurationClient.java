@@ -141,6 +141,7 @@ public class AircraftConfigurationClient implements SystemClient {
                                                                     "Seating configuration: " + cabinClass.getSeatConfiguration() + "\n" +
                                                                     "No. of aisles: " + cabinClass.getNoOfAisles() + "\n" +
                                                                     "No. of rows: " + cabinClass.getNoOfRows() + "\n" +
+                                                                    "No. of columns: " + cabinClass.getNoOfCols() + "\n" +
                                                                     "--------------------"));
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");

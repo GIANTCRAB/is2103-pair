@@ -35,6 +35,12 @@ public class CabinClass implements Serializable {
     @Max(99)
     @Column(nullable = false)
     private Integer noOfRows;
+    
+    @NotNull
+    @Min(1)
+    @Max(99)
+    @Column(nullable = false)
+    private Integer noOfCols;
 
     @NotNull
     @Size(min = 5, max = 8)

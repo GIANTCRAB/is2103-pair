@@ -36,8 +36,9 @@ public class CabinClassService {
         cabinClass.setCabinClassId(new CabinClassId(cabinClassType, aircraftConfiguration.getAircraftConfigurationId()));
         cabinClass.setNoOfAisles(this.calculateNoOfAisles(seatConfiguration));
         cabinClass.setNoOfRows(noOfRows);
+        cabinClass.setNoOfCols(this.calculateNoOfCols(seatConfiguration));
         cabinClass.setSeatConfiguration(seatConfiguration);
-        cabinClass.setMaxCapacity(noOfRows*this.calculateNoOfCols(seatConfiguration));
+        cabinClass.setMaxCapacity(noOfRows*calculateNoOfCols(seatConfiguration));
 
         Set<ConstraintViolation<CabinClass>> violations = this.validator.validate(cabinClass);
         // There are invalid data
@@ -63,13 +64,14 @@ public class CabinClassService {
     }
     
     private int calculateNoOfCols(String seatConfiguration) throws InvalidConstraintException {
-        Pattern pattern = Pattern.compile("([0-9][0-9]?)-([0-9][0-9]?)(-([0-9][0-9]?))?");
+        Pattern pattern = Pattern.compile("(?<col1>[0-9][0-9]?)-(?<col2>[0-9][0-9]?)(-(?<col3>[0-9][0-9]?))?");
         Matcher matcher = pattern.matcher(seatConfiguration);
         
-        int noOfCols = 0;
+        int noOfCols;
         if (matcher.matches()) {
-            for (int i = 1; i <= matcher.groupCount(); i++) {
-                noOfCols += Integer.parseInt(matcher.group(i));
+            noOfCols = Integer.parseInt(matcher.group("col1")) + Integer.parseInt(matcher.group("col2"));
+            if (matcher.groupCount() == 4) {
+                noOfCols += Integer.parseInt(matcher.group("col3"));
             }
         } else {
             throw new InvalidConstraintException("Invalid seat configuration!");
