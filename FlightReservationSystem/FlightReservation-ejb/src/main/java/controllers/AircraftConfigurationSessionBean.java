@@ -16,8 +16,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.IntStream;
 
 @Stateful
 public class AircraftConfigurationSessionBean implements AircraftConfigurationBeanRemote {
