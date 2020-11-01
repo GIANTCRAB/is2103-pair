@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="FlightReservationLibrary" />
+        <module name="HolidayReservationClient" />
         <module name="FlightReservation-ejb" />
         <module name="FlightManagementClient" />
         <module name="FlightReservationClient" />
@@ -19,6 +20,8 @@
       <module name="FlightReservationClient" target="1.8" />
       <module name="FlightReservationLibrary" target="1.8" />
       <module name="FlightReservationSystem" target="1.5" />
+      <module name="HolidayReservationClient" target="1.5" />
+      <module name="HolidayReserverationSystem" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
