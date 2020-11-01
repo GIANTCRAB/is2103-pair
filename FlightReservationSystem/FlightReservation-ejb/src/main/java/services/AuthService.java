@@ -30,15 +30,8 @@ public class AuthService {
         try {
             final Customer searchResult = searchQuery.getSingleResult();
 
-            // WARNING: If password isn't hashed, just allow it to compare anyways. Don't do this in real world! Always hash your passwords
-            try {
-                if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
-                    return searchResult;
-                }
-            } catch (IllegalArgumentException e) {
-                if (password.equals(searchResult.getPassword())) {
-                    return searchResult;
-                }
+            if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
+                return searchResult;
             }
         } catch (NoResultException ignored) {
         }
@@ -53,15 +46,8 @@ public class AuthService {
         try {
             final Employee searchResult = searchQuery.getSingleResult();
 
-            // WARNING: If password isn't hashed, just allow it to compare anyways. Don't do this in real world! Always hash your passwords
-            try {
-                if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
-                    return searchResult;
-                }
-            } catch (IllegalArgumentException e) {
-                if (password.equals(searchResult.getPassword())) {
-                    return searchResult;
-                }
+            if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
+                return searchResult;
             }
         } catch (NoResultException ignored) {
         }
