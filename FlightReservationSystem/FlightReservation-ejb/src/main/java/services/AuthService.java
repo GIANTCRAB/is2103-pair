@@ -3,6 +3,7 @@ package services;
 import entities.Customer;
 import entities.Employee;
 import entities.EmployeeRole;
+import entities.Partner;
 import exceptions.IncorrectCredentialsException;
 import exceptions.NotAuthenticatedException;
 
@@ -62,5 +63,21 @@ public class AuthService {
         }
 
         throw new NotAuthenticatedException();
+    }
+
+    public Partner partnerLogin(String username, String password) throws IncorrectCredentialsException {
+        final TypedQuery<Partner> searchQuery = this.em.createQuery("select p from Partner p where p.username = ?1", Partner.class)
+                .setParameter(1, username);
+
+        try {
+            final Partner searchResult = searchQuery.getSingleResult();
+
+            if (this.passwordHash.verify(password.toCharArray(), searchResult.getPassword())) {
+                return searchResult;
+            }
+        } catch (NoResultException ignored) {
+        }
+
+        throw new IncorrectCredentialsException();
     }
 }
