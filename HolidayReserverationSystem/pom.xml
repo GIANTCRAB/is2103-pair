@@ -11,6 +11,23 @@
     <modules>
         <module>HolidayReservationClient</module>
     </modules>
+    <properties>
+        <glassfish.version>5.0</glassfish.version>
+    </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>8.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.main.appclient</groupId>
+                <artifactId>gf-client</artifactId>
+                <version>${glassfish.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
