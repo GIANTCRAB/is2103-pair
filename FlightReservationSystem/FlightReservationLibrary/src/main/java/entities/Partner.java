@@ -35,4 +35,9 @@ public class Partner {
     @Size(min = 3, max = 255)
     @Column(nullable = false)
     private String password;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PartnerRole partnerRole = PartnerRole.EMPLOYEE;
 }
