@@ -12,6 +12,6 @@ echo $ROOT_DIR
 mvn -DskipTests=true clean install
 
 $ADMIN undeploy $APP_NAME || echo "nothing to undeploy..."
-$ADMIN add-resources $ROOT_DIR/FlightReservation-ejb/src/main/resources/WEB-INF/glassfish-resources.xml
+$ADMIN add-resources $ROOT_DIR/FlightReservation-ejb/setup/glassfish-resources.xml
 $ADMIN deploy --dropandcreatetables=true $EJB_ARTIFACT
 
