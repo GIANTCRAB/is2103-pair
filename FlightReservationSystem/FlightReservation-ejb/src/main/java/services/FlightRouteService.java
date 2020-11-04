@@ -36,9 +36,7 @@ public class FlightRouteService {
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
-        FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
-        FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
-        
+        FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
         if(flightRoute == null) {
             flightRoute = new FlightRoute();
             flightRoute.setOrigin(origin);
@@ -76,6 +74,12 @@ public class FlightRouteService {
             flightRoute.getReturnFlightRoute();
         });
         return flightRoutes;
+    }
+    
+    public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) {
+        FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
+        FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
+        return flightRoute;
     }
 
     public FlightRoute retrieveManagedEntity(FlightRoute flightRoute) throws InvalidEntityIdException {

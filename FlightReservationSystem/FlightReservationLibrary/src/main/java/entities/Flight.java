@@ -28,7 +28,7 @@ public class Flight implements Serializable {
     @NotNull
     private String flightCode;
 
-    @Column(nullable = false)
+    @Column
     private BigDecimal totalAmountPaid;
 
     @NotNull
@@ -43,4 +43,10 @@ public class Flight implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
+    
+    @OneToOne
+    private Flight mainFlight;
+    
+    @OneToOne(mappedBy = "mainFlight")
+    private Flight returnFlight;
 }
