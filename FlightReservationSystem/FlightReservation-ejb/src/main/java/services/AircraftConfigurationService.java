@@ -5,6 +5,7 @@ import entities.CabinClass;
 import entities.AircraftType;
 import entities.CabinClassType;
 import exceptions.InvalidEntityIdException;
+import exceptions.MaximumCapacityExceededException;
 
 import java.util.List;
 import javax.ejb.Stateless;
@@ -41,17 +42,23 @@ public class AircraftConfigurationService {
             throw new InvalidEntityIdException();
         }
         
-        AircraftConfiguration managedAircraftConfiguration = em.find(AircraftConfiguration.class, aircraftConfiguration.getAircraftConfigurationId());
-        
         for (CabinClass cabinClass : cabinClassList) {
-            CabinClass managedCabinClass = em.find(CabinClass.class, cabinClass.getCabinClassId());
-            managedCabinClass.setAircraftConfiguration(aircraftConfiguration);
-            managedAircraftConfiguration.getCabinClasses().add(cabinClass);
+            cabinClass.setAircraftConfiguration(aircraftConfiguration);
+            aircraftConfiguration.getCabinClasses().add(cabinClass);
         }
 
-        this.em.flush();
-
-        return managedAircraftConfiguration;
+        return aircraftConfiguration;
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public boolean checkMaxCapacity(AircraftType aircraftType, List<CabinClass> cabinClassList) throws MaximumCapacityExceededException {
+        int totalCapacity = cabinClassList.stream().map(c -> c.getMaxCapacity()).mapToInt(Integer::intValue).sum();
+        
+        if (totalCapacity > aircraftType.getMaxCapacity()) {
+            throw new MaximumCapacityExceededException("Seat capacity for current configuration is " + totalCapacity + ", maximum seat capacity is " + aircraftType.getMaxCapacity());
+        } else {
+            return true;
+        }
     }
     
     public List<Object[]> getAircraftConfigurations() {
