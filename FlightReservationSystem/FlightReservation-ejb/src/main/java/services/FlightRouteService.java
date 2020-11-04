@@ -2,6 +2,8 @@ package services;
 
 import entities.Airport;
 import entities.FlightRoute;
+import entities.FlightRouteId;
+import exceptions.FlightRouteAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 
@@ -31,26 +33,49 @@ public class FlightRouteService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
+        FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
+        FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
+        
+        if(flightRoute == null) {
+            flightRoute = new FlightRoute();
+            flightRoute.setOrigin(origin);
+            flightRoute.setDest(destination);
+            Set<ConstraintViolation<FlightRoute>> violations = this.validator.validate(flightRoute);
+            // There are invalid data
+            if (!violations.isEmpty()) {
+                throw new InvalidConstraintException(violations.toString());
+            }
+            
+            this.em.persist(flightRoute);
+            this.em.flush();
+            
+            return flightRoute;
 
-    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException {
-        final FlightRoute flightRoute = new FlightRoute();
-        flightRoute.setOrigin(origin);
-        flightRoute.setDest(destination);
-        Set<ConstraintViolation<FlightRoute>> violations = this.validator.validate(flightRoute);
-        // There are invalid data
-        if (!violations.isEmpty()) {
-            throw new InvalidConstraintException(violations.toString());
+        } else {
+            throw new FlightRouteAlreadyExistException();
         }
-        this.em.persist(flightRoute);
-        this.em.flush();
-
-        return flightRoute;
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void associateReturnFlightRoute(FlightRoute mainFlightRoute, FlightRoute returnFlightRoute) {
+        mainFlightRoute.setReturnFlightRoute(returnFlightRoute);
+        returnFlightRoute.setMainFlightRoute(mainFlightRoute);
     }
 
     public List<FlightRoute> getFlightRoutes() {
-        final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr", FlightRoute.class);
-
-        return searchQuery.getResultList();
+        // I don't know why this keeps retrieving all routes even if it's a return flight route
+        final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr WHERE fr.returnFlightRoute IS NOT NULL ORDER BY fr.flightRouteId.originId", FlightRoute.class);
+        List<FlightRoute> flightRoutes = searchQuery.getResultList();
+        
+        flightRoutes.forEach(flightRoute -> {
+            flightRoute.getOrigin();
+            flightRoute.getDest();
+            flightRoute.getReturnFlightRoute();
+        });
+        return flightRoutes;
     }
 
     public FlightRoute retrieveManagedEntity(FlightRoute flightRoute) throws InvalidEntityIdException {

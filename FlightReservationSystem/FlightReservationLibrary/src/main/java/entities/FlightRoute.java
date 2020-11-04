@@ -22,16 +22,27 @@ public class FlightRoute implements Serializable {
 
     @NotNull
     @MapsId("originId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "originId", nullable = false)
     private Airport origin;
 
     @NotNull
     @MapsId("destId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destId", nullable = false)
     private Airport dest;
 
     @OneToMany(mappedBy = "flightRoute")
     private List<Flight> flights = new ArrayList<>();
+    
+    @OneToOne(optional = true)
+    @PrimaryKeyJoinColumns({
+        @PrimaryKeyJoinColumn(name="originId", referencedColumnName="originId"), 
+        @PrimaryKeyJoinColumn(name="destId", referencedColumnName="destId")
+    })
+    private FlightRoute mainFlightRoute;
+    
+    @OneToOne(optional = true, mappedBy = "mainFlightRoute")
+    private FlightRoute returnFlightRoute;
+    
 }
