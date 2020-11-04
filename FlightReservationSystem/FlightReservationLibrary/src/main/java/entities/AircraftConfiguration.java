@@ -36,7 +36,7 @@ public class AircraftConfiguration implements Serializable {
     @OneToMany(mappedBy = "aircraftConfiguration")
     private List<Flight> flights = new ArrayList<>();
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AircraftType aircraftType;
 

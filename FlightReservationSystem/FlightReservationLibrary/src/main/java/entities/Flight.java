@@ -32,7 +32,7 @@ public class Flight implements Serializable {
     private BigDecimal totalAmountPaid;
 
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "routeOrigin", referencedColumnName = "originId"),
             @JoinColumn(name = "routeDest", referencedColumnName = "destId")
@@ -40,7 +40,7 @@ public class Flight implements Serializable {
     private FlightRoute flightRoute;
     
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
 }

@@ -36,7 +36,7 @@ public class Fare implements Serializable {
     @Column(nullable = false)
     private BigDecimal fareAmount;
     
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name = "cabinClassType", referencedColumnName = "cabinClassType"),
         @JoinColumn(name = "aircraftConfigurationId", referencedColumnName = "aircraftConfigurationId")})
