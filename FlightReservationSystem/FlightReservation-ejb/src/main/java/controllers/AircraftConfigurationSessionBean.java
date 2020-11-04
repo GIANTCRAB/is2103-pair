@@ -50,10 +50,11 @@ public class AircraftConfigurationSessionBean implements AircraftConfigurationBe
         }
         
         // Check if max capacity of AircraftType is exceeded
+        // Need to check this before creating the aircraft configuration actually
         int totalCapacity = managedCabinClassList.stream().map(c -> c.getMaxCapacity()).mapToInt(Integer::intValue).sum();
         
         if (totalCapacity > aircraftType.getMaxCapacity()) {
-            throw new MaximumCapacityExceededException("Maximum seat capacity exceeded!");
+            throw new MaximumCapacityExceededException("Seat capacity for current configuration is " + totalCapacity + ", maximum seat capacity is " + aircraftType.getMaxCapacity());
         } else {
             return this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration, managedCabinClassList);
         }

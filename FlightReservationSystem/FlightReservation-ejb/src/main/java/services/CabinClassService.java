@@ -70,7 +70,7 @@ public class CabinClassService {
         int noOfCols;
         if (matcher.matches()) {
             noOfCols = Integer.parseInt(matcher.group("col1")) + Integer.parseInt(matcher.group("col2"));
-            if (matcher.groupCount() == 4) {
+            if (matcher.group("col3") != null) {
                 noOfCols += Integer.parseInt(matcher.group("col3"));
             }
         } else {
