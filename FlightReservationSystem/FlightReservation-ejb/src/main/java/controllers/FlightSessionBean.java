@@ -1,12 +1,12 @@
 package controllers;
 
 import entities.EmployeeRole;
+import entities.Employee;
 import entities.Flight;
 import entities.FlightRoute;
 import entities.Airport;
 import entities.AircraftConfiguration;
 import exceptions.InvalidConstraintException;
-import exceptions.FlightRouteDoesNotExistException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import java.util.List;
@@ -17,6 +17,7 @@ import services.AircraftConfigurationService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
+import services.AirportService;
 
 
 
@@ -32,12 +33,15 @@ public class FlightSessionBean implements FlightBeanRemote {
     AircraftConfigurationService aircraftConfigurationService;
     
     @Inject
+    AirportService airportService;
+    
+    @Inject
     AuthService authService;
     
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
     
     @Override
-    public Flight create(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteDoesNotExistException {
+    public Flight create(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
         final Airport originAirport = this.airportService.findAirportByCode(origin);
@@ -45,9 +49,7 @@ public class FlightSessionBean implements FlightBeanRemote {
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
         AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
         
-        if (flightRoute == null) {
-            throw new FlightRouteDoesNotExistException();
-        } else if (aircraftConfiguration == null) {
+        if (aircraftConfiguration == null) {
             throw new InvalidEntityIdException();
         }
         
@@ -56,27 +58,24 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
     
     @Override
-    public Flight createRoundTripFlight(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteDoesNotExistException {
+    public boolean addReturnFlight(Employee employee, String mainFlightCode, String returnFlightCode) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
-        final Airport originAirport = this.airportService.findAirportByCode(origin);
-        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
-        FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
-        AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
-        
-        if (flightRoute == null) {
-            throw new FlightRouteDoesNotExistException("Main flight route does not exist.");
-        } else if (flightRoute.getReturnFlightRoute() == null) {
-            throw new FlightRouteDoesNotExistException("Return flight route does not exist.");
-        } else if (aircraftConfiguration == null) {
-            throw new InvalidEntityIdException();
-        }
-        
-        Flight mainFlight = this.flightService.create(flightCode, flightRoute, aircraftConfiguration);
-        Flight returnFlight = this.flightService.create(flightCode, flightRoute.getReturnFlightRoute(), aircraftConfiguration);
+        Flight mainFlight = this.flightService.getFlightByFlightCode(mainFlightCode);
+        Flight returnFlight = this.flightService.getFlightByFlightCode(returnFlightCode);
         
         this.flightService.associateReturnFlight(mainFlight, returnFlight);
-        return mainFlight;
+        return true;
+    }
+    
+    @Override
+    public boolean checkFlightRoute(Employee employee, String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        final Airport originAirport = this.airportService.findAirportByCode(origin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
+        
+        return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport) != null);
     }
     
     @Override

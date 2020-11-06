@@ -36,7 +36,7 @@ public class FlightService {
         flight.setFlightRoute(flightRoute);
         flight.setAircraftConfiguration(aircraftConfiguration);
         
-        Set<ConstraintViolation<FlightRoute>> violations = this.validator.validate(flight);
+        Set<ConstraintViolation<Flight>> violations = this.validator.validate(flight);
         if (!violations.isEmpty()) {
             throw new InvalidConstraintException(violations.toString());
         }
@@ -54,11 +54,11 @@ public class FlightService {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void associateReturnFlight(Flight mainFlight, Flight returnFlight) {
         mainFlight.setReturnFlight(returnFlight);
-        returnFlight.setMainFlightRoute(mainFlight);
+        returnFlight.setMainFlight(mainFlight);
     }
     
-    public List<FlightRoute> getFlights() {
-        TypedQuery<Flight> searchQuery = this.em.createQuery("SELECT f FROM Flight f WHERE f.returnFlight IS NOT NULL ORDER BY f.flightCode", FlightRoute.class);
+    public List<Flight> getFlights() {
+        TypedQuery<Flight> searchQuery = this.em.createQuery("SELECT f FROM Flight f WHERE f.returnFlight IS NOT NULL ORDER BY f.flightCode", Flight.class);
         List<Flight> flights = searchQuery.getResultList();
         
         flights.forEach(flight -> {
@@ -72,8 +72,12 @@ public class FlightService {
     public Flight getFlightByFlightCode(String flightCode) {
         Query query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode :=inFlightCode")
                 .setParameter("inFlightCode", flightCode);
+        Flight flight = (Flight)query.getSingleResult();
+        flight.getFlightRoute();
+        flight.getAircraftConfiguration();
+        flight.getAircraftConfiguration().getCabinClasses().size();
         
-        return (Flight)query.getSingleResult();        
+        return flight;      
     }
     
     // Not done yet
