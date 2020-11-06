@@ -3,6 +3,7 @@ package org.example;
 import controllers.AircraftConfigurationBeanRemote;
 import controllers.EmployeeAuthBeanRemote;
 import controllers.FlightRouteBeanRemote;
+import controllers.FlightBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
 import exceptions.NotAuthenticatedException;
@@ -83,6 +84,9 @@ public class ManagementClient implements SystemClient {
                 case ROUTE_PLANNER:
                     final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
+                case SCHEDULE_MANAGER:
+                    final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) this.initialContext.lookup(FlightBeanRemote.class.getName());
+                    return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote);
                 case SALES_MANAGER:
                     break;
                 default:
@@ -92,7 +96,7 @@ public class ManagementClient implements SystemClient {
 
         throw new NotAuthenticatedException();
     }
-
+    
     private String getEmployeeRoleName() {
         if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
             switch (this.authenticatedEmployee.getEmployeeRole()) {
@@ -102,6 +106,8 @@ public class ManagementClient implements SystemClient {
                     return "Route Planner";
                 case SALES_MANAGER:
                     return "Sales Manager";
+                case SCHEDULE_MANAGER:
+                    return "Schedule Manager";
                 default:
                     return "Unknown";
             }

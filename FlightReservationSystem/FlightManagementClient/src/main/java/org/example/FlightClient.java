@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FlightClient implements SystemClient {
     @NonNull
-    private final Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner;
     @NonNull
     private final Employee authenticatedEmployee;
     @NonNull
