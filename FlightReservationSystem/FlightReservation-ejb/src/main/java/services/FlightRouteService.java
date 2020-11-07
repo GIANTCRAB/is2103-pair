@@ -34,6 +34,10 @@ public class FlightRouteService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
+    public boolean canAddFlights(FlightRoute flightRoute) {
+        return flightRoute.getEnabled();
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
         FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
