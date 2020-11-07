@@ -49,10 +49,6 @@ public class FlightSessionBean implements FlightBeanRemote {
         final Airport originAirport = this.airportService.findAirportByCode(origin);
         final Airport destinationAirport = this.airportService.findAirportByCode(destination);
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
-        // Some flight routes are disabled, can't add new flights but they still exists
-        if (!this.flightRouteService.canAddFlights(flightRoute)) {
-            throw new InvalidEntityIdException();
-        }
         AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
 
         if (aircraftConfiguration == null) {
