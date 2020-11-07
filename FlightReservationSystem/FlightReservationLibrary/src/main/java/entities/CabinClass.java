@@ -43,7 +43,7 @@ public class CabinClass implements Serializable {
     private Integer noOfCols;
 
     @NotNull
-    @Size(min = 5, max = 8)
+    @Size(min = 3, max = 8)
     @Column(length = 8, nullable = false)
     private String seatConfiguration;
 

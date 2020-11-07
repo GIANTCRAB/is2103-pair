@@ -7,6 +7,7 @@ import entities.FlightRouteId;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import exceptions.FlightRouteAlreadyExistException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -78,6 +79,8 @@ public class FlightRouteClient implements SystemClient {
             System.out.println("Invalid airport codes.");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        } catch (FlightRouteAlreadyExistException e) {
+            System.out.println("Flight route already exists.");
         }
     }
 
@@ -86,7 +89,13 @@ public class FlightRouteClient implements SystemClient {
 
         try {
             final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes(this.authenticatedEmployee);
-            flightRouteList.forEach(flightRoute -> System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode()));
+            for (FlightRoute flightRoute : flightRouteList) {
+                System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode());
+                if(flightRoute.getReturnFlightRoute() != null) {
+                    FlightRoute returnFlightRoute = flightRoute.getReturnFlightRoute();
+                    System.out.println(returnFlightRoute.getOrigin().getIataCode() + " -> " + returnFlightRoute.getDest().getIataCode());
+                }
+            }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
@@ -112,7 +121,7 @@ public class FlightRouteClient implements SystemClient {
             System.out.println("Flight route does not exists");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
-        }
+        } 
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {

@@ -4,6 +4,7 @@ import entities.Airport;
 import entities.Employee;
 import entities.EmployeeRole;
 import entities.FlightRoute;
+import exceptions.FlightRouteAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -29,7 +30,7 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.ROUTE_PLANNER;
 
     @Override
-    public FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+    public FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
         final Airport originAirport = this.airportService.findAirportByCode(origin);
@@ -40,16 +41,18 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+    public FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
         final Airport originAirport = this.airportService.findAirportByCode(origin);
         final Airport destinationAirport = this.airportService.findAirportByCode(destination);
 
-        final FlightRoute flightRoute = this.flightRouteService.create(originAirport, destinationAirport);
-        this.flightRouteService.create(destinationAirport, originAirport);
-
-        return flightRoute;
+        final FlightRoute mainFlightRoute = this.flightRouteService.create(originAirport, destinationAirport);
+        final FlightRoute returnFlightRoute = this.flightRouteService.create(destinationAirport, originAirport);
+        
+        this.flightRouteService.associateReturnFlightRoute(mainFlightRoute, returnFlightRoute);
+        
+        return mainFlightRoute;
     }
 
     @Override

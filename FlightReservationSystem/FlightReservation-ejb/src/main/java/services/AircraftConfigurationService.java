@@ -5,6 +5,7 @@ import entities.CabinClass;
 import entities.AircraftType;
 import entities.CabinClassType;
 import exceptions.InvalidEntityIdException;
+import exceptions.MaximumCapacityExceededException;
 
 import java.util.List;
 import javax.ejb.Stateless;
@@ -14,7 +15,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 @LocalBean
 @Stateless
@@ -42,42 +42,49 @@ public class AircraftConfigurationService {
             throw new InvalidEntityIdException();
         }
         
-        AircraftConfiguration managedAircraftConfiguration = em.find(AircraftConfiguration.class, aircraftConfiguration.getAircraftConfigurationId());
-        
         for (CabinClass cabinClass : cabinClassList) {
-            CabinClass managedCabinClass = em.find(CabinClass.class, cabinClass.getCabinClassId());
-            managedCabinClass.setAircraftConfiguration(aircraftConfiguration);
-            managedAircraftConfiguration.getCabinClasses().add(cabinClass);
+            cabinClass.setAircraftConfiguration(aircraftConfiguration);
+            aircraftConfiguration.getCabinClasses().add(cabinClass);
         }
 
-        this.em.flush();
-
-        return managedAircraftConfiguration;
+        return aircraftConfiguration;
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public boolean checkMaxCapacity(AircraftType aircraftType, List<CabinClass> cabinClassList) throws MaximumCapacityExceededException {
+        int totalCapacity = cabinClassList.stream().map(c -> c.getMaxCapacity()).mapToInt(Integer::intValue).sum();
+        
+        if (totalCapacity > aircraftType.getMaxCapacity()) {
+            throw new MaximumCapacityExceededException("Seat capacity for current configuration is " + totalCapacity + ", maximum seat capacity is " + aircraftType.getMaxCapacity());
+        } else {
+            return true;
+        }
     }
     
     public List<Object[]> getAircraftConfigurations() {
         final Query searchQuery = this.em.createQuery("SELECT a.aircraftTypeName, ac.aircraftConfigurationName FROM " +
                                                                                   "AircraftConfiguration ac JOIN ac.aircraftType a " +
-                                                                                  "ORDER BY a.aircraftTypeName, ac.aircraftConfigurationName", AircraftConfiguration.class);
+                                                                                  "ORDER BY a.aircraftTypeName, ac.aircraftConfigurationName");
 
         return searchQuery.getResultList();
     }
     
     public AircraftConfiguration getAircraftConfigurationById(Long id) {
-        // Not sure why JOIN FETCH does not work
-        final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery(
-                "SELECT ac FROM AircraftConfiguration ac JOIN FETCH ac.cabinClasses WHERE ac.aircraftConfigurationId = :id", AircraftConfiguration.class)
+        final Query searchQuery = this.em.createQuery("SELECT ac FROM AircraftConfiguration ac WHERE ac.aircraftConfigurationId = :id")
                 .setParameter("id", id);
+        AircraftConfiguration aircraftConfiguration = (AircraftConfiguration) searchQuery.getSingleResult();
+        aircraftConfiguration.getCabinClasses().size();
 
-        return searchQuery.getSingleResult();
+        return aircraftConfiguration;
     }
     
     // Need to ensure that name is unique if using this
     public AircraftConfiguration getAircraftConfigurationByName(String name) {
-        final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery(
-                "SELECT ac from AircraftConfiguration ac JOIN FETCH ac.cabinClasses WHERE ac.aircraftConfigurationName LIKE ?1", AircraftConfiguration.class)
-                .setParameter(1, name);
+        final Query searchQuery = this.em.createQuery("SELECT ac FROM AircraftConfiguration ac WHERE ac.aircraftConfigurationName = :name")
+                .setParameter("name", name);
+        AircraftConfiguration aircraftConfiguration = (AircraftConfiguration) searchQuery.getSingleResult();
+        aircraftConfiguration.getCabinClasses().size();
 
-        return searchQuery.getSingleResult();
+        return aircraftConfiguration;
     }
 }
