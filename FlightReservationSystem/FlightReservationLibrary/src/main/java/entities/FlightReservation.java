@@ -29,6 +29,10 @@ public class FlightReservation implements Serializable {
     @JoinColumn(nullable = false)
     private Flight flight;
 
+    // Allow possibility of flight reservation being unpaid
+    @OneToOne(fetch = FetchType.LAZY)
+    private CustomerPayment customerPayment;
+
     @NotNull
     @Size(min = 1, max = 64)
     @Column(length = 64, nullable = false)
