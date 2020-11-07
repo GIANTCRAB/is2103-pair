@@ -33,7 +33,7 @@ public class FlightRouteService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-    
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
         FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
@@ -46,17 +46,17 @@ public class FlightRouteService {
             if (!violations.isEmpty()) {
                 throw new InvalidConstraintException(violations.toString());
             }
-            
+
             this.em.persist(flightRoute);
             this.em.flush();
-            
+
             return flightRoute;
 
         } else {
             throw new FlightRouteAlreadyExistException();
         }
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void associateReturnFlightRoute(FlightRoute mainFlightRoute, FlightRoute returnFlightRoute) {
         mainFlightRoute.setReturnFlightRoute(returnFlightRoute);
@@ -67,7 +67,7 @@ public class FlightRouteService {
         // I don't know why this keeps retrieving all routes even if it's a return flight route
         final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr WHERE fr.returnFlightRoute IS NOT NULL ORDER BY fr.flightRouteId.originId", FlightRoute.class);
         List<FlightRoute> flightRoutes = searchQuery.getResultList();
-        
+
         flightRoutes.forEach(flightRoute -> {
             flightRoute.getOrigin();
             flightRoute.getDest();
@@ -75,7 +75,7 @@ public class FlightRouteService {
         });
         return flightRoutes;
     }
-    
+
     public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) {
         FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
         FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
@@ -92,9 +92,13 @@ public class FlightRouteService {
         return managedFlightRoute;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void delete(FlightRoute flightRoute) {
-        flightRoute.getFlights().forEach(flight -> this.flightService.delete(flight));
-        this.em.remove(flightRoute);
+        // If flight route has flights, then disable it instead of deleting it
+        if (flightRoute.getFlights().size() > 0) {
+            flightRoute.setEnabled(false);
+            this.em.persist(flightRoute);
+        } else {
+            this.em.remove(flightRoute);
+        }
     }
 }

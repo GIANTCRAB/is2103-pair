@@ -34,15 +34,19 @@ public class FlightRoute implements Serializable {
 
     @OneToMany(mappedBy = "flightRoute")
     private List<Flight> flights = new ArrayList<>();
-    
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean enabled = true;
+
     @OneToOne(optional = true)
     @PrimaryKeyJoinColumns({
-        @PrimaryKeyJoinColumn(name="originId", referencedColumnName="originId"), 
-        @PrimaryKeyJoinColumn(name="destId", referencedColumnName="destId")
+            @PrimaryKeyJoinColumn(name = "originId", referencedColumnName = "originId"),
+            @PrimaryKeyJoinColumn(name = "destId", referencedColumnName = "destId")
     })
     private FlightRoute mainFlightRoute;
-    
+
     @OneToOne(optional = true, mappedBy = "mainFlightRoute")
     private FlightRoute returnFlightRoute;
-    
+
 }
