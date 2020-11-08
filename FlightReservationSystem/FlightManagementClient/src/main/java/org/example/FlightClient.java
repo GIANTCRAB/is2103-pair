@@ -109,23 +109,23 @@ public class FlightClient implements SystemClient {
         }
     }
 
-//    private void displayViewAllFlightsMenu() {
-//        System.out.println("*** View All Flights ***");
-//
-//        try {
-//            final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
-//            for (Flight flight : flightList) {
-//                System.out.println("Main flight: " + flight.getFlightCode() + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-//
+    private void displayViewAllFlightsMenu() {
+        System.out.println("*** View All Flights ***");
+
+        try {
+            final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
+            for (Flight flight : flightList) {
+                System.out.println("Main flight: " + flight.getFlightCode() + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
+
 //                if (flightRouteBeanRemote.checkFlightRoute(dest, origin)) {
 //                    Flight returnFlight = 
 //                    System.out.println("Return flight: " + returnFlight.getFlightCode() + returnFlight.getFlightRoute().getOrigin().getIataCode() + " -> " + returnFlight.getFlightRoute().getDest().getIataCode());
 //                }
-//            }
-//        } catch (NotAuthenticatedException e) {
-//            System.out.println("You do not have permission to do this!");
-//        }
-//    }
+            }
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
 
     private void displayViewFlightDetailsMenu() {
         System.out.println("*** View Aircraft Configuration Details ***");
@@ -160,9 +160,9 @@ public class FlightClient implements SystemClient {
         
         try {
             if(updateOption == 1) {
-                System.out.println("Enter the IATA code for the new origin airport: ")
+                System.out.println("Enter the IATA code for the new origin airport: ");
                 String origin = scanner.next();
-                System.out.println("Enter the IATA code for the new destination airport: ")
+                System.out.println("Enter the IATA code for the new destination airport: ");
                 String dest = scanner.next();
                 System.out.println("Checking for flight route...");
 
@@ -178,8 +178,6 @@ public class FlightClient implements SystemClient {
             } else {
                 System.out.println("Invalid input. Please try again.");
             }
-        } catch (InvalidConstraintException e) {
-            this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
             e.printStackTrace();
         } catch (NotAuthenticatedException e) {

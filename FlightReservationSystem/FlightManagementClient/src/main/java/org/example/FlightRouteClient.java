@@ -44,7 +44,7 @@ public class FlightRouteClient implements SystemClient {
                     this.displayCreateFlightRouteMenu();
                     break;
                 case 2:
-                    this.displayFlightRouteMenu();
+                    //this.displayFlightRouteMenu();
                     break;
                 case 3:
                     this.displayDeleteFlightRouteMenu();
@@ -91,10 +91,10 @@ public class FlightRouteClient implements SystemClient {
             final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes(this.authenticatedEmployee);
             for (FlightRoute flightRoute : flightRouteList) {
                 System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode());
-                if(flightRoute.getReturnFlightRoute() != null) {
-                    FlightRoute returnFlightRoute = flightRoute.getReturnFlightRoute();
-                    System.out.println(returnFlightRoute.getOrigin().getIataCode() + " -> " + returnFlightRoute.getDest().getIataCode());
-                }
+//                if(flightRoute.getReturnFlightRoute() != null) {
+//                    FlightRoute returnFlightRoute = flightRoute.getReturnFlightRoute();
+//                    System.out.println(returnFlightRoute.getOrigin().getIataCode() + " -> " + returnFlightRoute.getDest().getIataCode());
+//                }
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
