@@ -49,13 +49,13 @@ public class FlightClient implements SystemClient {
                     this.displayCreateFlightMenu();
                     break;
                 case 2:
-                    this.displayViewAllFlightsMenu();
+                    //this.displayViewAllFlightsMenu();
                     break;
                 case 3:
                     this.displayViewFlightDetailsMenu();
                     break;
                 case 4:
-                    //this.displayUpdateFlightMenu();
+                    this.displayUpdateFlightMenu();
                     break;
                 case 5:
                     //this.displayDeleteFlightMenu();
@@ -93,7 +93,6 @@ public class FlightClient implements SystemClient {
                         System.out.println("Enter return flight code: ");
                         final String returnFlightCode = scanner.next();
                         Flight returnFlight = flightBeanRemote.create(this.authenticatedEmployee, returnFlightCode, dest, origin, aircraftConfigurationId);
-                        flightBeanRemote.addReturnFlight(this.authenticatedEmployee, flightCode, returnFlightCode);
                         System.out.println("Return flight " + returnFlightCode + " successfully created!");
                     }
                 }
@@ -110,23 +109,23 @@ public class FlightClient implements SystemClient {
         }
     }
 
-    private void displayViewAllFlightsMenu() {
-        System.out.println("*** View All Flights ***");
-
-        try {
-            final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
-            for (Flight flight : flightList) {
-                System.out.println("Main flight: " + flight.getFlightCode() + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-
-                if (flight.getReturnFlight() != null) {
-                    Flight returnFlight = flight.getReturnFlight();
-                    System.out.println("Return flight: " + returnFlight.getFlightCode() + returnFlight.getFlightRoute().getOrigin().getIataCode() + " -> " + returnFlight.getFlightRoute().getDest().getIataCode());
-                }
-            }
-        } catch (NotAuthenticatedException e) {
-            System.out.println("You do not have permission to do this!");
-        }
-    }
+//    private void displayViewAllFlightsMenu() {
+//        System.out.println("*** View All Flights ***");
+//
+//        try {
+//            final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
+//            for (Flight flight : flightList) {
+//                System.out.println("Main flight: " + flight.getFlightCode() + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
+//
+//                if (flightRouteBeanRemote.checkFlightRoute(dest, origin)) {
+//                    Flight returnFlight = 
+//                    System.out.println("Return flight: " + returnFlight.getFlightCode() + returnFlight.getFlightRoute().getOrigin().getIataCode() + " -> " + returnFlight.getFlightRoute().getDest().getIataCode());
+//                }
+//            }
+//        } catch (NotAuthenticatedException e) {
+//            System.out.println("You do not have permission to do this!");
+//        }
+//    }
 
     private void displayViewFlightDetailsMenu() {
         System.out.println("*** View Aircraft Configuration Details ***");
@@ -147,6 +146,44 @@ public class FlightClient implements SystemClient {
             System.out.println("Available cabin classes: " + availableCabinClasses + "\n");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayUpdateFlightMenu() {
+        System.out.println("*** Update Aircraft Configuration Details ***");
+        System.out.println("Enter the flight number of the flight details you would like to update:");
+        String flightCode = scanner.next();
+        
+        System.out.println("1. Update flight route");
+        System.out.println("2. Update aircraft configuration");
+        int updateOption = scanner.nextInt();
+        
+        try {
+            if(updateOption == 1) {
+                System.out.println("Enter the IATA code for the new origin airport: ")
+                String origin = scanner.next();
+                System.out.println("Enter the IATA code for the new destination airport: ")
+                String dest = scanner.next();
+                System.out.println("Checking for flight route...");
+
+                if (flightRouteBeanRemote.checkFlightRoute(origin, dest)) {
+                    this.flightBeanRemote.updateFlightRoute(this.authenticatedEmployee, flightCode, origin, dest);
+                } else {
+                    System.out.println("Flight route does not exist!");
+                }
+            } else if (updateOption == 2) {
+                System.out.println("Enter the ID of the new aircraft configuration: ");
+                Long aircraftConfigurationId = scanner.nextLong();
+                this.flightBeanRemote.updateAircraftConfiguration(this.authenticatedEmployee, flightCode, aircraftConfigurationId);
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+        } catch (InvalidConstraintException e) {
+            this.displayConstraintErrorMessage(e);
+        } catch (InvalidEntityIdException e) {
+            e.printStackTrace();
+        } catch (NotAuthenticatedException e) {
+            e.printStackTrace();
         }
     }
 
