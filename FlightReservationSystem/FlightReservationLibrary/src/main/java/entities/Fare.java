@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -42,4 +44,7 @@ public class Fare implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private FlightSchedule flightSchedule;
+
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<FlightReservation> flightReservations = new ArrayList<>();
 }

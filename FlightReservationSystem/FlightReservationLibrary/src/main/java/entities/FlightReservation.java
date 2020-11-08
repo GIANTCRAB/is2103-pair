@@ -27,7 +27,7 @@ public class FlightReservation implements Serializable {
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private Flight flight;
+    private Fare fare;
 
     // Allow possibility of flight reservation being unpaid
     @OneToOne(fetch = FetchType.LAZY)
@@ -48,6 +48,7 @@ public class FlightReservation implements Serializable {
     @Column(length = 64, nullable = false)
     private String passengerPassportNo;
 
+    // Even if the fare price has changed, save the price of it at the time of reservation
     @NotNull
     @Min(0)
     @Column(nullable = false)
