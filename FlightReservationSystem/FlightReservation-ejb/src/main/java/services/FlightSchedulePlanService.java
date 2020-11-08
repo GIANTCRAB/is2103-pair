@@ -55,7 +55,8 @@ public class FlightSchedulePlanService {
     
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
         TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedule fsp JOIN fsp.flightSchedules fs ORDER BY fs.flight.flightCode ASC, fs.flight.date DESC", FlightSchedulePlan.class);
-        
+        List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
+        flightSchedulePlans.forEach(f -> f.getFlightSchedule().size());
         return searchQuery.getResultList();
     }
 }
