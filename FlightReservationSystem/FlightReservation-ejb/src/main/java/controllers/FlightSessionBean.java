@@ -86,6 +86,7 @@ public class FlightSessionBean implements FlightBeanRemote {
         }
     }
     
+    @Override
     public void updateAircraftConfiguration(Employee employee, String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
