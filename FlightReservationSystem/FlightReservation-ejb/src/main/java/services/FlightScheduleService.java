@@ -19,7 +19,11 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
+@LocalBean
+@Stateless
 public class FlightScheduleService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
