@@ -14,7 +14,12 @@ import javax.ejb.Remote;
 
 @Remote
 public interface FlightSchedulePlanBeanRemote {
+    
     FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType, Date recurrentEndDate) throws NotAuthenticatedException, InvalidConstraintException;
+    
     FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, List<Fare> fares) throws NotAuthenticatedException, InvalidConstraintException;
+    
     void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
+    
+    List<FlightSchedule> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException;
 }

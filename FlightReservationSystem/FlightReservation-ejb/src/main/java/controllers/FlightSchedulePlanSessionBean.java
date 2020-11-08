@@ -58,4 +58,11 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         
         this.flightSchedulePlanService.associateFlightSchedules(flightSchedulePlan, flightSchedules);
     }
+    
+    @Override
+    public List<FlightSchedule> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        return this.flightSchedulePlanService.getFlightSchedulePlans();
+    }
 }
