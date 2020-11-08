@@ -37,7 +37,7 @@ public class FlightSchedulePlanService {
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
         flightSchedulePlan.setRecurrentEndDate(recurrentEndDate);
 
-        Set<ConstraintViolation<FlightSchedule>> violations = this.validator.validate(flightSchedulePlan);
+        Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
             throw new InvalidConstraintException(violations.toString());
         }
