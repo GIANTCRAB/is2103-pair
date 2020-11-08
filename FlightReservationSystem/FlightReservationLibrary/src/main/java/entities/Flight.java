@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,10 +40,12 @@ public class Flight implements Serializable {
             @JoinColumn(name = "routeDest", referencedColumnName = "destId")
     })
     private FlightRoute flightRoute;
-    
+
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
-    
+
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<FlightSchedule> flightSchedules = new ArrayList<>();
 }
