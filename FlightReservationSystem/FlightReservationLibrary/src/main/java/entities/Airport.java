@@ -8,9 +8,11 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -43,4 +45,14 @@ public class Airport implements Serializable {
     @Size(min = 1, max = 127)
     @Column(length = 127, nullable = false)
     private String country;
+
+    @NotNull
+    @Size(min = 1, max = 127)
+    @Column(length = 127, nullable = false)
+    private String zoneId;
+
+    @Transient
+    public ZoneId getZoneId() {
+        return ZoneId.of(this.zoneId);
+    }
 }

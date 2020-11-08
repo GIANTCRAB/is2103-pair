@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -35,15 +38,45 @@ public class FlightSchedule implements Serializable {
     @Column
     @Min(0)
     @NotNull
-    private Integer estimatedDuration = 0;
+    private Long estimatedDuration;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Flight flight;
 
     @Transient
-    public Date getArrivalDate() {
+    public ZonedDateTime getDepartureDateTime() {
+        final FlightRoute flightRoute = this.getFlight().getFlightRoute();
+        final Airport originAirport = flightRoute.getOrigin();
 
+        final LocalDateTime localDateTime = LocalDateTime.of(this.getDate().toLocalDate(), this.getTime().toLocalTime());
+        final ZonedDateTime utcDateTime = ZonedDateTime.of(localDateTime, ZoneOffset.UTC);
+
+        return utcDateTime.withZoneSameInstant(originAirport.getZoneId());
+    }
+
+    // Given a departure date time of the origin airport location, save the date time in UTC into the entity
+    public void setDepartureDateTime(Date departureDate, Time departureTime) {
+        final FlightRoute flightRoute = this.getFlight().getFlightRoute();
+        final Airport originAirport = flightRoute.getOrigin();
+
+        final LocalDateTime departureDateTime = LocalDateTime.of(departureDate.toLocalDate(), departureTime.toLocalTime());
+        final ZonedDateTime originDateTime = ZonedDateTime.of(departureDateTime, originAirport.getZoneId());
+
+        final ZonedDateTime utcDateTime = originDateTime.withZoneSameInstant(ZoneOffset.UTC);
+
+        this.setDate(Date.valueOf(utcDateTime.toLocalDate()));
+        this.setTime(Time.valueOf(utcDateTime.toLocalTime()));
     }
 
     @Transient
-    public Time getArrivalTime() {
+    public ZonedDateTime getArrivalDateTime() {
+        final FlightRoute flightRoute = this.getFlight().getFlightRoute();
+        final Airport destinationAirport = flightRoute.getDest();
 
+        final LocalDateTime localDateTime = LocalDateTime.of(this.getDate().toLocalDate(), this.getTime().toLocalTime());
+        final ZonedDateTime utcDateTime = ZonedDateTime.of(localDateTime, ZoneOffset.UTC);
+
+        return utcDateTime.plusMinutes(this.getEstimatedDuration()).withZoneSameInstant(destinationAirport.getZoneId());
     }
 }

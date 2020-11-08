@@ -50,6 +50,7 @@ public class DataMigrationBean {
         sinAirport.setCity("Singapore");
         sinAirport.setCountry("Singapore");
         sinAirport.setStateName("Singapore");
+        sinAirport.setZoneId("Asia/Singapore");
         em.persist(sinAirport);
 
         final Airport sfoAirport = new Airport();
@@ -58,6 +59,7 @@ public class DataMigrationBean {
         sfoAirport.setCity("San Francisco");
         sfoAirport.setCountry("United States of America");
         sfoAirport.setStateName("California");
+        sfoAirport.setZoneId("America/Los Angeles");
         em.persist(sfoAirport);
 
         nrtAirport.setAirportName("Narita International Airport");
@@ -65,6 +67,7 @@ public class DataMigrationBean {
         nrtAirport.setCity("Narita");
         nrtAirport.setCountry("Japan");
         nrtAirport.setStateName("Chiba");
+        nrtAirport.setZoneId("Asia/Tokyo");
         em.persist(nrtAirport);
 
         em.flush();
@@ -96,7 +99,7 @@ public class DataMigrationBean {
     private void initAircraftConfiguration() {
         sinNrtAC = this.aircraftConfigurationService.create("basic", sinNrtAT);
 
-        cabinClassService.create(CabinClassType.F, 3,  "3-2-3", sinNrtAC);
+        cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
     }
 
     @SneakyThrows
