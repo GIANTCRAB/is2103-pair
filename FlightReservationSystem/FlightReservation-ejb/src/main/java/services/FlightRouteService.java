@@ -41,7 +41,7 @@ public class FlightRouteService {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
         FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
-        if(flightRoute == null) {
+        if (flightRoute == null) {
             flightRoute = new FlightRoute();
             flightRoute.setOrigin(origin);
             flightRoute.setDest(destination);
