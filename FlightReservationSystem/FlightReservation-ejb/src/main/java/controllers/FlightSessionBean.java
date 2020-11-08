@@ -71,16 +71,6 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public boolean checkFlightRoute(Employee employee, String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
-
-        final Airport originAirport = this.airportService.findAirportByCode(origin);
-        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
-
-        return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport) != null);
-    }
-
-    @Override
     public List<Flight> getFlights(Employee employee) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 

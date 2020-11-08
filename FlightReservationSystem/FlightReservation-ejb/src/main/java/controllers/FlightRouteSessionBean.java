@@ -30,6 +30,14 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.ROUTE_PLANNER;
 
     @Override
+    public boolean checkFlightRoute(String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException {
+        final Airport originAirport = this.airportService.findAirportByCode(origin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
+
+        return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport) != null);
+    }
+
+    @Override
     public FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
@@ -49,9 +57,9 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
         final FlightRoute mainFlightRoute = this.flightRouteService.create(originAirport, destinationAirport);
         final FlightRoute returnFlightRoute = this.flightRouteService.create(destinationAirport, originAirport);
-        
+
         this.flightRouteService.associateReturnFlightRoute(mainFlightRoute, returnFlightRoute);
-        
+
         return mainFlightRoute;
     }
 

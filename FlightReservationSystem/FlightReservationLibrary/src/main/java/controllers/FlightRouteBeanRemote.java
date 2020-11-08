@@ -12,6 +12,8 @@ import java.util.List;
 
 @Remote
 public interface FlightRouteBeanRemote {
+    boolean checkFlightRoute(String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException;
+
     FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
 
     FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
