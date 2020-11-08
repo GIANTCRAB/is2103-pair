@@ -31,8 +31,10 @@ public class DataMigrationBean {
     private final Airport sinAirport = new Airport();
     private final Airport nrtAirport = new Airport();
     private final FlightRoute sinToNrtFR = new FlightRoute();
-    private AircraftType sinNrtAT;
+    private final FlightRoute nrtToSinFR = new FlightRoute();
+    private AircraftType boeingSecondType;
     private AircraftConfiguration sinNrtAC = new AircraftConfiguration();
+    private AircraftConfiguration nrtSinAC = new AircraftConfiguration();
 
     @PostConstruct
     public void init() {
@@ -79,12 +81,10 @@ public class DataMigrationBean {
         boeingFirstType.setMaxCapacity(204);
         em.persist(boeingFirstType);
 
-        final AircraftType boeingSecondType = new AircraftType();
-        boeingSecondType.setAircraftTypeName("Boeing 747");
-        boeingSecondType.setMaxCapacity(660);
-        em.persist(boeingSecondType);
-
-        sinNrtAT = boeingSecondType;
+        this.boeingSecondType = new AircraftType();
+        this.boeingSecondType.setAircraftTypeName("Boeing 747");
+        this.boeingSecondType.setMaxCapacity(660);
+        em.persist(this.boeingSecondType);
 
         em.flush();
     }
@@ -93,18 +93,28 @@ public class DataMigrationBean {
         sinToNrtFR.setOrigin(sinAirport);
         sinToNrtFR.setDest(nrtAirport);
         em.persist(sinToNrtFR);
+
+        nrtToSinFR.setOrigin(nrtAirport);
+        nrtToSinFR.setDest(sinAirport);
+        em.persist(nrtToSinFR);
+
+        em.flush();
     }
 
     @SneakyThrows
     private void initAircraftConfiguration() {
-        sinNrtAC = this.aircraftConfigurationService.create("basic", sinNrtAT);
+        sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
 
         cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+
+        nrtSinAC = this.aircraftConfigurationService.create("basic2", boeingSecondType);
+        cabinClassService.create(CabinClassType.F, 3, "3-2-3", nrtSinAC);
     }
 
     @SneakyThrows
     private void initFlightData() {
         this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
+        this.flightService.create("ML124", nrtToSinFR, nrtSinAC);
     }
 
     private void initEmployeeData() {
