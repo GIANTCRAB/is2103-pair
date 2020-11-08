@@ -14,6 +14,8 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +45,13 @@ public class FlightSchedule implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Flight flight;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private FlightSchedulePlan flightSchedulePlan = null;
+
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<Fare> fares = new ArrayList<>();
 
     @Transient
     public ZonedDateTime getDepartureDateTime() {
