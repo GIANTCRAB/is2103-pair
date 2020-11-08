@@ -62,7 +62,6 @@ public class FlightRouteService {
     }
 
     public List<FlightRoute> getFlightRoutes() {
-        // I don't know why this keeps retrieving all routes even if it's a return flight route
         final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr ORDER BY fr.flightRouteId.originId", FlightRoute.class);
         List<FlightRoute> flightRoutes = searchQuery.getResultList();
 

@@ -72,5 +72,16 @@ public class FlightSessionBean implements FlightBeanRemote {
 
         return this.flightService.getFlightByFlightCode(flightCode);
     }
+    
+    @Override
+    public void updateFlightRoute(Employee employee, String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException {
+        final Airport originAirport = this.airportService.findAirportByCode(newOrigin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(newDestination);
+        FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
+        
+        if (flightRoute != null) {
+            this.flightService.update(flightCode, flightRoute);
+        }
+    }
 
 }

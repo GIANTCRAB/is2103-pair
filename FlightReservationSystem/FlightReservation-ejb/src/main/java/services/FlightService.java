@@ -84,10 +84,14 @@ public class FlightService {
         return flight;
     }
 
-    // Not done yet
-    public void update(Flight flight) {
-        this.em.merge(flight);
-        this.em.flush();
+    public void update(String flightCode, FlightRoute flightRoute) {
+        Flight flight = this.getFlightByFlightCode(flightCode);
+        FlightRoute oldFlightRoute = this.em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
+        FlightRoute newFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
+        
+        flight.setFlightRoute(flightRoute);
+        oldFlightRoute.getFlights().remove(flight);
+        newFlightRoute.getFlights().add(flight);
     }
 
     // Do this after FlightSchedule is settled

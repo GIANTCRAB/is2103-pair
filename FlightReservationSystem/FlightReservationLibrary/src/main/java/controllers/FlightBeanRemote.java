@@ -19,4 +19,6 @@ public interface FlightBeanRemote {
     List<Flight> getFlights(Employee employee) throws NotAuthenticatedException;
 
     Flight getFlightByFlightCode(Employee employee, String flightCode) throws NotAuthenticatedException;
+    
+    void updateFlightRoute(Employee employee, String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException;
 }
