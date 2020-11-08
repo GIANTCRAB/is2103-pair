@@ -60,17 +60,6 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public boolean addReturnFlight(Employee employee, String mainFlightCode, String returnFlightCode) throws NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
-
-        Flight mainFlight = this.flightService.getFlightByFlightCode(mainFlightCode);
-        Flight returnFlight = this.flightService.getFlightByFlightCode(returnFlightCode);
-
-        this.flightService.associateReturnFlight(mainFlight, returnFlight);
-        return true;
-    }
-
-    @Override
     public List<Flight> getFlights(Employee employee) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 

@@ -57,9 +57,7 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
         final FlightRoute mainFlightRoute = this.flightRouteService.create(originAirport, destinationAirport);
         final FlightRoute returnFlightRoute = this.flightRouteService.create(destinationAirport, originAirport);
-
-        this.flightRouteService.associateReturnFlightRoute(mainFlightRoute, returnFlightRoute);
-
+        
         return mainFlightRoute;
     }
 

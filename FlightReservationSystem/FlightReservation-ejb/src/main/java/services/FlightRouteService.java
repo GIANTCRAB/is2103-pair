@@ -61,21 +61,14 @@ public class FlightRouteService {
         }
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void associateReturnFlightRoute(FlightRoute mainFlightRoute, FlightRoute returnFlightRoute) {
-        mainFlightRoute.setReturnFlightRoute(returnFlightRoute);
-        returnFlightRoute.setMainFlightRoute(mainFlightRoute);
-    }
-
     public List<FlightRoute> getFlightRoutes() {
         // I don't know why this keeps retrieving all routes even if it's a return flight route
-        final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr WHERE fr.returnFlightRoute IS NOT NULL ORDER BY fr.flightRouteId.originId", FlightRoute.class);
+        final TypedQuery<FlightRoute> searchQuery = this.em.createQuery("select fr from FlightRoute fr ORDER BY fr.flightRouteId.originId", FlightRoute.class);
         List<FlightRoute> flightRoutes = searchQuery.getResultList();
 
         flightRoutes.forEach(flightRoute -> {
             flightRoute.getOrigin();
             flightRoute.getDest();
-            flightRoute.getReturnFlightRoute();
         });
         return flightRoutes;
     }
