@@ -38,5 +38,4 @@ public class FlightRoute implements Serializable {
     @NotNull
     @Column(nullable = false)
     private Boolean enabled = true;
-
 }

@@ -8,6 +8,7 @@ import exceptions.NotAuthenticatedException;
 
 import javax.ejb.Remote;
 import java.util.List;
+import java.util.Set;
 
 @Remote
 public interface FlightBeanRemote {
@@ -16,7 +17,7 @@ public interface FlightBeanRemote {
 
     List<Flight> getFlights(Employee employee) throws NotAuthenticatedException;
     
-    List<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException;
+    Set<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException;
 
     Flight getFlightByFlightCode(Employee employee, String flightCode) throws NotAuthenticatedException;
     

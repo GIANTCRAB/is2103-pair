@@ -6,6 +6,7 @@ import entities.FlightRoute;
 import entities.AircraftConfiguration;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
+import lombok.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +36,10 @@ public class FlightService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
+
+    public Flight findById(Long id) {
+        return this.em.find(Flight.class, id);
+    }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Flight create(String flightCode, FlightRoute flightRoute, AircraftConfiguration aircraftConfiguration) throws InvalidConstraintException, InvalidEntityIdException {
@@ -86,31 +91,28 @@ public class FlightService {
         return flight;
     }
 
-    public List<List<Flight>> getReturnFlights(Flight flight) {
+    public Set<List<Flight>> getReturnFlights(@NonNull Flight flight) {
         final Airport returnDestinationAirport = flight.getFlightRoute().getOrigin();
         final Airport returnOriginAirport = flight.getFlightRoute().getDest();
 
         final HashSet<Flight> markedRoutes = new HashSet<>();
-        final List<List<Flight>> correctFlightPaths = new ArrayList<>();
+        final Set<List<Flight>> correctFlightPaths = new HashSet<>();
 
         final List<Flight> startingRoutes = this.getFlightsForOrigin(returnOriginAirport);
         List<List<Flight>> routePaths = new ArrayList<>();
-        for (Flight startingRoutePath : startingRoutes) {
-            List<Flight> routePath = new LinkedList<>();
-            routePath.add(startingRoutePath);
+        for (Flight startingFlight : startingRoutes) {
+            final List<Flight> routePath = new LinkedList<>();
+            routePath.add(startingFlight);
+            markedRoutes.add(startingFlight); // mark starting route as visited as well
+            routePaths.add(routePath);
+        }
 
-            final List<List<Flight>> unmarkedRoutes = this.getUnmarkedRoutes(markedRoutes, routePath);
-            routePaths = Stream.of(routePaths, unmarkedRoutes)
-                    .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
-
-            for (int i = 0; i < 1; i++) {
-                for (List<Flight> flightPath : routePaths) {
-                    final List<List<Flight>> deepUnmarkedRoutes = this.getUnmarkedRoutes(markedRoutes, flightPath);
-                    routePaths = Stream.of(routePaths, deepUnmarkedRoutes)
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.toList());
-                }
+        for (int i = 0; i < 2; i++) {
+            for (List<Flight> flightPath : routePaths) {
+                final List<List<Flight>> deepUnmarkedRoutes = this.getUnmarkedRoutes(markedRoutes, flightPath);
+                routePaths = Stream.of(routePaths, deepUnmarkedRoutes)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
             }
         }
 
@@ -148,11 +150,23 @@ public class FlightService {
         return allFlightRoutes;
     }
 
-    public List<Flight> getFlightsForOrigin(Airport origin) {
-        final TypedQuery<Flight> searchQuery = this.em.createQuery("select f from Flight f WHERE f.flightRoute.origin.iataCode = ?1 ORDER BY f.flightRoute.flightRouteId.originId", Flight.class)
+    public List<Flight> getFlightsForOrigin(@NonNull Airport origin) {
+        TypedQuery<Flight> flightTypedQuery = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.origin.iataCode = ?1", Flight.class)
                 .setParameter(1, origin.getIataCode());
+        /**
+         final List<Flight> flightList = new ArrayList<>();
+         origin.getOriginFlightRoutes().forEach(flightRoute -> flightList.addAll(flightRoute.getFlights()));
 
-        return searchQuery.getResultList();
+         return flightList;**/
+
+        final List<Flight> flightList = flightTypedQuery.getResultList();
+        // Force entities to be loaded
+        flightList.forEach(flight -> {
+            flight.getFlightRoute().getOrigin().getIataCode();
+            flight.getFlightRoute().getDest().getIataCode();
+        });
+
+        return flightList;
     }
 
     public void updateFlightRoute(String flightCode, FlightRoute flightRoute) {

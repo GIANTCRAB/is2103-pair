@@ -11,7 +11,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -27,9 +26,6 @@ import java.util.Set;
 public class FlightRouteService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
-
-    @Inject
-    FlightService flightService;
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
@@ -54,8 +50,18 @@ public class FlightRouteService {
             this.em.persist(flightRoute);
             this.em.flush();
 
-            return flightRoute;
+            final List<FlightRoute> originFlightRoutes = origin.getOriginFlightRoutes();
+            originFlightRoutes.add(flightRoute);
+            origin.setOriginFlightRoutes(originFlightRoutes);
+            this.em.persist(origin);
 
+            final List<FlightRoute> destFlightRoutes = destination.getDestFlightRoutes();
+            destFlightRoutes.add(flightRoute);
+            destination.setDestFlightRoutes(destFlightRoutes);
+            this.em.persist(destination);
+            this.em.flush();
+
+            return flightRoute;
         } else {
             throw new FlightRouteAlreadyExistException();
         }
