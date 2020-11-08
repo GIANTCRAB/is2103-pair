@@ -15,6 +15,7 @@
     <class>entities.FlightReservation</class>
     <class>entities.CustomerPayment</class>
     <class>entities.FlightSchedule</class>
+    <class>entities.FlightSchedulePlan</class>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
       <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
