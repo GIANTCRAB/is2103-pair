@@ -72,5 +72,31 @@ public class FlightSessionBean implements FlightBeanRemote {
 
         return this.flightService.getFlightByFlightCode(flightCode);
     }
+    
+    @Override
+    public void updateFlightRoute(Employee employee, String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        final Airport originAirport = this.airportService.findAirportByCode(newOrigin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(newDestination);
+        FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
+        
+        if (flightRoute != null) {
+            this.flightService.update(flightCode, flightRoute);
+        }
+    }
+    
+    @Override
+    public void updateAircraftConfiguration(Employee employee, String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
+        
+        if (aircraftConfiguration != null) {
+            this.flightService.updateAircraftConfiguration(flightCode, aircraftConfiguration);
+        } else {
+            throw new InvalidEntityIdException();
+        }
+    }
 
 }
