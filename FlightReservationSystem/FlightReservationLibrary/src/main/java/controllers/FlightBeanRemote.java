@@ -15,6 +15,8 @@ public interface FlightBeanRemote {
     Flight create(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
 
     List<Flight> getFlights(Employee employee) throws NotAuthenticatedException;
+    
+    List<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException;
 
     Flight getFlightByFlightCode(Employee employee, String flightCode) throws NotAuthenticatedException;
     

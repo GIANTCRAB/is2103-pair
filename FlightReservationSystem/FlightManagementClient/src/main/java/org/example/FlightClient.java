@@ -115,13 +115,14 @@ public class FlightClient implements SystemClient {
         try {
             final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
             for (Flight flight : flightList) {
-                System.out.println("Main flight: " + flight.getFlightCode() + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-
-//                if (flightRouteBeanRemote.checkFlightRoute(dest, origin)) {
-//                    Flight returnFlight = 
-//                    System.out.println("Return flight: " + returnFlight.getFlightCode() + returnFlight.getFlightRoute().getOrigin().getIataCode() + " -> " + returnFlight.getFlightRoute().getDest().getIataCode());
-//                }
+                System.out.println("Flight: " + flight.getFlightCode() + ", " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
+                
+                List<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(this.authenticatedEmployee, flight);
+                for(List<Flight> flightPath : returnFlights) {
+                    flightPath.forEach(f -> System.out.println(f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
+                }
             }
+            
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
