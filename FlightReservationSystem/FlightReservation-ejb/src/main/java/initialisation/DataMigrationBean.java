@@ -4,6 +4,7 @@ import entities.*;
 import lombok.SneakyThrows;
 import services.AircraftConfigurationService;
 import services.CabinClassService;
+import services.FlightRouteService;
 import services.FlightService;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +24,8 @@ public class DataMigrationBean {
     AircraftConfigurationService aircraftConfigurationService;
     @Inject
     CabinClassService cabinClassService;
+    @Inject
+    FlightRouteService flightRouteService;
     @Inject
     FlightService flightService;
     @Inject
@@ -89,16 +92,10 @@ public class DataMigrationBean {
         em.flush();
     }
 
+    @SneakyThrows
     private void initFlightRouteData() {
-        sinToNrtFR.setOrigin(sinAirport);
-        sinToNrtFR.setDest(nrtAirport);
-        em.persist(sinToNrtFR);
-
-        nrtToSinFR.setOrigin(nrtAirport);
-        nrtToSinFR.setDest(sinAirport);
-        em.persist(nrtToSinFR);
-
-        em.flush();
+        this.flightRouteService.create(sinAirport, nrtAirport);
+        this.flightRouteService.create(nrtAirport, sinAirport);
     }
 
     @SneakyThrows
