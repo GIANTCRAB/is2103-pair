@@ -11,6 +11,7 @@ import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 
 import java.util.List;
+import java.util.Set;
 
 import services.AuthService;
 import services.FlightService;
@@ -67,10 +68,10 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
     
     @Override
-    public List<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException {
+    public Set<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
 
-        return this.flightService.getReturnFlights(flight);
+        return this.flightService.getReturnFlights(this.flightService.findById(flight.getFlightId()));
     }
 
     @Override

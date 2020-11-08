@@ -13,6 +13,7 @@ import exceptions.NotAuthenticatedException;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -117,7 +118,7 @@ public class FlightClient implements SystemClient {
             for (Flight flight : flightList) {
                 System.out.println("Flight: " + flight.getFlightCode() + ", " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
                 
-                List<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(this.authenticatedEmployee, flight);
+                Set<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(this.authenticatedEmployee, flight);
                 for(List<Flight> flightPath : returnFlights) {
                     flightPath.forEach(f -> System.out.println(f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
                 }
