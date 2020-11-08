@@ -82,7 +82,7 @@ public class FlightSessionBean implements FlightBeanRemote {
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
         
         if (flightRoute != null) {
-            this.flightService.update(flightCode, flightRoute);
+            this.flightService.updateFlightRoute(flightCode, flightRoute);
         }
     }
     
@@ -91,6 +91,7 @@ public class FlightSessionBean implements FlightBeanRemote {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
         final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
+        
         
         if (aircraftConfiguration != null) {
             this.flightService.updateAircraftConfiguration(flightCode, aircraftConfiguration);
