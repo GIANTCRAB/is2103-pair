@@ -49,7 +49,7 @@ public class FlightClient implements SystemClient {
                     this.displayCreateFlightMenu();
                     break;
                 case 2:
-                    //this.displayViewAllFlightsMenu();
+                    this.displayViewAllFlightsMenu();
                     break;
                 case 3:
                     this.displayViewFlightDetailsMenu();

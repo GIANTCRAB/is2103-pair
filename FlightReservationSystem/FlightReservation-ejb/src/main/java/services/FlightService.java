@@ -76,7 +76,7 @@ public class FlightService {
     }
 
     public Flight getFlightByFlightCode(String flightCode) {
-        Query query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode :=inFlightCode")
+        Query query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode = :inFlightCode")
                 .setParameter("inFlightCode", flightCode);
         Flight flight = (Flight) query.getSingleResult();
         flight.getFlightRoute();

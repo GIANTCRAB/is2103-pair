@@ -44,7 +44,7 @@ public class FlightRouteClient implements SystemClient {
                     this.displayCreateFlightRouteMenu();
                     break;
                 case 2:
-                    //this.displayFlightRouteMenu();
+                    this.displayFlightRouteMenu();
                     break;
                 case 3:
                     this.displayDeleteFlightRouteMenu();
