@@ -44,9 +44,4 @@ public class Flight implements Serializable {
     @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
     
-    @OneToOne
-    private Flight mainFlight;
-    
-    @OneToOne(mappedBy = "mainFlight")
-    private Flight returnFlight;
 }

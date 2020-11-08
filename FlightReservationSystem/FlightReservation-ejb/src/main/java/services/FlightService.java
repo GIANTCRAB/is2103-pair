@@ -61,14 +61,8 @@ public class FlightService {
         return flight;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void associateReturnFlight(Flight mainFlight, Flight returnFlight) {
-        mainFlight.setReturnFlight(returnFlight);
-        returnFlight.setMainFlight(mainFlight);
-    }
-
     public List<Flight> getFlights() {
-        TypedQuery<Flight> searchQuery = this.em.createQuery("SELECT f FROM Flight f WHERE f.returnFlight IS NOT NULL ORDER BY f.flightCode", Flight.class);
+        TypedQuery<Flight> searchQuery = this.em.createQuery("SELECT f FROM Flight f ORDER BY f.flightCode", Flight.class);
         List<Flight> flights = searchQuery.getResultList();
 
         flights.forEach(flight -> {

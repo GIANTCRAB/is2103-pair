@@ -39,14 +39,4 @@ public class FlightRoute implements Serializable {
     @Column(nullable = false)
     private Boolean enabled = true;
 
-    @OneToOne(optional = true)
-    @PrimaryKeyJoinColumns({
-            @PrimaryKeyJoinColumn(name = "originId", referencedColumnName = "originId"),
-            @PrimaryKeyJoinColumn(name = "destId", referencedColumnName = "destId")
-    })
-    private FlightRoute mainFlightRoute;
-
-    @OneToOne(optional = true, mappedBy = "mainFlightRoute")
-    private FlightRoute returnFlightRoute;
-
 }
