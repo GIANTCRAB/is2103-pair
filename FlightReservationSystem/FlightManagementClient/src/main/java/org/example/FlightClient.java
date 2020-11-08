@@ -1,6 +1,7 @@
 package org.example;
 
 import controllers.FlightBeanRemote;
+import controllers.FlightRouteBeanRemote;
 import entities.*;
 
 import lombok.NonNull;
@@ -10,7 +11,6 @@ import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -23,6 +23,8 @@ public class FlightClient implements SystemClient {
     private final Employee authenticatedEmployee;
     @NonNull
     private final FlightBeanRemote flightBeanRemote;
+    @NonNull
+    private final FlightRouteBeanRemote flightRouteBeanRemote;
     
     @Override
     public void runApp() {

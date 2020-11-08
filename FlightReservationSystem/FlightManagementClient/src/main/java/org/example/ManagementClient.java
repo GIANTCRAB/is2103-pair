@@ -77,16 +77,16 @@ public class ManagementClient implements SystemClient {
 
     private SystemClient createSystemBasedOnRole() throws NamingException, NotAuthenticatedException {
         if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
+            final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
             switch (this.authenticatedEmployee.getEmployeeRole()) {
                 case FLEET_MANAGER:
                     final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
                     return new AircraftConfigurationClient(this.scanner, this.authenticatedEmployee, aircraftConfigurationBeanRemote);
                 case ROUTE_PLANNER:
-                    final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SCHEDULE_MANAGER:
                     final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) this.initialContext.lookup(FlightBeanRemote.class.getName());
-                    return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote);
+                    return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
                 case SALES_MANAGER:
                     break;
                 default:
@@ -96,7 +96,7 @@ public class ManagementClient implements SystemClient {
 
         throw new NotAuthenticatedException();
     }
-    
+
     private String getEmployeeRoleName() {
         if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
             switch (this.authenticatedEmployee.getEmployeeRole()) {
