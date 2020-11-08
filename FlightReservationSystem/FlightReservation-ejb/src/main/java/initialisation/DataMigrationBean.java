@@ -33,8 +33,8 @@ public class DataMigrationBean {
 
     private final Airport sinAirport = new Airport();
     private final Airport nrtAirport = new Airport();
-    private final FlightRoute sinToNrtFR = new FlightRoute();
-    private final FlightRoute nrtToSinFR = new FlightRoute();
+    private FlightRoute sinToNrtFR;
+    private FlightRoute nrtToSinFR;
     private AircraftType boeingSecondType;
     private AircraftConfiguration sinNrtAC = new AircraftConfiguration();
     private AircraftConfiguration nrtSinAC = new AircraftConfiguration();
@@ -94,8 +94,8 @@ public class DataMigrationBean {
 
     @SneakyThrows
     private void initFlightRouteData() {
-        this.flightRouteService.create(sinAirport, nrtAirport);
-        this.flightRouteService.create(nrtAirport, sinAirport);
+        sinToNrtFR = this.flightRouteService.create(sinAirport, nrtAirport);
+        nrtToSinFR = this.flightRouteService.create(nrtAirport, sinAirport);
     }
 
     @SneakyThrows
