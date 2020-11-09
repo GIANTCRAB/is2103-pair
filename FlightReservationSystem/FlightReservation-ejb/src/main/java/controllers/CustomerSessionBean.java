@@ -1,15 +1,14 @@
 package controllers;
 
-import entities.CabinClassType;
-import entities.Customer;
-import entities.FlightReservation;
-import entities.FlightSchedule;
+import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.Passenger;
 import services.CustomerService;
+import services.FareService;
+import services.FlightReservationPaymentService;
 import services.FlightReservationService;
 
 import javax.ejb.Stateful;
@@ -22,11 +21,23 @@ public class CustomerSessionBean implements CustomerBeanRemote {
     CustomerService customerService;
     @Inject
     FlightReservationService flightReservationService;
+    @Inject
+    FareService fareService;
+    @Inject
+    FlightReservationPaymentService flightReservationPaymentService;
 
     //TODO: implement this
     @Override
     public List<FlightReservation> reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
-        return null;
+        final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
+        // TODO: find the managed flight schedule
+        final Fare fare = this.fareService.findByScheduleAndCabinClass(flightSchedule, cabinClassType);
+
+        final List<FlightReservation> flightReservations = this.flightReservationService.create(fare, passengers);
+        final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, managedCustomer);
+        this.flightReservationPaymentService.associateFlightReservations(flightReservations, flightReservationPayment);
+
+        return flightReservations;
     }
 
     @Override
