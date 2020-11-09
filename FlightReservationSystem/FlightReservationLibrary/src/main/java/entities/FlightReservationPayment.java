@@ -33,7 +33,7 @@ public class FlightReservationPayment implements Serializable {
     private Partner partner = null;
 
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "flightReservationPayment", fetch = FetchType.LAZY)
     private List<FlightReservation> flightReservations = new ArrayList<>();
 
     @NotNull
