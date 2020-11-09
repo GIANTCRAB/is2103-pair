@@ -1,6 +1,7 @@
 package services;
 
 import entities.*;
+import exceptions.InvalidConstraintException;
 import lombok.NonNull;
 import pojo.Passenger;
 
@@ -11,8 +12,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @LocalBean
 @Stateless
@@ -20,8 +26,11 @@ public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private final Validator validator = validatorFactory.getValidator();
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) {
+    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFare(fare);
         flightReservation.setPassengerFirstName(passenger.getFirstName());
@@ -29,6 +38,11 @@ public class FlightReservationService {
         flightReservation.setPassengerPassportNo(passenger.getPassportNumber());
         flightReservation.setSeatNumber(passenger.getSeatNumber());
         flightReservation.setFlightReservationPayment(flightReservationPayment);
+        Set<ConstraintViolation<FlightReservation>> violations = this.validator.validate(flightReservation);
+        // There are invalid data
+        if (!violations.isEmpty()) {
+            throw new InvalidConstraintException(violations.toString());
+        }
         this.em.persist(flightReservation);
         this.em.flush();
 
@@ -41,14 +55,16 @@ public class FlightReservationService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) {
+    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) throws InvalidConstraintException {
         return this.create(fare, passenger, null);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public List<FlightReservation> create(@NonNull Fare fare, @NonNull List<Passenger> passengers) {
+    public List<FlightReservation> create(@NonNull Fare fare, @NonNull List<Passenger> passengers) throws InvalidConstraintException {
         final List<FlightReservation> flightReservations = new ArrayList<>();
-        passengers.forEach(passenger -> flightReservations.add(this.create(fare, passenger)));
+        for (Passenger passenger : passengers) {
+            flightReservations.add(this.create(fare, passenger));
+        }
         return flightReservations;
     }
 
