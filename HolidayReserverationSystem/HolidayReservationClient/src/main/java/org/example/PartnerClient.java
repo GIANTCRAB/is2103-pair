@@ -20,7 +20,9 @@ public class PartnerClient implements SystemClient {
 
     public void runApp() {
         this.scanner = new Scanner(System.in);
+        this.scanner.useDelimiter("\n");
         this.displayLoginMenu();
+        this.scanner.close();
     }
 
     private void displayLoginMenu() {
