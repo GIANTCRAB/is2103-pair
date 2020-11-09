@@ -1,8 +1,6 @@
 package services;
 
-import entities.CustomerPayment;
-import entities.Fare;
-import entities.FlightReservation;
+import entities.*;
 import lombok.NonNull;
 import pojo.Passenger;
 
@@ -10,6 +8,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @LocalBean
@@ -39,5 +38,47 @@ public class FlightReservationService {
 
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) {
         return this.create(fare, passenger, null);
+    }
+
+    /**
+     * Retrieve Flight Reservations and order them by the cabinClassType
+     *
+     * @param flightSchedule
+     * @return
+     */
+    public List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) {
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.fare.flightSchedule.flightScheduleId = ?1 ORDER BY fr.fare.cabinClass.cabinClassId.cabinClassType", FlightReservation.class)
+                .setParameter(1, flightSchedule.getFlightScheduleId());
+
+        final List<FlightReservation> flightReservations = query.getResultList();
+
+        // Load fare data and cabin class
+        flightReservations.forEach(flightReservation -> {
+            flightReservation.getFare().getFareBasisCode();
+            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
+        });
+
+        return flightReservations;
+    }
+
+    /**
+     * Retrieve flight reservation information about a specific customer
+     *
+     * @param customer
+     * @return
+     */
+    public List<FlightReservation> getFlightReservations(@NonNull Customer customer) {
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.customerPayment.customer.customerId = ?1", FlightReservation.class)
+                .setParameter(1, customer.getCustomerId());
+
+        final List<FlightReservation> flightReservations = query.getResultList();
+
+        // Load the flight schedule, flight, route and airport
+        flightReservations.forEach(flightReservation -> {
+            flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode();
+            flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode();
+        });
+
+        return flightReservations;
     }
 }
