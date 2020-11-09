@@ -45,6 +45,6 @@ public class Fare implements Serializable {
     @JoinColumn(nullable = false)
     private FlightSchedule flightSchedule;
 
-    @OneToMany(mappedBy = "flightSchedule")
+    @OneToMany(mappedBy = "fare")
     private List<FlightReservation> flightReservations = new ArrayList<>();
 }
