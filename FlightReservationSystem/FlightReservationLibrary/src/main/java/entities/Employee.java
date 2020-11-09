@@ -48,7 +48,4 @@ public class Employee implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EmployeeRole employeeRole;
-
-    @OneToMany(mappedBy = "customer")
-    private List<FlightReservationPayment> flightReservationPayments = new ArrayList<>();
 }

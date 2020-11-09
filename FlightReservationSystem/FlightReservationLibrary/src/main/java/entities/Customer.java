@@ -10,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -54,4 +56,7 @@ public class Customer implements Serializable {
     @Column(length = 127, nullable = false)
     @NotNull
     private String address;
+
+    @OneToMany(mappedBy = "customer")
+    private List<FlightReservationPayment> flightReservationPayments = new ArrayList<>();
 }
