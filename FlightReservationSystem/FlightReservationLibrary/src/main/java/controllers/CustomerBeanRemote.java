@@ -3,7 +3,6 @@ package controllers;
 import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
-import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.Passenger;
 
@@ -16,7 +15,7 @@ public interface CustomerBeanRemote {
                                                        String creditCard,
                                                        @NonNull FlightSchedule flightSchedule,
                                                        @NonNull CabinClassType cabinClassType,
-                                                       @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException, NotAuthenticatedException;
+                                                       @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException;
 
     List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException;
 }

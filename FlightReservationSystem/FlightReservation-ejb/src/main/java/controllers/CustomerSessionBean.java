@@ -25,7 +25,7 @@ public class CustomerSessionBean implements CustomerBeanRemote {
 
     //TODO: implement this
     @Override
-    public List<FlightReservation> reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException, NotAuthenticatedException {
+    public List<FlightReservation> reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
         return null;
     }
 
