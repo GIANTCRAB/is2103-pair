@@ -17,14 +17,14 @@ public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
-    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, CustomerPayment customerPayment) {
+    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFare(fare);
         flightReservation.setPassengerFirstName(passenger.getFirstName());
         flightReservation.setPassengerLastName(passenger.getLastName());
         flightReservation.setPassengerPassportNo(passenger.getPassportNumber());
         flightReservation.setSeatNumber(passenger.getSeatNumber());
-        flightReservation.setCustomerPayment(customerPayment);
+        flightReservation.setFlightReservationPayment(flightReservationPayment);
         this.em.persist(flightReservation);
         this.em.flush();
 
@@ -68,7 +68,7 @@ public class FlightReservationService {
      * @return
      */
     public List<FlightReservation> getFlightReservations(@NonNull Customer customer) {
-        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.customerPayment.customer.customerId = ?1", FlightReservation.class)
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.flightReservationPayment.customer IS NOT NULL and fr.flightReservationPayment.customer.customerId = ?1", FlightReservation.class)
                 .setParameter(1, customer.getCustomerId());
 
         final List<FlightReservation> flightReservations = query.getResultList();

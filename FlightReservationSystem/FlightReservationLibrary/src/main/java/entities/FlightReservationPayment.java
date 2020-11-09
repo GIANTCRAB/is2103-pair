@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerPayment implements Serializable {
+public class FlightReservationPayment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
