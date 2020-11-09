@@ -30,7 +30,8 @@ public class FlightReservation implements Serializable {
     private Fare fare;
 
     // Allow possibility of flight reservation being unpaid
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private FlightReservationPayment flightReservationPayment;
 
     @NotNull

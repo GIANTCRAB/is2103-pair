@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,8 +32,9 @@ public class FlightReservationPayment implements Serializable {
     @JoinColumn
     private Partner partner = null;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private FlightReservation flightReservation;
+    @NotNull
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<FlightReservation> flightReservations = new ArrayList<>();
 
     @NotNull
     @Column(nullable = false)
