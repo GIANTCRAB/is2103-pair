@@ -1,5 +1,6 @@
 package org.example;
 
+import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
 import entities.Customer;
 import exceptions.IncorrectCredentialsException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
 import java.util.Scanner;
 
@@ -98,9 +100,14 @@ public class ReservationClient implements SystemClient {
                 final Customer customer = this.visitorBeanRemote.login(email, password);
                 System.out.println("Logged in as " + customer.getFirstName() + " (ID: " + customer.getCustomerId() + ")");
                 //TODO: establish new customer bean
+                final CustomerBeanRemote customerBeanRemote = (CustomerBeanRemote) this.initialContext.lookup(CustomerBeanRemote.class.getName());
+                final CustomerClient customerClient = new CustomerClient(scanner, visitorBeanRemote, customerBeanRemote, customer);
+                customerClient.runApp();
                 loop = false;
             } catch (IncorrectCredentialsException e) {
                 System.out.println("Invalid login details!");
+            } catch (NamingException e) {
+                System.out.println("Server error, could not create customer session.");
             }
         }
     }
