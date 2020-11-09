@@ -1,9 +1,6 @@
 package services;
 
-import entities.Customer;
-import entities.FlightReservation;
-import entities.FlightReservationPayment;
-import entities.Partner;
+import entities.*;
 import lombok.NonNull;
 
 import javax.ejb.LocalBean;
@@ -12,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @LocalBean
 @Stateless
@@ -20,9 +18,8 @@ public class FlightReservationPaymentService {
     private EntityManager em;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservationPayment create(@NonNull FlightReservation flightReservation, @NonNull String creditCardNumber, Customer customer, Partner partner) {
+    public FlightReservationPayment create(@NonNull String creditCardNumber, Customer customer, Partner partner) {
         final FlightReservationPayment flightReservationPayment = new FlightReservationPayment();
-        flightReservationPayment.setFlightReservation(flightReservation);
         flightReservationPayment.setCreditCardNumber(creditCardNumber);
         flightReservationPayment.setCustomer(customer);
         flightReservationPayment.setPartner(partner);
@@ -32,11 +29,22 @@ public class FlightReservationPaymentService {
         return flightReservationPayment;
     }
 
-    public FlightReservationPayment create(@NonNull FlightReservation flightReservation, @NonNull String creditCardNumber, Customer customer) {
-        return this.create(flightReservation, creditCardNumber, customer, null);
+    public FlightReservationPayment create(@NonNull String creditCardNumber, Customer customer) {
+        return this.create(creditCardNumber, customer, null);
     }
 
-    public FlightReservationPayment create(@NonNull FlightReservation flightReservation, @NonNull String creditCardNumber, Partner partner) {
-        return this.create(flightReservation, creditCardNumber, null, partner);
+    public FlightReservationPayment create(@NonNull String creditCardNumber, Partner partner) {
+        return this.create(creditCardNumber, null, partner);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void associateFlightReservations(List<FlightReservation> flightReservations, FlightReservationPayment flightReservationPayment) {
+        final List<FlightReservation> existingFlightReservations = flightReservationPayment.getFlightReservations();
+        flightReservations.forEach(flightReservation -> {
+            flightReservation.setFlightReservationPayment(flightReservationPayment);
+            this.em.persist(flightReservation);
+            existingFlightReservations.add(flightReservation);
+        });
+        this.em.persist(flightReservationPayment);
     }
 }
