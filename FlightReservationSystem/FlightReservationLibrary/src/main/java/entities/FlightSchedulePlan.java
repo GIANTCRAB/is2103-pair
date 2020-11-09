@@ -33,6 +33,10 @@ public class FlightSchedulePlan implements Serializable {
     private Date recurrentEndDate;
 
     @NotNull
+    @Column(nullable = false)
+    private Boolean enabled = true;
+
+    @NotNull
     @OneToMany(mappedBy = "flightSchedulePlan")
     private List<FlightSchedule> flightSchedules = new ArrayList<>();
 }
