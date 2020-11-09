@@ -38,11 +38,6 @@ public class Partner {
     @Column(nullable = false)
     private String password;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PartnerRole partnerRole = PartnerRole.EMPLOYEE;
-
     @OneToMany(mappedBy = "partner")
     private List<FlightReservationPayment> flightReservationPayments = new ArrayList<>();
 }

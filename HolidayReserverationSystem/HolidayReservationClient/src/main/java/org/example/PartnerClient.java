@@ -31,6 +31,8 @@ public class PartnerClient implements SystemClient {
 
         while (loop) {
             System.out.println("===Please login===");
+            System.out.println("Logging in as: (1) Employee. (2) Manager");
+            final int option = this.scanner.nextInt();
             System.out.println("Enter Email:");
             final String email = this.scanner.next();
             System.out.println("Enter Password:");
@@ -41,19 +43,19 @@ public class PartnerClient implements SystemClient {
                 System.out.println("Logged in as " + partner.getCompanyName() + " (ID: " + partner.getPartnerId() + ")");
                 loop = false;
 
-                this.createSystemBasedOnRole(partner).runApp();
+                this.createSystemBasedOnRole(partner, option).runApp();
             } catch (IncorrectCredentialsException_Exception e) {
                 System.out.println(e.getFaultInfo().getMessage());
             }
         }
     }
 
-    private SystemClient createSystemBasedOnRole(Partner partner) {
-        switch (partner.getPartnerRole()) {
-            case MANAGER:
+    private SystemClient createSystemBasedOnRole(Partner partner, int option) {
+        switch (option) {
+            case 2:
                 return new PartnerManagerClient(this.scanner, this.holidayReservationServiceBean, partner);
             default:
-            case EMPLOYEE:
+            case 1:
                 return new PartnerEmployeeClient(this.scanner, this.holidayReservationServiceBean, partner);
         }
     }
