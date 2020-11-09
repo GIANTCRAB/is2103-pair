@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 
 @LocalBean
 @Stateless
@@ -52,5 +53,29 @@ public class FlightScheduleService {
 
     public FlightSchedule create(@NonNull Flight flight, @NonNull Date departureDate, @NonNull Time departureTime, @NonNull Long estimatedDuration) throws InvalidConstraintException {
         return this.create(flight, departureDate, departureTime, estimatedDuration, new ArrayList<>());
+    }
+    
+    public List<FlightSchedule> getFlightSchedules() {
+        TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs ORDER BY fs.date", FlightSchedule.class);
+        List<FlightSchedule> flightSchedules = searchQuery.getResultList();
+        flightSchedules.forEach(f -> {
+            f.getFlight();
+            f.getFares().size();
+        });
+        return flightSchedules;
+    }
+    
+    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) {
+        TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.date >= :date1 AND fs.date <= :date2"
+                                                                + " ORDER BY fs.date", FlightSchedule.class)
+                .setParameter("date1", startDate)
+                .setParameter("date2", endDate);
+        
+        List<FlightSchedule> flightSchedules = searchQuery.getResultList();
+        flightSchedules.forEach(f -> {
+            f.getFlight();
+            f.getFares().size();
+        });
+        return flightSchedules;
     }
 }

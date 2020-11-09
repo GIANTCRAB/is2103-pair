@@ -55,6 +55,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     
     @Override
     public List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, LocalDate recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         List<FlightSchedule> flightSchedules = new ArrayList<>();
         for (LocalDate date = departureDate.toLocalDate(); date.isBefore(recurrentEndDate); date = date.plusDays(nDays)) {
             Date sqlDate = Date.valueOf(date);
@@ -71,9 +72,23 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    public List<FlightSchedule> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException {
+    public List<FlightSchedulePlan> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
         return this.flightSchedulePlanService.getFlightSchedulePlans();
     }
+    
+    @Override
+    public List<FlightSchedule> getFlightSchedules(Employee employee) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        return this.flightScheduleService.getFlightSchedules();
+    }
+    
+    @Override
+    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
+    } 
 }

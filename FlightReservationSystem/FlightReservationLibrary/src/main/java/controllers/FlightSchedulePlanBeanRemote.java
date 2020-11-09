@@ -24,5 +24,9 @@ public interface FlightSchedulePlanBeanRemote {
     
     void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
     
-    List<FlightSchedule> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException;
+    List<FlightSchedulePlan> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException;
+    
+    List<FlightSchedule> getFlightSchedules(Employee employee) throws NotAuthenticatedException;
+    
+    List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
 }
