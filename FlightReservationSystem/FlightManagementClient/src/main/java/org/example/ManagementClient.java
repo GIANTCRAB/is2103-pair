@@ -86,7 +86,9 @@ public class ManagementClient implements SystemClient {
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SCHEDULE_MANAGER:
                     final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) this.initialContext.lookup(FlightBeanRemote.class.getName());
-                    return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
+                    final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote = (FlightSchedulePlanBeanRemote) this.initialContext.lookup(FlightSchedulePlanBeanRemote.class.getName());
+                    final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
+                    return new ScheduleManagerClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
                 case SALES_MANAGER:
                     break;
                 default:

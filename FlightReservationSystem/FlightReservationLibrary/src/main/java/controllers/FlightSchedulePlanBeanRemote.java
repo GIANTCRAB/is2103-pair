@@ -28,5 +28,5 @@ public interface FlightSchedulePlanBeanRemote {
     
     List<FlightSchedule> getFlightSchedules(Employee employee) throws NotAuthenticatedException;
     
-    List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
+    List<FlightSchedule> getFlightSchedulesByDate(Employee employee, Date startDate, Date endDate) throws NotAuthenticatedException;
 }
