@@ -33,13 +33,13 @@ public class PartnerClient implements SystemClient {
             System.out.println("===Please login===");
             System.out.println("Logging in as: (1) Employee. (2) Manager");
             final int option = this.scanner.nextInt();
-            System.out.println("Enter Email:");
-            final String email = this.scanner.next();
+            System.out.println("Enter Username:");
+            final String username = this.scanner.next();
             System.out.println("Enter Password:");
             final String password = this.scanner.next();
 
             try {
-                final Partner partner = this.holidayReservationServiceBean.login(email, password);
+                final Partner partner = this.holidayReservationServiceBean.login(username, password);
                 System.out.println("Logged in as " + partner.getCompanyName() + " (ID: " + partner.getPartnerId() + ")");
                 loop = false;
 
