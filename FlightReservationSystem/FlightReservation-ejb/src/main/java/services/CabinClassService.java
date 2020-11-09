@@ -2,6 +2,7 @@ package services;
 
 import entities.*;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -26,6 +27,16 @@ public class CabinClassService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
+    public CabinClass findById(CabinClassId cabinClassId) throws InvalidEntityIdException {
+        final CabinClass cabinClass = this.em.find(CabinClass.class, cabinClassId);
+
+        if (cabinClass == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return cabinClass;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public CabinClass create(CabinClassType cabinClassType,
                              Integer noOfRows,
@@ -38,7 +49,7 @@ public class CabinClassService {
         cabinClass.setNoOfRows(noOfRows);
         cabinClass.setNoOfCols(this.calculateNoOfCols(seatConfiguration));
         cabinClass.setSeatConfiguration(seatConfiguration);
-        cabinClass.setMaxCapacity(noOfRows*calculateNoOfCols(seatConfiguration));
+        cabinClass.setMaxCapacity(noOfRows * calculateNoOfCols(seatConfiguration));
 
         Set<ConstraintViolation<CabinClass>> violations = this.validator.validate(cabinClass);
         // There are invalid data
@@ -57,16 +68,16 @@ public class CabinClassService {
                 cabinClass.getSeatConfiguration(),
                 aircraftConfiguration);
     }
-    
+
     private int calculateNoOfAisles(String seatConfiguration) {
         int count = (int) seatConfiguration.chars().filter(ch -> ch == '-').count();
         return count;
     }
-    
+
     private int calculateNoOfCols(String seatConfiguration) throws InvalidConstraintException {
         Pattern pattern = Pattern.compile("(?<col1>[0-9][0-9]?)-(?<col2>[0-9][0-9]?)(-(?<col3>[0-9][0-9]?))?");
         Matcher matcher = pattern.matcher(seatConfiguration);
-        
+
         int noOfCols;
         if (matcher.matches()) {
             noOfCols = Integer.parseInt(matcher.group("col1")) + Integer.parseInt(matcher.group("col2"));
@@ -76,8 +87,8 @@ public class CabinClassService {
         } else {
             throw new InvalidConstraintException("Invalid seat configuration!");
         }
-        
+
         return noOfCols;
     }
-    
+
 }
