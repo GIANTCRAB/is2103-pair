@@ -6,9 +6,12 @@ import pojo.Passenger;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 @LocalBean
@@ -17,6 +20,7 @@ public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFare(fare);
@@ -36,8 +40,16 @@ public class FlightReservationService {
         return flightReservation;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) {
         return this.create(fare, passenger, null);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public List<FlightReservation> create(@NonNull Fare fare, @NonNull List<Passenger> passengers) {
+        final List<FlightReservation> flightReservations = new ArrayList<>();
+        passengers.forEach(passenger -> flightReservations.add(this.create(fare, passenger)));
+        return flightReservations;
     }
 
     /**
@@ -71,9 +83,24 @@ public class FlightReservationService {
         TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.flightReservationPayment.customer IS NOT NULL and fr.flightReservationPayment.customer.customerId = ?1", FlightReservation.class)
                 .setParameter(1, customer.getCustomerId());
 
-        final List<FlightReservation> flightReservations = query.getResultList();
+        return this.loadFlightReservationsRelationships(query.getResultList());
+    }
 
-        // Load the flight schedule, flight, route and airport
+    /**
+     * Retrieve flight reservation information about a specific partner
+     *
+     * @param partner
+     * @return
+     */
+    public List<FlightReservation> getFlightReservations(@NonNull Partner partner) {
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.flightReservationPayment.partner IS NOT NULL and fr.flightReservationPayment.partner.partnerId = ?1", FlightReservation.class)
+                .setParameter(1, partner.getPartnerId());
+
+        return this.loadFlightReservationsRelationships(query.getResultList());
+    }
+
+    // Load the flight schedule, flight, route and airport
+    private List<FlightReservation> loadFlightReservationsRelationships(List<FlightReservation> flightReservations) {
         flightReservations.forEach(flightReservation -> {
             flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode();
             flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode();
