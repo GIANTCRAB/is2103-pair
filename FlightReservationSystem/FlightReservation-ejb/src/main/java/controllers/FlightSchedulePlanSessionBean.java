@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import services.AuthService;
 import services.FlightScheduleService;
@@ -38,6 +40,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -45,6 +48,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -54,6 +58,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -66,6 +71,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
         
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -87,7 +93,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException {
+    public List<FlightSchedule> getFlightSchedulesByDate(Employee employee, Date startDate, Date endDate) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
         return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
