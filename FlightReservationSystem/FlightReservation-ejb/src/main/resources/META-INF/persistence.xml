@@ -13,7 +13,7 @@
     <class>entities.CabinClass</class>
     <class>entities.Partner</class>
     <class>entities.FlightReservation</class>
-    <class>entities.CustomerPayment</class>
+    <class>entities.FlightReservationPayment</class>
     <class>entities.FlightSchedule</class>
     <class>entities.FlightSchedulePlan</class>
     <properties>

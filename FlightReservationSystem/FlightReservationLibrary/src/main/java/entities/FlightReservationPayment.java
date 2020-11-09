@@ -14,16 +14,21 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerPayment implements Serializable {
+public class FlightReservationPayment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Customer customer;
+    // Can be either customer or partner reserving the flight
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Customer customer = null;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Partner partner = null;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private FlightReservation flightReservation;

@@ -9,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -46,4 +48,7 @@ public class Employee implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EmployeeRole employeeRole;
+
+    @OneToMany(mappedBy = "customer")
+    private List<FlightReservationPayment> flightReservationPayments = new ArrayList<>();
 }

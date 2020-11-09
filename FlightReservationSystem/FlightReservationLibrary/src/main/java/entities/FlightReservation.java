@@ -31,7 +31,7 @@ public class FlightReservation implements Serializable {
 
     // Allow possibility of flight reservation being unpaid
     @OneToOne(fetch = FetchType.LAZY)
-    private CustomerPayment customerPayment;
+    private FlightReservationPayment flightReservationPayment;
 
     @NotNull
     @Size(min = 1, max = 64)
