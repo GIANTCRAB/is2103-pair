@@ -2,7 +2,6 @@ package controllers;
 
 import entities.Employee;
 import entities.EmployeeRole;
-import entities.Fare;
 import entities.Flight;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
@@ -11,6 +10,8 @@ import exceptions.InvalidConstraintException;
 import exceptions.NotAuthenticatedException;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
@@ -37,19 +38,29 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
     
     @Override
-    public FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType, Date recurrentEndDate) throws NotAuthenticatedException, InvalidConstraintException {
+    public FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
-        return this.flightSchedulePlanService.create(flightSchedulePlanType, recurrentEndDate);
+        return this.flightSchedulePlanService.create(flightSchedulePlanType);
     }
     
     @Override
-    public FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, List<Fare> fares) throws NotAuthenticatedException, InvalidConstraintException {
+    public FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
         Flight flight = this.flightService.getFlightByFlightCode(flightCode);
         
         return this.flightScheduleService.create(flight, flightCode, departureDate, departureTime, estimatedDuration);
+    }
+    
+    @Override
+    public List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, LocalDate recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException {
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        for (LocalDate date = departureDate.toLocalDate(); date.isBefore(recurrentEndDate); date = date.plusDays(nDays)) {
+            Date sqlDate = Date.valueOf(date);
+            flightSchedules.add(this.createFlightSchedule(employee, flightCode, sqlDate, departureTime, estimatedDuration));
+        }
+        return flightSchedules;
     }
         
     @Override

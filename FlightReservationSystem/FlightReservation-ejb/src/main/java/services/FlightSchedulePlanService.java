@@ -32,10 +32,9 @@ public class FlightSchedulePlanService {
     private final Validator validator = validatorFactory.getValidator();
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, @NonNull Date recurrentEndDate) throws InvalidConstraintException {
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
-        flightSchedulePlan.setRecurrentEndDate(recurrentEndDate);
 
         Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
