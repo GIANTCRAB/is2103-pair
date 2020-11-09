@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 @LocalBean
@@ -39,8 +40,16 @@ public class FlightReservationService {
         return flightReservation;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) {
         return this.create(fare, passenger, null);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public List<FlightReservation> create(@NonNull Fare fare, @NonNull List<Passenger> passengers) {
+        final List<FlightReservation> flightReservations = new ArrayList<>();
+        passengers.forEach(passenger -> flightReservations.add(this.create(fare, passenger)));
+        return flightReservations;
     }
 
     /**
