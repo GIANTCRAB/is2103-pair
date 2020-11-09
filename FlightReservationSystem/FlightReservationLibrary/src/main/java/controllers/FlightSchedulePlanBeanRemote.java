@@ -20,7 +20,7 @@ public interface FlightSchedulePlanBeanRemote {
     
     FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException;
     
-    List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, LocalDate recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException;
+    List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException;
     
     void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
     
