@@ -2,6 +2,7 @@ package services;
 
 import entities.Customer;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -25,6 +26,16 @@ public class CustomerService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
+
+    public Customer findById(Long id) throws InvalidEntityIdException {
+        final Customer customer = this.em.find(Customer.class, id);
+
+        if (customer == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return customer;
+    }
 
     public Customer create(String firstName,
                            String lastName,

@@ -18,5 +18,5 @@ public interface CustomerBeanRemote {
                                                        @NonNull CabinClassType cabinClassType,
                                                        @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException, NotAuthenticatedException;
 
-    List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException, NotAuthenticatedException;
+    List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException;
 }
