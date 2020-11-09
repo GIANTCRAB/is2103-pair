@@ -21,9 +21,14 @@ public class FlightReservationPayment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Customer customer;
+    // Can be either customer or partner reserving the flight
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Customer customer = null;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Partner partner = null;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private FlightReservation flightReservation;

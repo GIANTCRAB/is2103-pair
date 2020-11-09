@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,4 +42,7 @@ public class Partner {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PartnerRole partnerRole = PartnerRole.EMPLOYEE;
+
+    @OneToMany(mappedBy = "partner")
+    private List<FlightReservationPayment> flightReservationPayments = new ArrayList<>();
 }
