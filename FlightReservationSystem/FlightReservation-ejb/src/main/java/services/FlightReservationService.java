@@ -6,6 +6,8 @@ import pojo.Passenger;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -17,6 +19,7 @@ public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFare(fare);
