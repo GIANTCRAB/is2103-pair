@@ -54,7 +54,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         
         Flight flight = this.flightService.getFlightByFlightCode(flightCode);
         
-        return this.flightScheduleService.create(flight, flightCode, departureDate, departureTime, estimatedDuration);
+        return this.flightScheduleService.create(flight, departureDate, departureTime, estimatedDuration);
     }
     
     @Override

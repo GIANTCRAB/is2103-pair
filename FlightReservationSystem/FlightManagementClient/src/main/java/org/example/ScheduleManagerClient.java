@@ -28,11 +28,13 @@ public class ScheduleManagerClient implements SystemClient {
     
     @Override
     public void runApp() {
-        this.scanner = new Scanner(System.in);
-
-        boolean loop = true;
-
-        while (loop) {
+        this.displayScheduleManagerMenu();
+    }
+    
+    private SystemClient displayScheduleManagerMenu() {
+        boolean loop = true; 
+        
+        while(loop) { 
             System.out.println("*** Schedule Manager Client ***");
             System.out.println("1: Flight Client");
             System.out.println("2: Flight Schedule Plan Client");
@@ -41,12 +43,11 @@ public class ScheduleManagerClient implements SystemClient {
             if (option == 1) {
                 return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
             } else if (option == 2) {
-                return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
+                return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
             } else {
                 loop = false;
             }
         }
-
-        this.scanner.close();
+        return null;
     }
 }

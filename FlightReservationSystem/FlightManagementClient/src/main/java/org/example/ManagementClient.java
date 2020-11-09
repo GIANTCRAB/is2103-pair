@@ -4,6 +4,7 @@ import controllers.AircraftConfigurationBeanRemote;
 import controllers.EmployeeAuthBeanRemote;
 import controllers.FlightRouteBeanRemote;
 import controllers.FlightBeanRemote;
+import controllers.FlightSchedulePlanBeanRemote;
 import entities.Employee;
 import exceptions.IncorrectCredentialsException;
 import exceptions.NotAuthenticatedException;
@@ -78,16 +79,15 @@ public class ManagementClient implements SystemClient {
     private SystemClient createSystemBasedOnRole() throws NamingException, NotAuthenticatedException {
         if (this.authenticatedEmployee != null && this.authenticatedEmployee.getEmployeeRole() != null) {
             final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) this.initialContext.lookup(FlightRouteBeanRemote.class.getName());
+            final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
             switch (this.authenticatedEmployee.getEmployeeRole()) {
                 case FLEET_MANAGER:
-                    final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
                     return new AircraftConfigurationClient(this.scanner, this.authenticatedEmployee, aircraftConfigurationBeanRemote);
                 case ROUTE_PLANNER:
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SCHEDULE_MANAGER:
                     final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) this.initialContext.lookup(FlightBeanRemote.class.getName());
                     final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote = (FlightSchedulePlanBeanRemote) this.initialContext.lookup(FlightSchedulePlanBeanRemote.class.getName());
-                    final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) this.initialContext.lookup(AircraftConfigurationBeanRemote.class.getName());
                     return new ScheduleManagerClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
                 case SALES_MANAGER:
                     break;
