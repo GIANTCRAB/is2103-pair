@@ -24,7 +24,7 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
         try {
             final List<FlightReservation> flightReservationList = this.holidayReservationServiceBean.getFlightReservations(this.partner);
             for (FlightReservation flightReservation : flightReservationList) {
-                System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
+                System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
             }
 
             System.out.println("***View specific details***");
