@@ -2,9 +2,11 @@ package org.example;
 
 import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
+import entities.Airport;
 import entities.Customer;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.Setter;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class ReservationClient implements SystemClient {
                     displayLoginMenu();
                     break;
                 case 3:
-                    //TODO: implement flight search
+                    displayFlightSearchMenu();
                     break;
                 case 4:
                 default:
@@ -102,7 +105,6 @@ public class ReservationClient implements SystemClient {
             try {
                 final Customer customer = this.visitorBeanRemote.login(email, password);
                 System.out.println("Logged in as " + customer.getFirstName() + " (ID: " + customer.getCustomerId() + ")");
-                //TODO: establish new customer bean
                 final CustomerBeanRemote customerBeanRemote = (CustomerBeanRemote) this.initialContext.lookup(CustomerBeanRemote.class.getName());
                 final CustomerClient customerClient = new CustomerClient(scanner, visitorBeanRemote, customerBeanRemote, customer);
                 customerClient.runApp();
@@ -112,6 +114,31 @@ public class ReservationClient implements SystemClient {
             } catch (NamingException e) {
                 System.out.println("Server error, could not create customer session.");
             }
+        }
+    }
+
+    // TODO: implement all search
+    protected void displayFlightSearchMenu() {
+        System.out.println("**** Flight Search ****");
+        System.out.println("Enter departure airport: ");
+        final String departureAirportCode = this.scanner.next();
+        final Airport departureAirport = new Airport();
+        departureAirport.setIataCode(departureAirportCode);
+        System.out.println("Enter destination airport: ");
+        final String destinationAirportCode = this.scanner.next();
+        final Airport destinationAirport = new Airport();
+        destinationAirport.setIataCode(destinationAirportCode);
+        System.out.println("Enter departure date: (yyyy-mm-dd)");
+        final Date departureDate = Date.valueOf(this.scanner.next());
+        System.out.println("Enter passenger count: ");
+        final Integer passengerCount = this.scanner.nextInt();
+
+        try {
+            this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
+        } catch (InvalidConstraintException e) {
+            this.displayConstraintErrorMessage(e);
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid airport codes.");
         }
     }
 
