@@ -7,6 +7,7 @@ import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import java.sql.Date;
 import java.sql.Time;
@@ -83,6 +84,18 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
         return this.flightSchedulePlanService.getFlightSchedulePlans();
+    }
+    
+    @Override
+    public FlightSchedulePlan getFlightSchedulePlanById(Employee employee, Long id) throws NotAuthenticatedException, InvalidEntityIdException {
+        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+        
+        FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(id);
+        
+        if (flightSchedulePlan == null) {
+            throw new InvalidEntityIdException();
+        }
+        return flightSchedulePlan;
     }
     
     @Override

@@ -6,6 +6,7 @@ import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import java.sql.Date;
 import java.sql.Time;
@@ -23,6 +24,8 @@ public interface FlightSchedulePlanBeanRemote {
     List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException;
     
     void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
+    
+    FlightSchedulePlan getFlightSchedulePlanById(Employee employee, Long id) throws NotAuthenticatedException, InvalidEntityIdException;
     
     List<FlightSchedulePlan> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException;
     
