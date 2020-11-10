@@ -52,7 +52,10 @@ public class FlightSchedule implements Serializable {
 
     @OneToMany(mappedBy = "flightSchedule")
     private List<FlightReservation> flightReservations = new ArrayList<>();
-
+    
+    @Transient 
+    private boolean enabled = flightSchedulePlan.getEnabled();
+    
     @Transient
     public ZonedDateTime getDepartureDateTime() {
         final FlightRoute flightRoute = this.getFlight().getFlightRoute();

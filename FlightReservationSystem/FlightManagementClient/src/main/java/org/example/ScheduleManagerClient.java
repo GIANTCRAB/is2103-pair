@@ -1,5 +1,6 @@
 package org.example;
 
+import controllers.FareBeanRemote;
 import controllers.FlightBeanRemote;
 import controllers.FlightRouteBeanRemote;
 import controllers.AircraftConfigurationBeanRemote;
@@ -17,6 +18,8 @@ public class ScheduleManagerClient implements SystemClient {
     @NonNull
     private final Employee authenticatedEmployee;
     @NonNull
+    private final FareBeanRemote fareBeanRemote;
+    @NonNull
     private final FlightBeanRemote flightBeanRemote;
     @NonNull
     private final FlightRouteBeanRemote flightRouteBeanRemote;
@@ -32,22 +35,16 @@ public class ScheduleManagerClient implements SystemClient {
     }
     
     private SystemClient displayScheduleManagerMenu() {
-        boolean loop = true; 
-        
-        while(loop) { 
-            System.out.println("*** Schedule Manager Client ***");
-            System.out.println("1: Flight Client");
-            System.out.println("2: Flight Schedule Plan Client");
-            final int option = this.scanner.nextInt();
+        System.out.println("*** Schedule Manager Client ***");
+        System.out.println("1: Flight Client");
+        System.out.println("2: Flight Schedule Plan Client");
+        final int option = this.scanner.nextInt();
 
-            if (option == 1) {
-                return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
-            } else if (option == 2) {
-                return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
-            } else {
-                loop = false;
-            }
-        }
+        if (option == 1) {
+            return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
+        } else if (option == 2) {
+            return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
+        } 
         return null;
     }
 }

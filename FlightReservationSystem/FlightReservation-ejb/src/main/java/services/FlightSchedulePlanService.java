@@ -32,9 +32,10 @@ public class FlightSchedulePlanService {
     private final Validator validator = validatorFactory.getValidator();
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType) throws InvalidConstraintException {
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
+        flightSchedulePlan.setFlightSchedules(flightSchedules);
 
         Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
@@ -42,14 +43,10 @@ public class FlightSchedulePlanService {
         }
 
         em.persist(flightSchedulePlan);
+        flightSchedules.forEach(f -> em.find(FlightSchedule.class, f.getFlightScheduleId()).setFlightSchedulePlan(flightSchedulePlan));
         em.flush();
 
         return flightSchedulePlan;
-    }
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void associateFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) {
-        flightSchedulePlan.setFlightSchedules(flightSchedules);
-        flightSchedules.forEach(f -> f.setFlightSchedulePlan(flightSchedulePlan));
     }
     
     public FlightSchedulePlan getFlightSchedulePlanById(Long id) {

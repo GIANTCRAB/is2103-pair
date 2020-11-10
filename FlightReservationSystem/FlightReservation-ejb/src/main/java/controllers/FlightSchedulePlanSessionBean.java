@@ -41,15 +41,13 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType) throws NotAuthenticatedException, InvalidConstraintException {
+    public FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
-        return this.flightSchedulePlanService.create(flightSchedulePlanType);
+        return this.flightSchedulePlanService.create(flightSchedulePlanType, flightSchedules);
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -59,7 +57,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
         
@@ -70,15 +67,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         }
         return flightSchedules;
     }
-        
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void associateFlightSchedules(Employee employee, FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
-        
-        this.flightSchedulePlanService.associateFlightSchedules(flightSchedulePlan, flightSchedules);
-    }
-    
+           
     @Override
     public List<FlightSchedulePlan> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException {
         this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
