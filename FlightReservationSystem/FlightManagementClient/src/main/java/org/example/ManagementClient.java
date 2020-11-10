@@ -2,6 +2,7 @@ package org.example;
 
 import controllers.AircraftConfigurationBeanRemote;
 import controllers.EmployeeAuthBeanRemote;
+import controllers.FareBeanRemote;
 import controllers.FlightRouteBeanRemote;
 import controllers.FlightBeanRemote;
 import controllers.FlightSchedulePlanBeanRemote;
@@ -86,9 +87,10 @@ public class ManagementClient implements SystemClient {
                 case ROUTE_PLANNER:
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SCHEDULE_MANAGER:
+                    final FareBeanRemote fareBeanRemote = (FareBeanRemote) this.initialContext.lookup(FareBeanRemote.class.getName());
                     final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) this.initialContext.lookup(FlightBeanRemote.class.getName());
                     final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote = (FlightSchedulePlanBeanRemote) this.initialContext.lookup(FlightSchedulePlanBeanRemote.class.getName());
-                    return new ScheduleManagerClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
+                    return new ScheduleManagerClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, flightRouteBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
                 case SALES_MANAGER:
                     break;
                 default:
