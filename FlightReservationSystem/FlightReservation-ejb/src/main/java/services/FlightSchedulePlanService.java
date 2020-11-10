@@ -54,7 +54,8 @@ public class FlightSchedulePlanService {
     
     public FlightSchedulePlan getFlightSchedulePlanById(Long id) {
         FlightSchedulePlan flightSchedulePlan = em.find(FlightSchedulePlan.class, id);
-        flightSchedulePlan.getFlightSchedules().getFlight().getAircraftConfiguration();
+        flightSchedulePlan.getFlightSchedules();
+        flightSchedulePlan.getFlightSchedules().forEach(f -> f.getFlight());
         return flightSchedulePlan;
     }
     

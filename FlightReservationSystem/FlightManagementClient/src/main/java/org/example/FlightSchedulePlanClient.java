@@ -228,7 +228,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid flight schedule plan ID.")
+            System.out.println("Invalid flight schedule plan ID.");
         }
     }
     
@@ -239,9 +239,9 @@ public class FlightSchedulePlanClient implements SystemClient {
         
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         Flight flight = flightSchedules.get(0).getFlight();
-        System.out.println("Flight number: " + flight.getFlightCode());
-        System.out.println("Origin airport: " + flight.getFlightRoute.getOrigin().getIataCode());
-        System.out.println("Destination airport: " + flight.getFlightRoute.getDest().getIataCode());
+//        System.out.println("Flight number: " + flight.getFlightCode());
+//        System.out.println("Origin airport: " + flight.getFlightRoute.getOrigin().getIataCode());
+//        System.out.println("Destination airport: " + flight.getFlightRoute.getDest().getIataCode());
         System.out.println("----------------------");
         
         for(FlightSchedule flightSchedule : flightSchedules) {

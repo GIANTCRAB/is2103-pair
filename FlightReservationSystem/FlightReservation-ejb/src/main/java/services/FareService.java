@@ -47,7 +47,7 @@ public class FareService {
         
         CabinClass managedCabinClass = em.find(CabinClass.class, cabinClass.getCabinClassId());
         managedCabinClass.getFares().add(fare);
-        FlightSchedulePlan managedFlightSchedulePlan = em.find(CabinClass.class, cabinClass.getCabinClassId());
+        FlightSchedulePlan managedFlightSchedulePlan = em.find(FlightSchedulePlan.class, flightSchedulePlan.getFlightSchedulePlanId());
         managedFlightSchedulePlan.getFares().add(fare);
   
         return fare;
