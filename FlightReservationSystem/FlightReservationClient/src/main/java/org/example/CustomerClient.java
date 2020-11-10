@@ -4,6 +4,7 @@ import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
 import entities.Customer;
 import entities.FlightReservation;
+import entities.FlightReservationPayment;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class CustomerClient implements SystemClient {
 
             switch (option) {
                 case 1:
+                    //TODO: implement flight search, flight reservation
                     break;
                 case 2:
                     this.displayViewReservationsMenu();
@@ -72,6 +74,23 @@ public class CustomerClient implements SystemClient {
     }
 
     private void displayViewSpecificReservation(FlightReservation flightReservation) {
+        try {
+            final FlightReservationPayment flightReservationPayment = this.customerBeanRemote.getFlightReservationDetails(this.customer, flightReservation.getFlightReservationPayment());
 
+            System.out.println("======================================================");
+            System.out.println("*****All associated flight reservations*****");
+            flightReservationPayment.getFlightReservations().forEach(fr -> {
+                System.out.println("ID: " + fr.getFlightReservationId());
+                System.out.println("Passenger: " + fr.getPassengerFirstName() + " " + fr.getPassengerLastName() + " (" + fr.getPassengerPassportNo() + ")");
+                System.out.println("Seat number: " + fr.getSeatNumber());
+                System.out.println("Fare basis code: " + fr.getFare().getFareBasisCode());
+                System.out.println("Cabin class: " + fr.getFare().getCabinClass().getCabinClassId().getCabinClassType());
+            });
+            System.out.println("******************************************************");
+            System.out.println("Total Cost: " + flightReservationPayment.getTotalCost());
+            System.out.println("======================================================");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid customer details. Please re-authenticate.");
+        }
     }
 }
