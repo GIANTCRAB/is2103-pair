@@ -34,6 +34,16 @@ public class FlightRouteService {
         return flightRoute.getEnabled();
     }
 
+    public FlightRoute findById(FlightRouteId id) throws InvalidEntityIdException {
+        final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, id);
+
+        if (managedFlightRoute == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return managedFlightRoute;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException, InvalidEntityIdException {
         FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
@@ -87,16 +97,6 @@ public class FlightRouteService {
         }
 
         return flightRoute;
-    }
-
-    public FlightRoute retrieveManagedEntity(FlightRoute flightRoute) throws InvalidEntityIdException {
-        final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
-
-        if (managedFlightRoute == null) {
-            throw new InvalidEntityIdException();
-        }
-
-        return managedFlightRoute;
     }
 
     public void delete(FlightRoute flightRoute) {
