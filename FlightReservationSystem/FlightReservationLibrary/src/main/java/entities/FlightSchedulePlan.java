@@ -37,10 +37,6 @@ public class FlightSchedulePlan implements Serializable {
     private Boolean enabled = true;
     
     @NotNull
-    @Column(nullable = false)
-    private Boolean enabled = true;
-    
-    @NotNull
     @OneToMany(mappedBy = "flightSchedulePlan")
     private List<Fare> fares = new ArrayList<>();
 
