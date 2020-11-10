@@ -58,7 +58,7 @@ public class CustomerClient implements SystemClient {
             final List<FlightReservation> flightReservations = this.customerBeanRemote.getFlightReservations(this.customer);
 
             flightReservations.forEach(flightReservation -> {
-                System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
+                System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
             });
 
             System.out.println("***View specific details***");
@@ -83,8 +83,8 @@ public class CustomerClient implements SystemClient {
                 System.out.println("ID: " + fr.getFlightReservationId());
                 System.out.println("Passenger: " + fr.getPassengerFirstName() + " " + fr.getPassengerLastName() + " (" + fr.getPassengerPassportNo() + ")");
                 System.out.println("Seat number: " + fr.getSeatNumber());
-                System.out.println("Fare basis code: " + fr.getFare().getFareBasisCode());
-                System.out.println("Cabin class: " + fr.getFare().getCabinClass().getCabinClassId().getCabinClassType());
+                System.out.println("Cost: " + fr.getReservationCost());
+                System.out.println("Cabin class: " + fr.getCabinClassType());
             });
             System.out.println("******************************************************");
             System.out.println("Total Cost: " + flightReservationPayment.getTotalCost());
