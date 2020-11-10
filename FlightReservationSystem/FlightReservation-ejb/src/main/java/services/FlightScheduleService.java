@@ -1,9 +1,6 @@
 package services;
 
-import entities.CabinClassType;
-import entities.Fare;
-import entities.Flight;
-import entities.FlightSchedule;
+import entities.*;
 import exceptions.InvalidConstraintException;
 import lombok.NonNull;
 
@@ -17,6 +14,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -77,8 +75,37 @@ public class FlightScheduleService {
         return flightSchedules;
     }
 
-    //TODO: implement this
-    public List<FlightSchedule> searchFlightSchedules(Date departureDate, CabinClassType cabinClassType) {
-        return this.em.createQuery("", FlightSchedule.class).getResultList();
+    //TODO: test this
+    /**
+     * Basic flight search that takes into account the flight route, departure date and passengers
+     * @param flightRoute
+     * @param departureDate
+     * @param passengerCount
+     * @return
+     */
+    public List<FlightSchedule> searchFlightSchedules(FlightRoute flightRoute, Date departureDate, Integer passengerCount) {
+        // Cabin Class getMaxCapacity
+        // FlightSchedule
+        // FlightReservations (each reservation is 1 seat)
+        // 3 days before, 3 days after
+        final LocalDate localDate = departureDate.toLocalDate();
+        final Date threeDaysBefore = Date.valueOf(localDate.minusDays(3));
+        final Date threeDaysAfter = Date.valueOf(localDate.plusDays(3));
+
+        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightRoute.flightRouteId = ?1 AND fs.date >= ?2 AND fs.date <= ?3", FlightSchedule.class)
+                .setParameter(1, flightRoute.getFlightRouteId())
+                .setParameter(2, threeDaysBefore)
+                .setParameter(3, threeDaysAfter);
+
+        final List<FlightSchedule> countFilteredFlightSchedules = new ArrayList<>();
+        final List<FlightSchedule> flightSchedules = query.getResultList();
+        flightSchedules.forEach(flightSchedule -> {
+            final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
+            if(flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {
+                countFilteredFlightSchedules.add(flightSchedule);
+            }
+        });
+
+        return countFilteredFlightSchedules;
     }
 }
