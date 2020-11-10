@@ -1,6 +1,8 @@
 
 package entities;
 
-public enum CabinClassType {
+import java.io.Serializable;
+
+public enum CabinClassType implements Serializable {
     F, J, W, Y;
 }
