@@ -101,11 +101,12 @@ public class DataMigrationBean {
     @SneakyThrows
     private void initAircraftConfiguration() {
         sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
-
-        cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+        CabinClass cabinClass1 = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+        sinNrtAC.getCabinClasses().add(cabinClass1);
 
         nrtSinAC = this.aircraftConfigurationService.create("basic2", boeingSecondType);
-        cabinClassService.create(CabinClassType.F, 3, "3-2-3", nrtSinAC);
+        CabinClass cabinClass2 = cabinClassService.create(CabinClassType.J, 3, "3-2-3", nrtSinAC);
+        nrtSinAC.getCabinClasses().add(cabinClass2);
     }
 
     @SneakyThrows
