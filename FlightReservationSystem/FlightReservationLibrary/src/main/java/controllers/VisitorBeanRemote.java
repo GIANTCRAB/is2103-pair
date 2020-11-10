@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Airport;
+import entities.CabinClassType;
 import entities.Customer;
 import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
@@ -27,5 +28,7 @@ public interface VisitorBeanRemote {
                                       @NonNull Airport destinationAirport,
                                       @NonNull Date departureDate,
                                       Date returnDate,
-                                      @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException;
+                                      @NonNull Integer passengerCount,
+                                      Boolean directOnly,
+                                      CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException;
 }
