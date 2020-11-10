@@ -92,7 +92,7 @@ public class FlightScheduleService {
         final Date threeDaysBefore = Date.valueOf(localDate.minusDays(3));
         final Date threeDaysAfter = Date.valueOf(localDate.plusDays(3));
 
-        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightRoute.flightRouteId = ?1 AND fs.date >= ?2 AND fs.date <= ?3", FlightSchedule.class)
+        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightRoute.flightRouteId = ?1 AND fs.date >= ?2 AND fs.date <= ?3 ORDER BY fs.date", FlightSchedule.class)
                 .setParameter(1, flightRoute.getFlightRouteId())
                 .setParameter(2, threeDaysBefore)
                 .setParameter(3, threeDaysAfter);
@@ -102,6 +102,9 @@ public class FlightScheduleService {
         flightSchedules.forEach(flightSchedule -> {
             final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
             if(flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {
+                // Load flight schedule data
+                flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode();
+                flightSchedule.getFlight().getFlightRoute().getDest().getIataCode();
                 countFilteredFlightSchedules.add(flightSchedule);
             }
         });
