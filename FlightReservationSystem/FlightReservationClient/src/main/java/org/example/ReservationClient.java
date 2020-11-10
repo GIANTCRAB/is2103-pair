@@ -4,6 +4,7 @@ import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
 import entities.Airport;
 import entities.Customer;
+import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -16,6 +17,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
+import java.util.List;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
@@ -132,9 +134,16 @@ public class ReservationClient implements SystemClient {
         final Date departureDate = Date.valueOf(this.scanner.next());
         System.out.println("Enter passenger count: ");
         final Integer passengerCount = this.scanner.nextInt();
+        System.out.println("=======================");
 
         try {
-            this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
+            List<FlightSchedule> flightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
+            flightScheduleList.forEach(flightSchedule -> {
+                System.out.println("ID: " + flightSchedule.getFlightScheduleId());
+                System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
+                System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
+                System.out.println("=======================");
+            });
         } catch (InvalidConstraintException e) {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
