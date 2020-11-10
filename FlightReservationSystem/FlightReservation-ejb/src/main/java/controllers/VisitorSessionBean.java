@@ -12,7 +12,7 @@ import services.CustomerService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Stateful
@@ -39,8 +39,7 @@ public class VisitorSessionBean implements VisitorBeanRemote {
 
     //TODO: implement this
     @Override
-    public List<Flight> searchFlight(@NonNull String tripType,
-                                     @NonNull Airport departureAirport,
+    public List<Flight> searchFlight(@NonNull Airport departureAirport,
                                      @NonNull Airport destinationAirport,
                                      @NonNull Date departureDate,
                                      Date returnDate,

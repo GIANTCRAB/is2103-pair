@@ -9,7 +9,7 @@ import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 
 import javax.ejb.Remote;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Remote
@@ -23,5 +23,9 @@ public interface VisitorBeanRemote {
 
     Customer login(String email, String password) throws IncorrectCredentialsException;
 
-    List<Flight> searchFlight(@NonNull String tripType, @NonNull Airport departureAirport, @NonNull Airport destinationAirport, @NonNull Date departureDate, Date returnDate, @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException;
+    List<Flight> searchFlight(@NonNull Airport departureAirport,
+                              @NonNull Airport destinationAirport,
+                              @NonNull Date departureDate,
+                              Date returnDate,
+                              @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException;
 }
