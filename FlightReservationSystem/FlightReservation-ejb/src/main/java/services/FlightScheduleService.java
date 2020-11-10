@@ -39,7 +39,6 @@ public class FlightScheduleService {
         flightSchedule.setFlight(flight);
         flightSchedule.setDepartureDateTime(departureDate, departureTime);
         flightSchedule.setEstimatedDuration(estimatedDuration);
-        flightSchedule.setFares(fares);
 
         Set<ConstraintViolation<FlightSchedule>> violations = this.validator.validate(flightSchedule);
         if (!violations.isEmpty()) {
@@ -61,7 +60,6 @@ public class FlightScheduleService {
         List<FlightSchedule> flightSchedules = searchQuery.getResultList();
         flightSchedules.forEach(f -> {
             f.getFlight();
-            f.getFares().size();
         });
         return flightSchedules;
     }
@@ -75,7 +73,6 @@ public class FlightScheduleService {
         List<FlightSchedule> flightSchedules = searchQuery.getResultList();
         flightSchedules.forEach(f -> {
             f.getFlight();
-            f.getFares().size();
         });
         return flightSchedules;
     }
