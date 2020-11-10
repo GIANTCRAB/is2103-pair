@@ -51,6 +51,9 @@ public class ReservationClient implements SystemClient {
                 case 2:
                     displayLoginMenu();
                     break;
+                case 3:
+                    //TODO: implement flight search
+                    break;
                 case 4:
                 default:
                     loop = false;

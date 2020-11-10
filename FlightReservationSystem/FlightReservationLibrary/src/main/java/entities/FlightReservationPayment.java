@@ -42,7 +42,7 @@ public class FlightReservationPayment implements Serializable {
     private String creditCardNumber;
 
     @Transient
-    private BigDecimal getTotalCost() {
+    public BigDecimal getTotalCost() {
         BigDecimal totalCost = new BigDecimal(0);
 
         for (FlightReservation flightReservation : flightReservations) {

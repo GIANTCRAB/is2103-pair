@@ -50,6 +50,9 @@ public class FlightSchedule implements Serializable {
     @JoinColumn
     private FlightSchedulePlan flightSchedulePlan = null;
 
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<FlightReservation> flightReservations = new ArrayList<>();
+
     @Transient
     public ZonedDateTime getDepartureDateTime() {
         final FlightRoute flightRoute = this.getFlight().getFlightRoute();

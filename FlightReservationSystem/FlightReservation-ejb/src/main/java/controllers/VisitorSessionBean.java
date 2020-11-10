@@ -2,17 +2,18 @@ package controllers;
 
 import entities.Airport;
 import entities.Customer;
-import entities.Flight;
+import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 import services.AuthService;
 import services.CustomerService;
+import services.FlightService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Stateful
@@ -21,6 +22,8 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     CustomerService customerService;
     @Inject
     AuthService authService;
+    @Inject
+    FlightService flightService;
 
     @Override
     public Customer register(String firstName,
@@ -39,12 +42,11 @@ public class VisitorSessionBean implements VisitorBeanRemote {
 
     //TODO: implement this
     @Override
-    public List<Flight> searchFlight(@NonNull String tripType,
-                                     @NonNull Airport departureAirport,
-                                     @NonNull Airport destinationAirport,
-                                     @NonNull Date departureDate,
-                                     Date returnDate,
-                                     @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException {
+    public List<FlightSchedule> searchFlight(@NonNull Airport departureAirport,
+                                             @NonNull Airport destinationAirport,
+                                             @NonNull Date departureDate,
+                                             Date returnDate,
+                                             @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException {
         return null;
     }
 }

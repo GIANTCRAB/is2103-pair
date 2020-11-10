@@ -1,5 +1,6 @@
 package services;
 
+import entities.CabinClassType;
 import entities.Fare;
 import entities.Flight;
 import entities.FlightSchedule;
@@ -54,7 +55,7 @@ public class FlightScheduleService {
     public FlightSchedule create(@NonNull Flight flight, @NonNull Date departureDate, @NonNull Time departureTime, @NonNull Long estimatedDuration) throws InvalidConstraintException {
         return this.create(flight, departureDate, departureTime, estimatedDuration, new ArrayList<>());
     }
-    
+
     public List<FlightSchedule> getFlightSchedules() {
         TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs ORDER BY fs.date", FlightSchedule.class);
         List<FlightSchedule> flightSchedules = searchQuery.getResultList();
@@ -64,18 +65,23 @@ public class FlightScheduleService {
         });
         return flightSchedules;
     }
-    
+
     public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) {
         TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.date >= :date1 AND fs.date <= :date2"
                                                                 + " ORDER BY fs.date", FlightSchedule.class)
                 .setParameter("date1", startDate)
                 .setParameter("date2", endDate);
-        
+
         List<FlightSchedule> flightSchedules = searchQuery.getResultList();
         flightSchedules.forEach(f -> {
             f.getFlight();
             f.getFares().size();
         });
         return flightSchedules;
+    }
+
+    //TODO: implement this
+    public List<FlightSchedule> searchFlightSchedules(Date departureDate, CabinClassType cabinClassType) {
+        return this.em.createQuery("", FlightSchedule.class).getResultList();
     }
 }
