@@ -1,21 +1,16 @@
 package controllers;
 
-import entities.Airport;
-import entities.CabinClassType;
-import entities.Customer;
-import entities.FlightSchedule;
+import entities.*;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
-import services.AirportService;
-import services.AuthService;
-import services.CustomerService;
-import services.FlightService;
+import services.*;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateful
@@ -26,6 +21,10 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     AuthService authService;
     @Inject
     AirportService airportService;
+    @Inject
+    FlightRouteService flightRouteService;
+    @Inject
+    FlightScheduleService flightScheduleService;
 
     @Override
     public Customer register(String firstName,
@@ -53,6 +52,8 @@ public class VisitorSessionBean implements VisitorBeanRemote {
                                              CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException {
         final Airport managedDepartureAirport = this.airportService.findAirportByCode(departureAirport.getIataCode());
         final Airport managedDestinationAirport = this.airportService.findAirportByCode(destinationAirport.getIataCode());
+        final FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(managedDepartureAirport, managedDestinationAirport);
+        final List<FlightSchedule> searchResult = new ArrayList<>();
 
         if (returnDate != null) {
             // Return date specified
@@ -60,8 +61,19 @@ public class VisitorSessionBean implements VisitorBeanRemote {
             if (departureDate.before(returnDate)) {
                 // Valid
             }
+        } else {
+            if (directOnly != null && directOnly) {
+
+            } else {
+                if (cabinClassType != null) {
+
+                } else {
+                    // Basic search only
+                    searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightRoute, departureDate, passengerCount));
+                }
+            }
         }
 
-        return null;
+        return searchResult;
     }
 }
