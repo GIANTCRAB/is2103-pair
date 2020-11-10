@@ -3,7 +3,6 @@ package controllers;
 import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
-import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.Passenger;
 import services.CustomerService;
@@ -28,7 +27,7 @@ public class CustomerSessionBean implements CustomerBeanRemote {
 
     //TODO: implement this
     @Override
-    public List<FlightReservation> reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
+    public FlightReservationPayment reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
         final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
         // TODO: find the managed flight schedule
         final Fare fare = this.fareService.findByScheduleAndCabinClass(flightSchedule, cabinClassType);
@@ -37,7 +36,14 @@ public class CustomerSessionBean implements CustomerBeanRemote {
         final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, managedCustomer);
         this.flightReservationPaymentService.associateFlightReservations(flightReservations, flightReservationPayment);
 
-        return flightReservations;
+        // Load its flight reservations
+        flightReservationPayment.getFlightReservations().forEach(flightReservation -> {
+            flightReservation.getPassengerFirstName();
+            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
+            flightReservation.getFare().getFareBasisCode();
+        });
+
+        return flightReservationPayment;
     }
 
     @Override
