@@ -18,4 +18,6 @@ public interface CustomerBeanRemote {
                                                        @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException;
 
     List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException;
+
+    FlightReservationPayment getFlightReservationDetails(@NonNull Customer customer, FlightReservationPayment flightReservationPayment) throws InvalidEntityIdException;
 }

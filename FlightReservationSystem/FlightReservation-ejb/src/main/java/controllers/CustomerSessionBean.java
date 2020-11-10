@@ -46,4 +46,24 @@ public class CustomerSessionBean implements CustomerBeanRemote {
 
         return this.flightReservationService.getFlightReservations(managedCustomer);
     }
+
+    @Override
+    public FlightReservationPayment getFlightReservationDetails(@NonNull Customer customer, FlightReservationPayment flightReservationPayment) throws InvalidEntityIdException {
+        final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
+
+        final FlightReservationPayment managedFlightReservationPayment = this.flightReservationPaymentService.findById(flightReservationPayment.getPaymentId());
+
+        if (!managedCustomer.getCustomerId().equals(managedFlightReservationPayment.getCustomer().getCustomerId())) {
+            throw new InvalidEntityIdException();
+        }
+
+        // Load its flight reservations
+        managedFlightReservationPayment.getFlightReservations().forEach(flightReservation -> {
+            flightReservation.getPassengerFirstName();
+            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
+            flightReservation.getFare().getFareBasisCode();
+        });
+
+        return managedFlightReservationPayment;
+    }
 }
