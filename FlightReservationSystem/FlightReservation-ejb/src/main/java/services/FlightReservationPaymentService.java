@@ -2,6 +2,7 @@ package services;
 
 import entities.*;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 
 import javax.ejb.LocalBean;
@@ -25,6 +26,16 @@ public class FlightReservationPaymentService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
+
+    public FlightReservationPayment findById(Long id) throws InvalidEntityIdException {
+        final FlightReservationPayment flightReservationPayment = this.em.find(FlightReservationPayment.class, id);
+
+        if (flightReservationPayment == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return flightReservationPayment;
+    }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservationPayment create(@NonNull String creditCardNumber, Customer customer, Partner partner) throws InvalidConstraintException {
