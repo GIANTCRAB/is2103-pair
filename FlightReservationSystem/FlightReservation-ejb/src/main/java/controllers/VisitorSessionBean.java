@@ -1,12 +1,14 @@
 package controllers;
 
 import entities.Airport;
+import entities.CabinClassType;
 import entities.Customer;
 import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
+import services.AirportService;
 import services.AuthService;
 import services.CustomerService;
 import services.FlightService;
@@ -23,7 +25,7 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     @Inject
     AuthService authService;
     @Inject
-    FlightService flightService;
+    AirportService airportService;
 
     @Override
     public Customer register(String firstName,
@@ -46,7 +48,20 @@ public class VisitorSessionBean implements VisitorBeanRemote {
                                              @NonNull Airport destinationAirport,
                                              @NonNull Date departureDate,
                                              Date returnDate,
-                                             @NonNull Integer passengerCount) throws InvalidConstraintException, InvalidEntityIdException {
+                                             @NonNull Integer passengerCount,
+                                             Boolean directOnly,
+                                             CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException {
+        final Airport managedDepartureAirport = this.airportService.findAirportByCode(departureAirport.getIataCode());
+        final Airport managedDestinationAirport = this.airportService.findAirportByCode(destinationAirport.getIataCode());
+
+        if (returnDate != null) {
+            // Return date specified
+            // Check if departure date is earlier than return date
+            if (departureDate.before(returnDate)) {
+                // Valid
+            }
+        }
+
         return null;
     }
 }

@@ -34,8 +34,18 @@ public class FlightRouteService {
         return flightRoute.getEnabled();
     }
 
+    public FlightRoute findById(FlightRouteId id) throws InvalidEntityIdException {
+        final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, id);
+
+        if (managedFlightRoute == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        return managedFlightRoute;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException {
+    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException, InvalidEntityIdException {
         FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
         if (flightRoute == null) {
             flightRoute = new FlightRoute();
@@ -78,20 +88,15 @@ public class FlightRouteService {
         return flightRoutes;
     }
 
-    public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) {
-        FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
-        FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
-        return flightRoute;
-    }
+    public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) throws InvalidEntityIdException {
+        final FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
+        final FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
 
-    public FlightRoute retrieveManagedEntity(FlightRoute flightRoute) throws InvalidEntityIdException {
-        final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
-
-        if (managedFlightRoute == null) {
+        if (flightRoute == null) {
             throw new InvalidEntityIdException();
         }
 
-        return managedFlightRoute;
+        return flightRoute;
     }
 
     public void delete(FlightRoute flightRoute) {
