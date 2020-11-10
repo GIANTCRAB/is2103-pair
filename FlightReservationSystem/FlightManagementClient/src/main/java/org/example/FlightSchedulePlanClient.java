@@ -58,10 +58,10 @@ public class FlightSchedulePlanClient implements SystemClient {
                     this.displayViewAllFlightSchedulePlanMenu();
                     break;
                 case 3:
-                    //this.displayViewFlightSchedulePlanDetailsMenu();
+                    this.displayViewFlightSchedulePlanDetailsMenu();
                     break;
                 case 4:
-                    //this.displayUpdateFlightSchedulePlanFlightMenu();
+                    //this.displayUpdateFlightSchedulePlanMenu();
                     break;
                 case 5:
                     //this.displayDeleteFlightSchedulePlanMenu();
@@ -214,6 +214,40 @@ public class FlightSchedulePlanClient implements SystemClient {
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        } 
+    }
+    
+    private void displayViewFlightSchedulePlanDetailsMenu() {
+        System.out.println("*** View Flight Schedule Plan Details ***");
+        System.out.println("Enter the ID of the flight schedule plan you would like to view:");
+        Long flightSchedulePlanId = scanner.nextLong();
+        
+        try {
+            FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.getFlightSchedulePlanById(this.authenticatedEmployee, flightSchedulePlanId);
+            this.printFlightSchedulePlanDetails(flightSchedulePlan);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid flight schedule plan ID.")
+        }
+    }
+    
+    private void printFlightSchedulePlanDetails(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("Viewing details for flight schedule plan: " + flightSchedulePlan.getFlightSchedulePlanId());
+        System.out.println("--------------------------------------------");
+        System.out.println("Flight schedule plan type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
+        
+        List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
+        Flight flight = flightSchedules.get(0).getFlight();
+        System.out.println("Flight number: " + flight.getFlightCode());
+        System.out.println("Origin airport: " + flight.getFlightRoute.getOrigin().getIataCode());
+        System.out.println("Destination airport: " + flight.getFlightRoute.getDest().getIataCode());
+        System.out.println("----------------------");
+        
+        for(FlightSchedule flightSchedule : flightSchedules) {
+            System.out.println("Departure date/time: " + flightSchedule.getDepartureDateTime());
+            System.out.println("Estimated arrival date/time: " + flightSchedule.getArrivalDateTime());
+            System.out.println("----------------------");
         }
     }
 }
