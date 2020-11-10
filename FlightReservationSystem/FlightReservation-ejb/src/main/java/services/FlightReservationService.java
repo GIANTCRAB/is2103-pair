@@ -2,6 +2,7 @@ package services;
 
 import entities.*;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 import pojo.Passenger;
 
@@ -9,6 +10,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -24,21 +26,25 @@ import java.util.Set;
 @Stateless
 public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
-    private EntityManager em;
+    EntityManager em;
+    @Inject
+    CabinClassService cabinClassService;
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException {
+    public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException {
         final FlightReservation flightReservation = new FlightReservation();
-        flightReservation.setFare(fare);
-        flightReservation.setReservationCost(fare.getFareAmount());
+        flightReservation.setFlightSchedule(flightSchedule);
         flightReservation.setPassengerFirstName(passenger.getFirstName());
         flightReservation.setPassengerLastName(passenger.getLastName());
         flightReservation.setPassengerPassportNo(passenger.getPassportNumber());
         flightReservation.setSeatNumber(passenger.getSeatNumber());
         flightReservation.setFlightReservationPayment(flightReservationPayment);
+        // TODO: test if this works
+        final Fare fare = this.getFlightReservationFare(flightReservation);
+        flightReservation.setReservationCost(fare.getFareAmount());
         Set<ConstraintViolation<FlightReservation>> violations = this.validator.validate(flightReservation);
         // There are invalid data
         if (!violations.isEmpty()) {
@@ -47,24 +53,24 @@ public class FlightReservationService {
         this.em.persist(flightReservation);
         this.em.flush();
 
-        final List<FlightReservation> flightReservationList = fare.getFlightReservations();
+        final List<FlightReservation> flightReservationList = flightSchedule.getFlightReservations();
         flightReservationList.add(flightReservation);
-        fare.setFlightReservations(flightReservationList);
-        this.em.persist(fare);
+        flightSchedule.setFlightReservations(flightReservationList);
+        this.em.persist(flightSchedule);
 
         return flightReservation;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger) throws InvalidConstraintException {
-        return this.create(fare, passenger, null);
+    public FlightReservation create(@NonNull  FlightSchedule flightSchedule, @NonNull Passenger passenger) throws InvalidConstraintException {
+        return this.create(flightSchedule, passenger, null);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public List<FlightReservation> create(@NonNull Fare fare, @NonNull List<Passenger> passengers) throws InvalidConstraintException {
+    public List<FlightReservation> create(@NonNull  FlightSchedule flightSchedule, @NonNull List<Passenger> passengers) throws InvalidConstraintException {
         final List<FlightReservation> flightReservations = new ArrayList<>();
         for (Passenger passenger : passengers) {
-            flightReservations.add(this.create(fare, passenger));
+            flightReservations.add(this.create(flightSchedule, passenger));
         }
         return flightReservations;
     }
@@ -76,18 +82,10 @@ public class FlightReservationService {
      * @return
      */
     public List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) {
-        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.fare.flightSchedule.flightScheduleId = ?1 ORDER BY fr.fare.cabinClass.cabinClassId.cabinClassType", FlightReservation.class)
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.flightSchedule.flightScheduleId = ?1 ORDER BY fr.cabinClassType", FlightReservation.class)
                 .setParameter(1, flightSchedule.getFlightScheduleId());
 
-        final List<FlightReservation> flightReservations = query.getResultList();
-
-        // Load fare data and cabin class
-        flightReservations.forEach(flightReservation -> {
-            flightReservation.getFare().getFareBasisCode();
-            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
-        });
-
-        return flightReservations;
+        return query.getResultList();
     }
 
     /**
@@ -119,10 +117,18 @@ public class FlightReservationService {
     // Load the flight schedule, flight, route and airport
     private List<FlightReservation> loadFlightReservationsRelationships(List<FlightReservation> flightReservations) {
         flightReservations.forEach(flightReservation -> {
-            flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode();
-            flightReservation.getFare().getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode();
+            flightReservation.getFlightSchedule().getFlightSchedulePlan();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode();
         });
 
         return flightReservations;
+    }
+
+    //TODO: test this
+    public Fare getFlightReservationFare(@NonNull FlightReservation flightReservation){
+        return this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId.cabinClassType = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2", Fare.class)
+                .setParameter(1, flightReservation.getCabinClassType())
+                .setParameter(2, flightReservation.getFlightSchedule().getFlightSchedulePlan().getFlightSchedulePlanId()).getSingleResult();
     }
 }

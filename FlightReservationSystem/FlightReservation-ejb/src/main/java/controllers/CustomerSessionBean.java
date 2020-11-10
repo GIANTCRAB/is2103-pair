@@ -6,7 +6,6 @@ import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 import pojo.Passenger;
 import services.CustomerService;
-import services.FareService;
 import services.FlightReservationPaymentService;
 import services.FlightReservationService;
 
@@ -21,8 +20,6 @@ public class CustomerSessionBean implements CustomerBeanRemote {
     @Inject
     FlightReservationService flightReservationService;
     @Inject
-    FareService fareService;
-    @Inject
     FlightReservationPaymentService flightReservationPaymentService;
 
     //TODO: implement this
@@ -30,17 +27,16 @@ public class CustomerSessionBean implements CustomerBeanRemote {
     public FlightReservationPayment reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
         final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
         // TODO: find the managed flight schedule
-        final Fare fare = this.fareService.findByScheduleAndCabinClass(flightSchedule, cabinClassType);
 
-        final List<FlightReservation> flightReservations = this.flightReservationService.create(fare, passengers);
+        final List<FlightReservation> flightReservations = this.flightReservationService.create(flightSchedule, passengers);
         final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, managedCustomer);
         this.flightReservationPaymentService.associateFlightReservations(flightReservations, flightReservationPayment);
 
         // Load its flight reservations
         flightReservationPayment.getFlightReservations().forEach(flightReservation -> {
             flightReservation.getPassengerFirstName();
-            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
-            flightReservation.getFare().getFareBasisCode();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest();
         });
 
         return flightReservationPayment;
@@ -66,8 +62,8 @@ public class CustomerSessionBean implements CustomerBeanRemote {
         // Load its flight reservations
         managedFlightReservationPayment.getFlightReservations().forEach(flightReservation -> {
             flightReservation.getPassengerFirstName();
-            flightReservation.getFare().getCabinClass().getCabinClassId().getCabinClassType();
-            flightReservation.getFare().getFareBasisCode();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest();
         });
 
         return managedFlightReservationPayment;
