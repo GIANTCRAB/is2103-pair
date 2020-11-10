@@ -33,6 +33,7 @@ public class FlightReservationService {
     public FlightReservation create(@NonNull Fare fare, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFare(fare);
+        flightReservation.setReservationCost(fare.getFareAmount());
         flightReservation.setPassengerFirstName(passenger.getFirstName());
         flightReservation.setPassengerLastName(passenger.getLastName());
         flightReservation.setPassengerPassportNo(passenger.getPassportNumber());
