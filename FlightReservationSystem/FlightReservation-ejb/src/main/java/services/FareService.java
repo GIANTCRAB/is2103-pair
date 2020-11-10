@@ -25,10 +25,11 @@ public class FareService {
         cabinClassId.setAircraftConfigurationId(aircraftConfiguration.getAircraftConfigurationId());
         cabinClassId.setCabinClassType(cabinClassType);
         final CabinClass cabinClass = cabinClassService.findById(cabinClassId);
+        final FlightSchedulePlan flightSchedulePlan = flightSchedule.getFlightSchedulePlan();
 
-        TypedQuery<Fare> query = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId = ?1 AND f.flightSchedule.flightScheduleId = ?2", Fare.class)
+        TypedQuery<Fare> query = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2", Fare.class)
                 .setParameter(1, cabinClass.getCabinClassId())
-                .setParameter(2, flightSchedule.getFlightScheduleId());
+                .setParameter(2, flightSchedulePlan.getFlightSchedulePlanId());
 
         return query.getSingleResult();
     }
