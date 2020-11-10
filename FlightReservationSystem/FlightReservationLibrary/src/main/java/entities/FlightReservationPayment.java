@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,4 +40,15 @@ public class FlightReservationPayment implements Serializable {
     @NotNull
     @Column(nullable = false)
     private String creditCardNumber;
+
+    @Transient
+    private BigDecimal getTotalCost() {
+        BigDecimal totalCost = new BigDecimal(0);
+
+        for (FlightReservation flightReservation : flightReservations) {
+            totalCost = totalCost.add(flightReservation.getReservationCost());
+        }
+
+        return totalCost;
+    }
 }
