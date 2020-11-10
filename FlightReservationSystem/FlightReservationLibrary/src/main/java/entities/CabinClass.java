@@ -35,7 +35,7 @@ public class CabinClass implements Serializable {
     @Max(99)
     @Column(nullable = false)
     private Integer noOfRows;
-    
+
     @NotNull
     @Min(1)
     @Max(99)
@@ -59,8 +59,13 @@ public class CabinClass implements Serializable {
     // Used only in delivering data from client to ejb
     @Transient
     private CabinClassType temporaryCabinClassType;
-    
+
     // Used to check if max capacity has exceeded
     @Transient
     private Integer maxCapacity;
+
+    @Transient
+    private Integer getMaxCapacity() {
+        return this.getNoOfCols() * this.getNoOfRows();
+    }
 }
