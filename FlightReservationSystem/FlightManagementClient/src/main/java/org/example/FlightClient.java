@@ -192,10 +192,11 @@ public class FlightClient implements SystemClient {
         System.out.println("Enter the flight number of the flight you would like to delete:");
         String flightCode = scanner.next();
                
-        System.out.println(this.flightBeanRemote.deleteFlight(flightCode));
-
-        // Add try-catch
-        
+        try { 
+            System.out.println(this.flightBeanRemote.deleteFlight(flightCode));
+        } catch (NotAuthenticatedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {

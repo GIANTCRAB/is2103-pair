@@ -27,8 +27,6 @@ public interface FlightBeanRemote {
     
     void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
 
-    String deleteFlight(String flightCode);
-
-    void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
+    String deleteFlight(String flightCode) throws NotAuthenticatedException;
 
 }
