@@ -5,6 +5,7 @@ import entities.Fare;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -16,18 +17,19 @@ import javax.ejb.Remote;
 
 @Remote
 public interface FlightSchedulePlanBeanRemote {
+    Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
     
-    FlightSchedulePlan create(Employee employee, FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
+    FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
     
-    FlightSchedule createFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException;
+    FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException;
     
-    List<FlightSchedule> createRecurrentFlightSchedule(Employee employee, String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException;
+    List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException;
     
-    FlightSchedulePlan getFlightSchedulePlanById(Employee employee, Long id) throws NotAuthenticatedException, InvalidEntityIdException;
+    FlightSchedulePlan getFlightSchedulePlanById(Long id) throws NotAuthenticatedException, InvalidEntityIdException;
     
-    List<FlightSchedulePlan> getFlightSchedulePlans(Employee employee) throws NotAuthenticatedException;
+    List<FlightSchedulePlan> getFlightSchedulePlans() throws NotAuthenticatedException;
     
-    List<FlightSchedule> getFlightSchedules(Employee employee) throws NotAuthenticatedException;
+    List<FlightSchedule> getFlightSchedules() throws NotAuthenticatedException;
     
-    List<FlightSchedule> getFlightSchedulesByDate(Employee employee, Date startDate, Date endDate) throws NotAuthenticatedException;
+    List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
 }

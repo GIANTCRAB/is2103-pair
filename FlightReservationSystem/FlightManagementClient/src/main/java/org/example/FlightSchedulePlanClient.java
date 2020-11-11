@@ -99,8 +99,8 @@ public class FlightSchedulePlanClient implements SystemClient {
                     System.out.println("Enter estimated flight duration in minutes:");
                     Long estimatedDuration = scanner.nextLong();
                     
-                    flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(this.authenticatedEmployee, flightCode, departureDate, departureTime, estimatedDuration));
-                    FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(this.authenticatedEmployee, FlightSchedulePlanType.SINGLE, flightSchedules);
+                    flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
+                    FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
                     this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
                     
                     System.out.println("Flight schedule plan created successfully!");
@@ -117,10 +117,10 @@ public class FlightSchedulePlanClient implements SystemClient {
                         departureTime = Time.valueOf(scanner.next() + ":00");
                         System.out.println("Enter estimated flight duration in minutes:");
                         estimatedDuration = scanner.nextLong();
-                        flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(this.authenticatedEmployee, flightCode, departureDate, departureTime, estimatedDuration));
+                        flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
                     }
                     
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(this.authenticatedEmployee, FlightSchedulePlanType.MULTIPLE, flightSchedules);
+                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.MULTIPLE, flightSchedules);
                     this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
                     
                     System.out.println("Flight schedule plan created successfully!");
@@ -141,8 +141,8 @@ public class FlightSchedulePlanClient implements SystemClient {
                     Date endDate = Date.valueOf(scanner.next());
                     
                     
-                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(this.authenticatedEmployee, flightCode, departureDate, departureTime, estimatedDuration, endDate, nDays);
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(this.authenticatedEmployee, FlightSchedulePlanType.RECURRENT_N_DAYS, flightSchedules);
+                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, nDays);
+                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_N_DAYS, flightSchedules);
                     this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
                     
                     System.out.println("Flight schedule plan created successfully!");
@@ -159,8 +159,8 @@ public class FlightSchedulePlanClient implements SystemClient {
                     endDate = Date.valueOf(scanner.next());
                     
                     
-                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(this.authenticatedEmployee, flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(this.authenticatedEmployee, FlightSchedulePlanType.RECURRENT_WEEKLY, flightSchedules);
+                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
+                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_WEEKLY, flightSchedules);
                     this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
                     
                     System.out.println("Flight schedule plan created successfully!");
@@ -202,7 +202,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("*** View All Flight Schedule Plans ***");
 
         try {
-            final List<FlightSchedulePlan> flightSchedulePlanList = this.flightSchedulePlanBeanRemote.getFlightSchedulePlans(this.authenticatedEmployee);
+            final List<FlightSchedulePlan> flightSchedulePlanList = this.flightSchedulePlanBeanRemote.getFlightSchedulePlans();
             for (FlightSchedulePlan flightSchedulePlan : flightSchedulePlanList) {
                 System.out.println("Flight Schedule Plan: " + flightSchedulePlan.getFlightSchedulePlanId() + " , Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
                 flightSchedulePlan.getFlightSchedules().forEach(f -> {
@@ -221,7 +221,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         Long flightSchedulePlanId = scanner.nextLong();
         
         try {
-            FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.getFlightSchedulePlanById(this.authenticatedEmployee, flightSchedulePlanId);
+            FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.getFlightSchedulePlanById(flightSchedulePlanId);
             this.printFlightSchedulePlanDetails(flightSchedulePlan);
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
