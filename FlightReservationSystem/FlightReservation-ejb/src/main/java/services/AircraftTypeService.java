@@ -18,7 +18,7 @@ public class AircraftTypeService {
         final AircraftType aircraftType = this.em.find(AircraftType.class, id);
 
         if (aircraftType == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Airport Type could not be found.");
         }
 
         return aircraftType;

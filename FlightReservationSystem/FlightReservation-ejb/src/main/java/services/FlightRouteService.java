@@ -38,7 +38,7 @@ public class FlightRouteService {
         final FlightRoute managedFlightRoute = this.em.find(FlightRoute.class, id);
 
         if (managedFlightRoute == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Flight Route could not be found");
         }
 
         return managedFlightRoute;

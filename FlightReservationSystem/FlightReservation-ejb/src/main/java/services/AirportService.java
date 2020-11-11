@@ -18,7 +18,7 @@ public class AirportService {
         final Airport airport = this.em.find(Airport.class, iataCode);
 
         if (airport == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Airport could not be found.");
         }
 
         return airport;
