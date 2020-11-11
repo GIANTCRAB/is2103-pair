@@ -2,13 +2,14 @@ package org.example;
 
 import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
-import entities.Customer;
-import entities.FlightReservation;
-import entities.FlightReservationPayment;
+import entities.*;
+import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
+import pojo.Passenger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -45,7 +46,7 @@ public class CustomerClient extends ReservationClient {
                     this.displayFlightSearchMenu();
                     break;
                 case 2:
-                    //TODO: reserve flight
+                    this.displayCreateReservationMenu();
                     break;
                 case 3:
                     this.displayViewReservationsMenu();
@@ -56,6 +57,47 @@ public class CustomerClient extends ReservationClient {
                     loop = false;
                     break;
             }
+        }
+    }
+
+    private void displayCreateReservationMenu() {
+        System.out.println("*** Create Flight Reservation ***");
+        System.out.println("Enter flight schedule ID: ");
+        final Long flightScheduleId = this.scanner.nextLong();
+        final FlightSchedule flightSchedule = new FlightSchedule();
+        flightSchedule.setFlightScheduleId(flightScheduleId);
+        System.out.println("Enter cabin class type: ");
+        final CabinClassType cabinClassType = CabinClassType.valueOf(this.scanner.next());
+        System.out.println("Enter number of passengers: ");
+        final int numberOfPassengers = this.scanner.nextInt();
+
+        final List<Passenger> passengers = new ArrayList<>(numberOfPassengers);
+
+        for (int i = 0; i < numberOfPassengers; i++) {
+            System.out.println("Enter passenger details for passenger no. " + (i + 1));
+            final Passenger passenger = new Passenger();
+            System.out.println("Enter passenger first name: ");
+            passenger.setFirstName(this.scanner.next());
+            System.out.println("Enter passenger last name: ");
+            passenger.setLastName(this.scanner.next());
+            System.out.println("Enter passenger passport number: ");
+            passenger.setPassportNumber(this.scanner.next());
+            System.out.println("Enter passenger seat number: ");
+            passenger.setSeatNumber(this.scanner.nextInt());
+            System.out.println("==================");
+            passengers.add(passenger);
+        }
+        System.out.println("Enter your credit card details to check out: ");
+        final String creditCardNumber = this.scanner.next();
+
+        try {
+            this.customerBeanRemote.reserveFlightForPassengers(creditCardNumber, flightSchedule, cabinClassType, passengers);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in as customer.");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Flight schedule ID does not exists!");
+        } catch (InvalidConstraintException e) {
+            e.printStackTrace();
         }
     }
 
