@@ -84,7 +84,7 @@ public class FlightClient implements SystemClient {
         try {
             if (flightRouteBeanRemote.checkFlightRoute(origin, dest)) {
 
-                Flight flight = flightBeanRemote.create(this.authenticatedEmployee, flightCode, origin, dest, aircraftConfigurationId);
+                Flight flight = flightBeanRemote.create(flightCode, origin, dest, aircraftConfigurationId);
                 System.out.println("Flight " + flightCode + " successfully created!");
 
                 if (flightRouteBeanRemote.checkFlightRoute(dest, origin)) {
@@ -93,7 +93,7 @@ public class FlightClient implements SystemClient {
                     if (createReturnFlight == 1) {
                         System.out.println("Enter return flight code: ");
                         final String returnFlightCode = scanner.next();
-                        Flight returnFlight = flightBeanRemote.create(this.authenticatedEmployee, returnFlightCode, dest, origin, aircraftConfigurationId);
+                        Flight returnFlight = flightBeanRemote.create(returnFlightCode, dest, origin, aircraftConfigurationId);
                         System.out.println("Return flight " + returnFlightCode + " successfully created!");
                     }
                 }
@@ -114,11 +114,11 @@ public class FlightClient implements SystemClient {
         System.out.println("*** View All Flights ***");
 
         try {
-            final List<Flight> flightList = this.flightBeanRemote.getFlights(this.authenticatedEmployee);
+            final List<Flight> flightList = this.flightBeanRemote.getFlights();
             for (Flight flight : flightList) {
                 System.out.println("Flight: " + flight.getFlightCode() + ", " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
                 
-                Set<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(this.authenticatedEmployee, flight);
+                Set<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(flight);
                 for(List<Flight> flightPath : returnFlights) {
                     flightPath.forEach(f -> System.out.println(f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
                 }
@@ -135,7 +135,7 @@ public class FlightClient implements SystemClient {
         String flightCode = scanner.next();
 
         try {
-            final Flight flight = this.flightBeanRemote.getFlightByFlightCode(this.authenticatedEmployee, flightCode);
+            final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
             List<CabinClass> cabinClasses = flight.getAircraftConfiguration().getCabinClasses();
             String availableCabinClasses = cabinClasses.stream()
                     .map(c -> c.getCabinClassId().getCabinClassType().name())
@@ -169,14 +169,14 @@ public class FlightClient implements SystemClient {
                 System.out.println("Checking for flight route...");
 
                 if (flightRouteBeanRemote.checkFlightRoute(origin, dest)) {
-                    this.flightBeanRemote.updateFlightRoute(this.authenticatedEmployee, flightCode, origin, dest);
+                    this.flightBeanRemote.updateFlightRoute(flightCode, origin, dest);
                 } else {
                     System.out.println("Flight route does not exist!");
                 }
             } else if (updateOption == 2) {
                 System.out.println("Enter the ID of the new aircraft configuration: ");
                 Long aircraftConfigurationId = scanner.nextLong();
-                this.flightBeanRemote.updateAircraftConfiguration(this.authenticatedEmployee, flightCode, aircraftConfigurationId);
+                this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationId);
             } else {
                 System.out.println("Invalid input. Please try again.");
             }

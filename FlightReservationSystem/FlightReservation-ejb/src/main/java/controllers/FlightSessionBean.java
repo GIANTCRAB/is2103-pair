@@ -6,6 +6,7 @@ import entities.Flight;
 import entities.FlightRoute;
 import entities.Airport;
 import entities.AircraftConfiguration;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -26,27 +27,37 @@ import services.AirportService;
 
 @Stateful
 public class FlightSessionBean implements FlightBeanRemote {
+    private Employee loggedInEmployee;
     @Inject
     FlightService flightService;
-
     @Inject
     FlightRouteService flightRouteService;
-
     @Inject
     AircraftConfigurationService aircraftConfigurationService;
-
     @Inject
     AirportService airportService;
-
     @Inject
     AuthService authService;
 
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
 
     @Override
-    public Flight create(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+    public Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException {
+        final Employee employee = this.authService.employeeLogin(username, password);
 
+        if (employee.getEmployeeRole().equals(PERMISSION_REQUIRED)) {
+            this.loggedInEmployee = employee;
+            return employee;
+        } else {
+            throw new InvalidEntityIdException();
+        }
+    }
+
+    @Override
+    public Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
         final Airport originAirport = this.airportService.findAirportByCode(origin);
         final Airport destinationAirport = this.airportService.findAirportByCode(destination);
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
@@ -61,46 +72,55 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public List<Flight> getFlights(Employee employee) throws NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+    public List<Flight> getFlights() throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
 
         return this.flightService.getFlights();
     }
-    
+
     @Override
-    public Set<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+    public Set<List<Flight>> getReturnFlights(Flight flight) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
 
         return this.flightService.getReturnFlights(this.flightService.findById(flight.getFlightId()));
     }
 
     @Override
-    public Flight getFlightByFlightCode(Employee employee, String flightCode) throws NotAuthenticatedException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
+    public Flight getFlightByFlightCode(String flightCode) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
 
         return this.flightService.getFlightByFlightCode(flightCode);
     }
-    
+
     @Override
-    public void updateFlightRoute(Employee employee, String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
-        
+    public void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
         final Airport originAirport = this.airportService.findAirportByCode(newOrigin);
         final Airport destinationAirport = this.airportService.findAirportByCode(newDestination);
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
-        
+
         if (flightRoute != null) {
             this.flightService.updateFlightRoute(flightCode, flightRoute);
         }
     }
-    
+
     @Override
-    public void updateAircraftConfiguration(Employee employee, String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException {
-        this.authService.checkPermission(employee, this.PERMISSION_REQUIRED);
-        
+    public void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
         final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
-        
-        
+
         if (aircraftConfiguration != null) {
             this.flightService.updateAircraftConfiguration(flightCode, aircraftConfiguration);
         } else {

@@ -2,6 +2,7 @@ package controllers;
 
 import entities.Employee;
 import entities.Flight;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -12,16 +13,17 @@ import java.util.Set;
 
 @Remote
 public interface FlightBeanRemote {
+    Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
 
-    Flight create(Employee employee, String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
+    Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
 
-    List<Flight> getFlights(Employee employee) throws NotAuthenticatedException;
+    List<Flight> getFlights() throws NotAuthenticatedException;
     
-    Set<List<Flight>> getReturnFlights (Employee employee, Flight flight) throws NotAuthenticatedException;
+    Set<List<Flight>> getReturnFlights (Flight flight) throws NotAuthenticatedException;
 
-    Flight getFlightByFlightCode(Employee employee, String flightCode) throws NotAuthenticatedException;
+    Flight getFlightByFlightCode(String flightCode) throws NotAuthenticatedException;
     
-    void updateFlightRoute(Employee employee, String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException;
+    void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException;
     
-    void updateAircraftConfiguration(Employee employee, String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
+    void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
 }
