@@ -79,13 +79,13 @@ public class FlightScheduleService {
 
     //TODO: test this
     /**
-     * Basic flight search that takes into account the flight route, departure date and passengers
-     * @param flightRoute
+     * Basic flight search that takes into account the flight, departure date and passengers
+     * @param flight
      * @param departureDate
      * @param passengerCount
      * @return
      */
-    public List<FlightSchedule> searchFlightSchedules(FlightRoute flightRoute, Date departureDate, Integer passengerCount) {
+    public List<FlightSchedule> searchFlightSchedules(Flight flight, Date departureDate, Integer passengerCount) {
         // Cabin Class getMaxCapacity
         // FlightSchedule
         // FlightReservations (each reservation is 1 seat)
@@ -94,13 +94,17 @@ public class FlightScheduleService {
         final Date threeDaysBefore = Date.valueOf(localDate.minusDays(3));
         final Date threeDaysAfter = Date.valueOf(localDate.plusDays(3));
 
-        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightRoute.flightRouteId = ?1 AND fs.date >= ?2 AND fs.date <= ?3 ORDER BY fs.date", FlightSchedule.class)
-                .setParameter(1, flightRoute.getFlightRouteId())
+        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightId = ?1 AND fs.date >= ?2 AND fs.date <= ?3 ORDER BY fs.date", FlightSchedule.class)
+                .setParameter(1, flight.getFlightId())
                 .setParameter(2, threeDaysBefore)
                 .setParameter(3, threeDaysAfter);
 
+        return this.searchFlightSchedules(query, passengerCount);
+    }
+
+    public List<FlightSchedule> searchFlightSchedules(TypedQuery<FlightSchedule> typedQuery, Integer passengerCount) {
         final List<FlightSchedule> countFilteredFlightSchedules = new ArrayList<>();
-        final List<FlightSchedule> flightSchedules = query.getResultList();
+        final List<FlightSchedule> flightSchedules = typedQuery.getResultList();
         flightSchedules.forEach(flightSchedule -> {
             final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
             if(flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {

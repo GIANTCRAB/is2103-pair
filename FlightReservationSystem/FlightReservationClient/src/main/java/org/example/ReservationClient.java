@@ -13,6 +13,7 @@ import lombok.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -127,13 +128,19 @@ public class ReservationClient implements SystemClient {
         System.out.println("=======================");
 
         try {
-            List<FlightSchedule> flightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
-            flightScheduleList.forEach(flightSchedule -> {
-                System.out.println("ID: " + flightSchedule.getFlightScheduleId());
-                System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
-                System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
-                System.out.println("=======================");
-            });
+            Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
+            for (List<FlightSchedule> flightScheduleList : possibleFlightScheduleList) {
+                System.out.println("========== Possible schedule route ==========");
+                flightScheduleList.forEach(flightSchedule -> {
+                    System.out.println("Flight Schedule ID: " + flightSchedule.getFlightScheduleId());
+                    System.out.println("Departure Airport: " + flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode());
+                    System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
+                    System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
+                    System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
+                    System.out.println("=======================");
+                });
+                System.out.println("=================================================");
+            }
         } catch (InvalidConstraintException e) {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {

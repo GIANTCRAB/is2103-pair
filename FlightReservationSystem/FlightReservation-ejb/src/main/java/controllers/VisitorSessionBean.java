@@ -10,7 +10,9 @@ import javax.ejb.Stateful;
 import javax.inject.Inject;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Stateful
 public class VisitorSessionBean implements VisitorBeanRemote {
@@ -20,6 +22,8 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     AirportService airportService;
     @Inject
     FlightRouteService flightRouteService;
+    @Inject
+    FlightService flightService;
     @Inject
     FlightScheduleService flightScheduleService;
 
@@ -35,17 +39,17 @@ public class VisitorSessionBean implements VisitorBeanRemote {
 
     //TODO: implement this
     @Override
-    public List<FlightSchedule> searchFlight(@NonNull Airport departureAirport,
-                                             @NonNull Airport destinationAirport,
-                                             @NonNull Date departureDate,
-                                             Date returnDate,
-                                             @NonNull Integer passengerCount,
-                                             Boolean directOnly,
-                                             CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException {
+    public Set<List<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
+                                                  @NonNull Airport destinationAirport,
+                                                  @NonNull Date departureDate,
+                                                  Date returnDate,
+                                                  @NonNull Integer passengerCount,
+                                                  Boolean directOnly,
+                                                  CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException {
         final Airport managedDepartureAirport = this.airportService.findAirportByCode(departureAirport.getIataCode());
         final Airport managedDestinationAirport = this.airportService.findAirportByCode(destinationAirport.getIataCode());
         final FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(managedDepartureAirport, managedDestinationAirport);
-        final List<FlightSchedule> searchResult = new ArrayList<>();
+        final Set<List<FlightSchedule>> possibleFlightSchedules = new HashSet<>();
 
         if (returnDate != null) {
             // Return date specified
@@ -61,11 +65,18 @@ public class VisitorSessionBean implements VisitorBeanRemote {
 
                 } else {
                     // Basic search only
-                    searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightRoute, departureDate, passengerCount));
+                    final Set<List<Flight>> possibleFlights = this.flightService.getPossibleFlights(flightRoute.getOrigin(), flightRoute.getDest());
+                    for (List<Flight> possibleFlight : possibleFlights) {
+                        final List<FlightSchedule> searchResult = new ArrayList<>();
+                        for (Flight flightPathNode : possibleFlight) {
+                            searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
+                        }
+                        possibleFlightSchedules.add(searchResult);
+                    }
                 }
             }
         }
 
-        return searchResult;
+        return possibleFlightSchedules;
     }
 }

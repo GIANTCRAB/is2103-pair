@@ -4,7 +4,6 @@ import entities.Airport;
 import entities.CabinClassType;
 import entities.Customer;
 import entities.FlightSchedule;
-import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
@@ -12,6 +11,7 @@ import lombok.NonNull;
 import javax.ejb.Remote;
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 @Remote
 public interface VisitorBeanRemote {
@@ -22,11 +22,11 @@ public interface VisitorBeanRemote {
                       String phoneNumber,
                       String address) throws InvalidConstraintException;
 
-    List<FlightSchedule> searchFlight(@NonNull Airport departureAirport,
-                                      @NonNull Airport destinationAirport,
-                                      @NonNull Date departureDate,
-                                      Date returnDate,
-                                      @NonNull Integer passengerCount,
-                                      Boolean directOnly,
-                                      CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException;
+    Set<List<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
+                                           @NonNull Airport destinationAirport,
+                                           @NonNull Date departureDate,
+                                           Date returnDate,
+                                           @NonNull Integer passengerCount,
+                                           Boolean directOnly,
+                                           CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException;
 }
