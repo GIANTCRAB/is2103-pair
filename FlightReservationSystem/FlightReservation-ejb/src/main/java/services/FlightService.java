@@ -82,9 +82,9 @@ public class FlightService {
     }
 
     public Flight getFlightByFlightCode(String flightCode) {
-        Query query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode = :inFlightCode")
+        TypedQuery<Flight> query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode = :inFlightCode", Flight.class)
                 .setParameter("inFlightCode", flightCode);
-        Flight flight = (Flight) query.getSingleResult();
+        Flight flight = query.getSingleResult();
         flight.getFlightRoute();
         flight.getAircraftConfiguration();
         flight.getAircraftConfiguration().getCabinClasses().size();
