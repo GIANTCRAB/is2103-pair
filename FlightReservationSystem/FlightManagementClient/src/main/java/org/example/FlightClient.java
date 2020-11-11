@@ -59,7 +59,7 @@ public class FlightClient implements SystemClient {
                     this.displayUpdateFlightMenu();
                     break;
                 case 5:
-                    //this.displayDeleteFlightMenu();
+                    this.displayDeleteFlightMenu();
                     break;
                 default:
                     System.out.println("Exiting...");
@@ -185,6 +185,17 @@ public class FlightClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void displayDeleteFlightMenu() {
+        System.out.println("*** Delete Flight ***");
+        System.out.println("Enter the flight number of the flight you would like to delete:");
+        String flightCode = scanner.next();
+               
+        System.out.println(this.flightBeanRemote.deleteFlight(flightCode));
+
+        // Add try-catch
+        
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
