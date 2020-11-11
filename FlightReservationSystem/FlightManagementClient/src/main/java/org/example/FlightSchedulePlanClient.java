@@ -9,6 +9,7 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityInUseException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -294,10 +295,10 @@ public class FlightSchedulePlanClient implements SystemClient {
                     displayUpdateFares(flightSchedulePlan);
                     break;
                 case 2:
-                    //displayAddFlightSchedule(flightSchedulePlan);
+                    displayAddFlightSchedule(flightSchedulePlan);
                     break;
                 case 3:
-                    //displayDeleteFlightSchedule(flightSchedulePlan);
+                    displayDeleteFlightSchedule(flightSchedulePlan);
                     break;
                 case 4:
                     displayUpdateFlightScheduleDetails(flightSchedulePlan);
@@ -337,6 +338,56 @@ public class FlightSchedulePlanClient implements SystemClient {
             this.flightSchedulePlanBeanRemote.updateFares(updatedFares);
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayAddFlightSchedule(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Add Flight Schedule ---");
+        String flightCode = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightCode();
+        List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+        boolean add = true; 
+        try {
+            while(add) {
+                System.out.println("Enter departure date in YYYY-MM-DD:");
+                Date departureDate = Date.valueOf(scanner.next());
+                System.out.println("Enter departure time in hh:mm");
+                Time departureTime = Time.valueOf(scanner.next() + ":00");
+                System.out.println("Enter estimated flight duration in minutes:");
+                Long estimatedDuration = scanner.nextLong();
+                FlightSchedule flightSchedule = this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration);
+                newFlightSchedules.add(flightSchedule);
+                System.out.println("Add another flight schedule? (1: Yes, 2: No)");
+                int option = scanner.nextInt();
+                if (option == 2) {
+                    add = false;
+                }
+            }
+            this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidConstraintException e) {
+            displayConstraintErrorMessage(e);
+        }
+    }
+    
+    private void displayDeleteFlightSchedule(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Delete Flight Schedule ---");
+        ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
+        while (iterateSchedules.hasNext()) {
+            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
+                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
+                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+        }
+        
+        System.out.println("Enter the index of the flight schedule you would like to delete: ");
+        int index = scanner.nextInt();
+        FlightSchedule flightSchedule = flightSchedulePlan.getFlightSchedules().get(index-1);
+        try {
+            this.flightSchedulePlanBeanRemote.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (EntityInUseException e) {
+            e.getMessage();
         }
     }
     
@@ -392,5 +443,10 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (InvalidEntityIdException e) {
             System.out.println("Invalid flight schedule plan ID.");
         }
+    }
+    
+    private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
+        System.out.println("There were some validation errors!");
+        System.out.println(invalidConstraintException.toString());
     }
 }

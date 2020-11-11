@@ -160,7 +160,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         if (flightSchedule.getFlightReservations().isEmpty()) {
             this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
         } else {
-            throw new EntityInUseException();
+            throw new EntityInUseException("Flight schedule is in use and cannot be deleted!");
         }
     }
     
