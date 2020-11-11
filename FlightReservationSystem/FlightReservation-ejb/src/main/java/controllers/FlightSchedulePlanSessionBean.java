@@ -137,21 +137,11 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    // Only works if end date is earlier than current date
-    public void updateEndDate(Long flightSchedulePlanId, Date newEndDate) throws NotAuthenticatedException, InvalidEntityIdException, EntityInUseException {
+    public void updateFlightSchedules(List<FlightSchedule> flightSchedules) throws NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlanId);
-        for (FlightSchedule flightSchedule : flightSchedulePlan.getFlightSchedules()) {
-            if (newEndDate.compareTo(flightSchedule.getDate()) < 0) {
-                if (!flightSchedule.getFlightReservations().isEmpty()) {
-                    this.flightScheduleService.deleteFlightSchedule(flightSchedule);
-                } else {
-                    throw new EntityInUseException();
-                }
-            }
-        }
+        this.flightScheduleService.updateFlightSchedules(flightSchedules);
     }
 
     @Override

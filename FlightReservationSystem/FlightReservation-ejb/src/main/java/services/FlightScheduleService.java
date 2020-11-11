@@ -58,6 +58,11 @@ public class FlightScheduleService {
         return flightSchedules;
     }
     
+    public void updateFlightSchedules(List<FlightSchedule> flightSchedules) {
+        flightSchedules.forEach(flightSchedule -> em.merge(flightSchedule));
+        em.flush();
+    }
+    
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteFlightSchedule(FlightSchedule flightSchedule) {
         Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());

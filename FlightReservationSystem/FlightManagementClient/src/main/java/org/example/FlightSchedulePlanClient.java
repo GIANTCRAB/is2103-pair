@@ -85,7 +85,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         final String flightCode = scanner.next();
         
         try {  
-            displayCreateFlightSchedule(flightCode);
+            displayCreateFlightSchedulePlan(flightCode);
             
             Flight returnFlight = this.flightBeanRemote.getDirectReturnFlightByFlightCode(flightCode);
             if (returnFlight != null) {
@@ -94,7 +94,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                 final int option = scanner.nextInt();
                 if (option == 1) {
                     System.out.println("Creating flight schedule plan for return flight...");
-                    displayCreateFlightSchedule(returnFlight.getFlightCode());
+                    displayCreateFlightSchedulePlan(returnFlight.getFlightCode());
                 }         
             }
         } catch (InvalidConstraintException e) {
@@ -104,7 +104,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } 
     }
     
-    private void displayCreateFlightSchedule(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+    private void displayCreateFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
         System.out.println("Enter flight schedule plan type:");
         System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
         final int option = scanner.nextInt();
@@ -261,7 +261,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         Flight flight = flightSchedules.get(0).getFlight();
-        System.out.println("Flight number: " + flight.getFlightRoute());
+        System.out.println("Flight number: " + flight.getFlightCode());
         System.out.println("Origin airport: " + flight.getFlightRoute().getOrigin().getIataCode());
         System.out.println("Destination airport: " + flight.getFlightRoute().getDest().getIataCode());
         System.out.println("------------------------------------");
@@ -282,17 +282,26 @@ public class FlightSchedulePlanClient implements SystemClient {
         try {
             FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.getFlightSchedulePlanById(flightSchedulePlanId);
             this.printFlightSchedulePlanDetails(flightSchedulePlan);
-            // Need to check if flight can be updated
+
             System.out.println("What details would you like to update?");
             System.out.println("1. Fare(s)");
-            System.out.println("2. Add/Delete Schedule(s)");
+            System.out.println("2. Add Flight Schedule");
+            System.out.println("3. Delete Flight Schedule");
+            System.out.println("4. Update Flight Schedule Details");
             final int option = scanner.nextInt();
-            if (option == 1) {
-                displayUpdateFares(flightSchedulePlan);
-            } else if (option == 2) {
-                //displayUpdateSchedules(flightSchedulePlan);
-            } else {
-                System.out.println("Invalid option. Please try again.");
+            switch(option) {
+                case 1:
+                    displayUpdateFares(flightSchedulePlan);
+                    break;
+                case 2:
+                    //displayAddFlightSchedule(flightSchedulePlan);
+                    break;
+                case 3:
+                    //displayDeleteFlightSchedule(flightSchedulePlan);
+                    break;
+                case 4:
+                    displayUpdateFlightScheduleDetails(flightSchedulePlan);
+                    break;
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
@@ -314,7 +323,7 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println("Enter the index of the fare you would like to update: ");
             int index = scanner.nextInt();
             System.out.println("Enter the new fare amount: ");
-            final BigDecimal newFareAmount = scanner.nextBigDecimal();
+            BigDecimal newFareAmount = scanner.nextBigDecimal();
             Fare updatedFare = flightSchedulePlan.getFares().get(index-1);
             updatedFare.setFareAmount(newFareAmount);
             updatedFares.add(updatedFare);
@@ -326,6 +335,46 @@ public class FlightSchedulePlanClient implements SystemClient {
         }
         try {
             this.flightSchedulePlanBeanRemote.updateFares(updatedFares);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayUpdateFlightScheduleDetails(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Update Flight Schedule Details ---");
+        ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
+        while (iterateSchedules.hasNext()) {
+            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
+                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
+                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+        }
+        
+        List<FlightSchedule> updatedFlightSchedules = new ArrayList<>();
+        boolean update = true;
+        while (update) {
+            System.out.println("Enter the index of the flight schedules you would like to update: ");
+            int index = scanner.nextInt();
+            System.out.println("Enter the new departure date in YYYY-MM-DD: ");
+            Date newDate = Date.valueOf(scanner.next());
+            System.out.println("Enter the new departure time in hh:mm: ");
+            Time newTime = Time.valueOf(scanner.next());
+            System.out.println("Enter the new estimated duration: ");
+            Long newDuration = scanner.nextLong();
+            
+            FlightSchedule updatedFlightSchedule = flightSchedulePlan.getFlightSchedules().get(index-1);
+            updatedFlightSchedule.setDate(newDate);
+            updatedFlightSchedule.setTime(newTime);
+            updatedFlightSchedule.setEstimatedDuration(newDuration);
+            updatedFlightSchedules.add(updatedFlightSchedule);
+
+            System.out.println("Update another flight schedule? (1: Yes, 2: No)");
+            int option = scanner.nextInt();
+            if (option == 2) {
+                update = false;
+            }
+        }
+        try {
+            this.flightSchedulePlanBeanRemote.updateFlightSchedules(updatedFlightSchedules);
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
