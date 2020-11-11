@@ -34,11 +34,10 @@ public class FlightSchedulePlanService {
     private final Validator validator = validatorFactory.getValidator();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules, List<Fare> fares) throws InvalidConstraintException {
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
         flightSchedulePlan.setFlightSchedules(flightSchedules);
-        flightSchedulePlan.setFares(fares);
 
         Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
@@ -46,14 +45,20 @@ public class FlightSchedulePlanService {
         }
 
         em.persist(flightSchedulePlan);
-        flightSchedules.forEach(f -> em.find(FlightSchedule.class, f.getFlightScheduleId()).setFlightSchedulePlan(flightSchedulePlan));
+        flightSchedules.forEach(f -> {
+            f.setFlightSchedulePlan(flightSchedulePlan);
+            em.persist(f);
+        });
         em.flush();
 
         return flightSchedulePlan;
     }
 
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
-        return this.create(flightSchedulePlanType, flightSchedules, null);
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public FlightSchedulePlan associateWithFares(@NonNull FlightSchedulePlan flightSchedulePlan, List<Fare> fares) {
+        flightSchedulePlan.setFares(fares);
+        em.persist(flightSchedulePlan);
+        return flightSchedulePlan;
     }
 
     public FlightSchedulePlan getFlightSchedulePlanById(Long id) {
