@@ -17,4 +17,6 @@ public interface FareBeanRemote {
     Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
 
     Fare create(String fareBasisCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException, InvalidConstraintException;
+
+    void delete(Fare fare) throws NotAuthenticatedException;
 }

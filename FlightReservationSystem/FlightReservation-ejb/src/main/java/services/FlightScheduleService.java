@@ -60,7 +60,11 @@ public class FlightScheduleService {
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteFlightSchedule(FlightSchedule flightSchedule) {
-        em.remove(flightSchedule);
+        Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());
+        FlightSchedule managedFlightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
+        
+        flight.getFlightSchedules().remove(managedFlightSchedule);
+        em.remove(managedFlightSchedule);
         em.flush();
     }
 

@@ -10,6 +10,8 @@ import lombok.NonNull;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -66,5 +68,15 @@ public class FareService {
                 .setParameter(2, flightSchedulePlan.getFlightSchedulePlanId());
 
         return query.getSingleResult();
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void delete(Fare fare) {
+        Fare managedFare = em.find(Fare.class, fare.getFareId());
+        CabinClass managedCabinClass = em.find(CabinClass.class, fare.getCabinClass().getCabinClassId());
+        
+        managedCabinClass.getFares().remove(managedFare);
+        em.remove(managedFare);
+        em.flush();
     }
 }

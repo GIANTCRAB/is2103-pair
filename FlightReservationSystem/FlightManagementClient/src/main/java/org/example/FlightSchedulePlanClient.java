@@ -204,9 +204,11 @@ public class FlightSchedulePlanClient implements SystemClient {
         try {
             final List<FlightSchedulePlan> flightSchedulePlanList = this.flightSchedulePlanBeanRemote.getFlightSchedulePlans();
             for (FlightSchedulePlan flightSchedulePlan : flightSchedulePlanList) {
-                System.out.println("Flight Schedule Plan: " + flightSchedulePlan.getFlightSchedulePlanId() + " , Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
-                flightSchedulePlan.getFlightSchedules().forEach(f -> {
-                    System.out.println("\tFlight number: " + f.getFlight().getFlightCode() + " , Departure date/time: " + f.getDepartureDateTime());
+                System.out.println("Flight Schedule Plan: " + flightSchedulePlan.getFlightSchedulePlanId() + ", Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
+                
+                // Not sure why this gives NullPointerException
+                flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
+                    System.out.println("\tFlight number: " + flightSchedule.getFlight().getFlightCode() + " , Departure date/time: " + flightSchedule.getDepartureDateTime());
                 });
                 // Print return flight schedule plan
             }

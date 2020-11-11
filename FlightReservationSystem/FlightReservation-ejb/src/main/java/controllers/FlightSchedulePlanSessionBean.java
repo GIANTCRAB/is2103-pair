@@ -20,6 +20,7 @@ import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import services.AuthService;
+import services.FareService;
 import services.FlightScheduleService;
 import services.FlightSchedulePlanService;
 import services.FlightService;
@@ -27,6 +28,8 @@ import services.FlightService;
 @Stateful
 public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemote {
     private Employee loggedInEmployee = null;
+    @Inject
+    FareService fareService;
     @Inject
     FlightService flightService;
     @Inject
@@ -137,6 +140,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         String msg = "";
         if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
             flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
+            flightSchedulePlan.getFares().forEach(fare -> this.fareService.delete(fare));
             this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
             msg = "Flight schedule plan successfully deleted.";
         } else {
