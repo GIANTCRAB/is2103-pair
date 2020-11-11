@@ -127,5 +127,19 @@ public class FlightSessionBean implements FlightBeanRemote {
             throw new InvalidEntityIdException();
         }
     }
-
+    
+    @Override
+    public String deleteFlight(String flightCode) {
+        Flight flight = this.flightService.getFlightByFlightCode(flightCode);
+        String msg;
+        
+        if (flight.getFlightSchedules().isEmpty()) {
+            this.flightService.delete(flight);
+            msg = "Flight deleted successfully.";
+        } else {
+            this.flightService.disable(flight);
+            msg = "Flight is in use, will be disabled instead.";
+        }
+        return msg;
+    }
 }

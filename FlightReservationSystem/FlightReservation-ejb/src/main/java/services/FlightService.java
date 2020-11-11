@@ -189,9 +189,12 @@ public class FlightService {
         newAircraftConfiguration.getFlights().add(flight);
     }
 
-    // Do this after FlightSchedule is settled
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void delete(Flight flight) {
         this.em.remove(flight);
+    }
+    
+    public void disable(Flight flight) {
+        Flight managedFlight = this.em.find(Flight.class, flight.getFlightId());
+        flight.setEnabled(false);
     }
 }

@@ -32,6 +32,10 @@ public class Flight implements Serializable {
 
     @Column
     private BigDecimal totalAmountPaid;
+    
+    @NotNull
+    @Column(nullable = false)
+    private Boolean enabled = true;
 
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -45,4 +49,7 @@ public class Flight implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
+    
+    @OneToMany(mappedBy="flight")
+    private List<FlightSchedule> flightSchedules = new ArrayList<>();
 }
