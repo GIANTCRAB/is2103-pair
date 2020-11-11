@@ -150,9 +150,11 @@ public class ReservationClient implements SystemClient {
         System.out.println("=======================");
 
         try {
+            System.out.println("============ **** Departure Flight Search Result **** =============");
             final Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, passengerCount, directOnly, cabinClassType);
             this.displayFlightScheduleListDetails(possibleFlightScheduleList);
             if (returnDate != null) {
+                System.out.println("============ **** Return Flight Search Result **** =============");
                 final Set<List<FlightSchedule>> possibleReturnFlightScheduleList = this.visitorBeanRemote.searchFlight(destinationAirport, departureAirport, returnDate, passengerCount, directOnly, cabinClassType);
                 this.displayFlightScheduleListDetails(possibleReturnFlightScheduleList);
             }
