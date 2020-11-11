@@ -18,6 +18,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -89,6 +90,15 @@ public class FlightService {
         flight.getAircraftConfiguration().getCabinClasses().size();
 
         return flight;
+    }
+    
+    
+    public Flight getFlightByOriginDest(String origin, String destination) throws NoResultException {
+        TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f JOIN f.flightRoute fr"
+                + " WHERE fr.flightRouteId.originId =?1 AND fr.flightRouteId.destId =?2", Flight.class)
+                .setParameter(1, origin)
+                .setParameter(2, destination);
+        return searchQuery.getSingleResult();
     }
 
     public Set<List<Flight>> getPossibleFlights(@NonNull Airport origin, @NonNull Airport destination) {

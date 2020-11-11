@@ -81,96 +81,110 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("*** Create Flight Schedule Plan ***");
         System.out.println("Enter flight code:");
         final String flightCode = scanner.next();
-        // Include check for return flight
         
-        System.out.println("Enter flight schedule plan type:");
-        System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
-        final int option = scanner.nextInt();
-        
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
-        
-        try {
-            switch (option) {
-                case 1:
-                    System.out.println("Enter departure date in YYYY-MM-DD:");
-                    Date departureDate = Date.valueOf(scanner.next());
-                    System.out.println("Enter departure time in hh:mm");
-                    Time departureTime = Time.valueOf(scanner.next() + ":00");
-                    System.out.println("Enter estimated flight duration in minutes:");
-                    Long estimatedDuration = scanner.nextLong();
-                    
-                    flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
-                    FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
-                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
-                    
-                    System.out.println("Flight schedule plan created successfully!");
-                    break;
-                    
-                case 2:
-                    System.out.println("Enter the number of flight schedules to be created:");
-                    final int noOfSchedules = scanner.nextInt();
-                    
-                    for (int i = 0; i < noOfSchedules; i++) {
-                        System.out.println("Enter departure date in YYYY-MM-DD:");
-                        departureDate = Date.valueOf(scanner.next());
-                        System.out.println("Enter departure time in hh:mm");
-                        departureTime = Time.valueOf(scanner.next() + ":00");
-                        System.out.println("Enter estimated flight duration in minutes:");
-                        estimatedDuration = scanner.nextLong();
-                        flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
-                    }
-                    
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.MULTIPLE, flightSchedules);
-                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
-                    
-                    System.out.println("Flight schedule plan created successfully!");
-                    break;
-                
-                case 3:
-                    System.out.println("Enter the frequency of the flight schedule in days: ");
-                    System.out.println("(Minimum n = 1, maximum n = 6)");
-                    final int nDays = scanner.nextInt();
-                    
-                    System.out.println("Enter the first departure date in YYYY-MM-DD:");
-                    departureDate = Date.valueOf(scanner.next());
-                    System.out.println("Enter departure time in hh:mm");
-                    departureTime = Time.valueOf(scanner.next() + ":00");
-                    System.out.println("Enter estimated flight duration in minutes:");
-                    estimatedDuration = scanner.nextLong();
-                    System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
-                    Date endDate = Date.valueOf(scanner.next());
-                    
-                    
-                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, nDays);
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_N_DAYS, flightSchedules);
-                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
-                    
-                    System.out.println("Flight schedule plan created successfully!");
-                    break;
-                
-                case 4:                    
-                    System.out.println("Enter the first departure date in YYYY-MM-DD:");
-                    departureDate = Date.valueOf(scanner.next());
-                    System.out.println("Enter departure time in hh:mm");
-                    departureTime = Time.valueOf(scanner.next() + ":00");
-                    System.out.println("Enter estimated flight duration in minutes:");
-                    estimatedDuration = scanner.nextLong();
-                    System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
-                    endDate = Date.valueOf(scanner.next());
-                    
-                    
-                    flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
-                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_WEEKLY, flightSchedules);
-                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
-                    
-                    System.out.println("Flight schedule plan created successfully!");
-                    break;
+        try {  
+            displayCreateFlightSchedule(flightCode);
+
+            Flight returnFlight = this.flightBeanRemote.getDirectReturnFlightByFlightCode(flightCode);
+            if (returnFlight != null) {
+                System.out.println("A return flight exists. Create a flight schedule plan for return flight?");
+                System.out.println("1: Yes, 2: No");
+                final int option = scanner.nextInt();
+                if (option == 1) {
+                    System.out.println("Creating flight schedule plan for return flight...");
+                    displayCreateFlightSchedule(returnFlight.getFlightCode());
+                }         
             }
         } catch (InvalidConstraintException e) {
             e.printStackTrace();
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
         } 
+    }
+    
+    private void displayCreateFlightSchedule(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+        System.out.println("Enter flight schedule plan type:");
+        System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
+        final int option = scanner.nextInt();
+        
+        List<FlightSchedule> flightSchedules = new ArrayList<>();
+        
+        switch (option) {
+            case 1:
+                System.out.println("Enter departure date in YYYY-MM-DD:");
+                Date departureDate = Date.valueOf(scanner.next());
+                System.out.println("Enter departure time in hh:mm");
+                Time departureTime = Time.valueOf(scanner.next() + ":00");
+                System.out.println("Enter estimated flight duration in minutes:");
+                Long estimatedDuration = scanner.nextLong();
+
+                flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
+                FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+
+                System.out.println("Flight schedule plan created successfully!");
+                break;
+
+            case 2:
+                System.out.println("Enter the number of flight schedules to be created:");
+                final int noOfSchedules = scanner.nextInt();
+
+                for (int i = 0; i < noOfSchedules; i++) {
+                    System.out.println("Enter departure date in YYYY-MM-DD:");
+                    departureDate = Date.valueOf(scanner.next());
+                    System.out.println("Enter departure time in hh:mm");
+                    departureTime = Time.valueOf(scanner.next() + ":00");
+                    System.out.println("Enter estimated flight duration in minutes:");
+                    estimatedDuration = scanner.nextLong();
+                    flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
+                }
+
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.MULTIPLE, flightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+
+                System.out.println("Flight schedule plan created successfully!");
+                break;
+
+            case 3:
+                System.out.println("Enter the frequency of the flight schedule in days: ");
+                System.out.println("(Minimum n = 1, maximum n = 6)");
+                final int nDays = scanner.nextInt();
+
+                System.out.println("Enter the first departure date in YYYY-MM-DD:");
+                departureDate = Date.valueOf(scanner.next());
+                System.out.println("Enter departure time in hh:mm");
+                departureTime = Time.valueOf(scanner.next() + ":00");
+                System.out.println("Enter estimated flight duration in minutes:");
+                estimatedDuration = scanner.nextLong();
+                System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
+                Date endDate = Date.valueOf(scanner.next());
+
+
+                flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, nDays);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_N_DAYS, flightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+
+                System.out.println("Flight schedule plan created successfully!");
+                break;
+
+            case 4:                    
+                System.out.println("Enter the first departure date in YYYY-MM-DD:");
+                departureDate = Date.valueOf(scanner.next());
+                System.out.println("Enter departure time in hh:mm");
+                departureTime = Time.valueOf(scanner.next() + ":00");
+                System.out.println("Enter estimated flight duration in minutes:");
+                estimatedDuration = scanner.nextLong();
+                System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
+                endDate = Date.valueOf(scanner.next());
+
+
+                flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_WEEKLY, flightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+
+                System.out.println("Flight schedule plan created successfully!");
+                break;
+        }
     }
     
     private void displayEnterFareForCabinClass(String flightCode, FlightSchedulePlan flightSchedulePlan) {

@@ -21,6 +21,7 @@ import services.AircraftConfigurationService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import services.AirportService;
 
@@ -96,6 +97,23 @@ public class FlightSessionBean implements FlightBeanRemote {
         }
 
         return this.flightService.getFlightByFlightCode(flightCode);
+    }
+    
+    @Override
+    public Flight getDirectReturnFlightByFlightCode(String flightCode) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        Flight flight = this.flightService.getFlightByFlightCode(flightCode);
+        String origin = flight.getFlightRoute().getOrigin().getIataCode();
+        String destination = flight.getFlightRoute().getDest().getIataCode();
+        
+        try {
+            Flight returnFlight = this.flightService.getFlightByOriginDest(destination, origin);
+            return returnFlight;
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
