@@ -44,4 +44,12 @@ public class FareSessionBean implements FareBeanRemote {
         return this.fareService.create(fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
     }
     
+    @Override
+    public void delete(Fare fare) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        this.fareService.delete(fare);
+    }
+    
 }
