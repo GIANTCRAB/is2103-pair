@@ -64,7 +64,15 @@ public class CustomerSessionBean implements CustomerBeanRemote {
             throw new NotAuthenticatedException();
         }
 
-        return this.flightReservationService.getFlightReservations(loggedInCustomer);
+        List<FlightReservation> flightReservations = this.flightReservationService.getFlightReservations(loggedInCustomer);
+
+        flightReservations.forEach(flightReservation -> {
+            flightReservation.getFlightReservationPayment().getPaymentId();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode();
+            flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode();
+        });
+
+        return flightReservations;
     }
 
     @Override
