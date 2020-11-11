@@ -7,6 +7,7 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -153,7 +154,7 @@ public class FlightClient implements SystemClient {
         System.out.println("-----------------------------------");
         System.out.println("Flight route: " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
         System.out.println("Aircraft configuration: " + flight.getAircraftConfiguration().getAircraftConfigurationName());
-        System.out.println("Available cabin classes: " + availableCabinClasses + "\n");
+        System.out.println("Available cabin classes: " + availableCabinClasses);
         System.out.println("-----------------------------------");
     }
     
@@ -179,6 +180,7 @@ public class FlightClient implements SystemClient {
 
                 if (flightRouteBeanRemote.checkFlightRoute(origin, dest)) {
                     this.flightBeanRemote.updateFlightRoute(flightCode, origin, dest);
+                    System.out.println("Flight updated successfully!");
                 } else {
                     System.out.println("Flight route does not exist!");
                 }
@@ -186,13 +188,16 @@ public class FlightClient implements SystemClient {
                 System.out.println("Enter the ID of the new aircraft configuration: ");
                 Long aircraftConfigurationId = scanner.nextLong();
                 this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationId);
+                System.out.println("Flight updated successfully!");
             } else {
                 System.out.println("Invalid input. Please try again.");
             }
-        } catch (InvalidEntityIdException e) {
+        } catch (EntityAlreadyExistException e) {
             e.getMessage();
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            e.getMessage();
         }
     }
     

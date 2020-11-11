@@ -6,6 +6,7 @@ import entities.Flight;
 import entities.FlightRoute;
 import entities.Airport;
 import entities.AircraftConfiguration;
+import exceptions.EntityAlreadyExistException;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -117,17 +118,20 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException {
+    public void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-
+        
+        Flight flight = getFlightByFlightCode(flightCode);
         final Airport originAirport = this.airportService.findAirportByCode(newOrigin);
         final Airport destinationAirport = this.airportService.findAirportByCode(newDestination);
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
 
-        if (flightRoute != null) {
-            this.flightService.updateFlightRoute(flightCode, flightRoute);
+        if(flightRoute.getFlights().contains(flight)) {
+            throw new EntityAlreadyExistException("There is an existing flight with the chosen flight route.");
+        } else {
+            this.flightService.updateFlightRoute(flight, flightRoute);
         }
     }
 

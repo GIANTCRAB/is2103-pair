@@ -190,14 +190,15 @@ public class FlightService {
         return flightList;
     }
 
-    public void updateFlightRoute(String flightCode, FlightRoute flightRoute) {
-        Flight flight = this.getFlightByFlightCode(flightCode);
+    public void updateFlightRoute(Flight flight, FlightRoute flightRoute) {
         FlightRoute oldFlightRoute = this.em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
         FlightRoute newFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
 
         flight.setFlightRoute(flightRoute);
+        em.merge(flight);
         oldFlightRoute.getFlights().remove(flight);
         newFlightRoute.getFlights().add(flight);
+        em.flush();
     }
 
     public void updateAircraftConfiguration(String flightCode, AircraftConfiguration aircraftConfiguration) {

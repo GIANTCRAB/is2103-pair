@@ -2,6 +2,7 @@ package controllers;
 
 import entities.Employee;
 import entities.Flight;
+import exceptions.EntityAlreadyExistException;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -25,7 +26,7 @@ public interface FlightBeanRemote {
             
     Flight getFlightByFlightCode(String flightCode) throws NotAuthenticatedException;
     
-    void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException;
+    void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException, EntityAlreadyExistException;
     
     void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
 
