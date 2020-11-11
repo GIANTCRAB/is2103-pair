@@ -46,34 +46,34 @@ public class FlightRouteService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException, InvalidEntityIdException {
-        FlightRoute flightRoute = findFlightRouteByOriginDest(origin, destination);
-        if (flightRoute == null) {
-            flightRoute = new FlightRoute();
-            flightRoute.setOrigin(origin);
-            flightRoute.setDest(destination);
-            Set<ConstraintViolation<FlightRoute>> violations = this.validator.validate(flightRoute);
+        try {
+            findFlightRouteByOriginDest(origin, destination);
+            throw new FlightRouteAlreadyExistException();
+        } catch (InvalidEntityIdException e) {
+            final FlightRoute newFlightRoute = new FlightRoute();
+            newFlightRoute.setOrigin(origin);
+            newFlightRoute.setDest(destination);
+            Set<ConstraintViolation<FlightRoute>> violations = this.validator.validate(newFlightRoute);
             // There are invalid data
             if (!violations.isEmpty()) {
                 throw new InvalidConstraintException(violations.toString());
             }
 
-            this.em.persist(flightRoute);
+            this.em.persist(newFlightRoute);
             this.em.flush();
 
             final List<FlightRoute> originFlightRoutes = origin.getOriginFlightRoutes();
-            originFlightRoutes.add(flightRoute);
+            originFlightRoutes.add(newFlightRoute);
             origin.setOriginFlightRoutes(originFlightRoutes);
             this.em.persist(origin);
 
             final List<FlightRoute> destFlightRoutes = destination.getDestFlightRoutes();
-            destFlightRoutes.add(flightRoute);
+            destFlightRoutes.add(newFlightRoute);
             destination.setDestFlightRoutes(destFlightRoutes);
             this.em.persist(destination);
             this.em.flush();
 
-            return flightRoute;
-        } else {
-            throw new FlightRouteAlreadyExistException();
+            return newFlightRoute;
         }
     }
 
