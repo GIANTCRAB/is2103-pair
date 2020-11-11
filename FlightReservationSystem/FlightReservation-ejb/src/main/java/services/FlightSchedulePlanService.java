@@ -58,9 +58,23 @@ public class FlightSchedulePlanService {
     public FlightSchedulePlan associateWithFares(@NonNull FlightSchedulePlan flightSchedulePlan, List<Fare> fares) {
         flightSchedulePlan.setFares(fares);
         em.merge(flightSchedulePlan);
+        em.flush();
         return flightSchedulePlan;
     }
-
+    
+    public void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) {
+        
+        flightSchedules.forEach(flightSchedule -> {
+            flightSchedulePlan.getFlightSchedules().add(flightSchedule);
+            flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
+            em.merge(flightSchedule);
+        });
+        
+        em.merge(flightSchedulePlan);
+        em.flush();
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedulePlan getFlightSchedulePlanById(Long id) {
         FlightSchedulePlan flightSchedulePlan = em.find(FlightSchedulePlan.class, id);
         flightSchedulePlan.getFlightSchedules();
@@ -82,7 +96,6 @@ public class FlightSchedulePlanService {
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
-        flightSchedulePlan.getFlightSchedules().clear();
         em.remove(flightSchedulePlan);
         em.flush();
     }

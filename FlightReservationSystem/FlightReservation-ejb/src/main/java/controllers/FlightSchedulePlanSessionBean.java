@@ -129,16 +129,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    public void updateFlight(Long flightSchedulePlanId, String newFlightCode) throws NotAuthenticatedException, InvalidEntityIdException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-        FlightSchedulePlan flightSchedulePlan = getFlightSchedulePlanById(flightSchedulePlanId);
-        Flight newFlight = this.flightService.getFlightByFlightCode(newFlightCode);
-        this.flightScheduleService.updateFlightForFlightSchedules(flightSchedulePlan.getFlightSchedules(), newFlight);
-    }
-    
-    @Override
     public void updateFares(List<Fare> fares) throws NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
@@ -147,23 +137,33 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    // Works if end date is earlier than current date
-    public void updateEndDate(Long flightSchedulePlanId, Date newEndDate) throws NotAuthenticatedException, InvalidEntityIdException, EntityInUseException {
+    public void updateFlightSchedules(List<FlightSchedule> flightSchedules) throws NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlanId);
-        for (FlightSchedule flightSchedule : flightSchedulePlan.getFlightSchedules()) {
-            if (newEndDate.compareTo(flightSchedule.getDate()) < 0) {
-                if (!flightSchedule.getFlightReservations().isEmpty()) {
-                    this.flightScheduleService.deleteFlightSchedule(flightSchedule);
-                } else {
-                    throw new EntityInUseException();
-                }
-            }
+        this.flightScheduleService.updateFlightSchedules(flightSchedules);
+    }
+    
+    @Override
+    public void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        this.flightSchedulePlanService.addFlightSchedules(flightSchedulePlan, flightSchedules);
+    }
+    
+    @Override
+    public void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) throws NotAuthenticatedException, EntityInUseException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        if (flightSchedule.getFlightReservations().isEmpty()) {
+            this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
+        } else {
+            throw new EntityInUseException("Flight schedule is in use and cannot be deleted!");
         }
     }
-
+    
     @Override
     public String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
@@ -177,7 +177,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         String msg = "";
         if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
-            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule));
             flightSchedulePlan.getFares().forEach(fare -> this.fareService.delete(fare));
             this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
             msg = "Flight schedule plan successfully deleted.";

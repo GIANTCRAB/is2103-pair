@@ -9,6 +9,7 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityInUseException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -16,9 +17,12 @@ import exceptions.NotAuthenticatedException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.ListIterator;
+import java.util.stream.Collectors;
 import java.sql.Date;
 import java.sql.Time;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @RequiredArgsConstructor
 public class FlightSchedulePlanClient implements SystemClient {
@@ -64,7 +68,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     this.displayViewFlightSchedulePlanDetailsMenu();
                     break;
                 case 4:
-                    //this.displayUpdateFlightSchedulePlanMenu();
+                    this.displayUpdateFlightSchedulePlanMenu();
                     break;
                 case 5:
                     this.displayDeleteFlightSchedulePlanMenu();
@@ -83,7 +87,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         final String flightCode = scanner.next();
         
         try {  
-            displayCreateFlightSchedule(flightCode);
+            FlightSchedulePlan newFlightSchedulePlan = createFlightSchedulePlan(flightCode);
             
             Flight returnFlight = this.flightBeanRemote.getDirectReturnFlightByFlightCode(flightCode);
             if (returnFlight != null) {
@@ -92,7 +96,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                 final int option = scanner.nextInt();
                 if (option == 1) {
                     System.out.println("Creating flight schedule plan for return flight...");
-                    displayCreateFlightSchedule(returnFlight.getFlightCode());
+                    displayCreateReturnFlightSchedulePlan(newFlightSchedulePlan, returnFlight.getFlightCode());
                 }         
             }
         } catch (InvalidConstraintException e) {
@@ -102,15 +106,16 @@ public class FlightSchedulePlanClient implements SystemClient {
         } 
     }
     
-    private void displayCreateFlightSchedule(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
         System.out.println("Enter flight schedule plan type:");
         System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
         final int option = scanner.nextInt();
+        FlightSchedulePlan flightSchedulePlan = null;
         
         List<FlightSchedule> flightSchedules = new ArrayList<>();
         
         switch (option) {
-            case 1:
+            case 1: {
                 System.out.println("Enter departure date in YYYY-MM-DD:");
                 Date departureDate = Date.valueOf(scanner.next());
                 System.out.println("Enter departure time in hh:mm");
@@ -119,23 +124,23 @@ public class FlightSchedulePlanClient implements SystemClient {
                 Long estimatedDuration = scanner.nextLong();
 
                 flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
-                FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
                 this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
                 System.out.println("Flight schedule plan created successfully!");
                 break;
-
-            case 2:
+            }
+            case 2: {
                 System.out.println("Enter the number of flight schedules to be created:");
                 final int noOfSchedules = scanner.nextInt();
 
                 for (int i = 0; i < noOfSchedules; i++) {
                     System.out.println("Enter departure date in YYYY-MM-DD:");
-                    departureDate = Date.valueOf(scanner.next());
+                    Date departureDate = Date.valueOf(scanner.next());
                     System.out.println("Enter departure time in hh:mm");
-                    departureTime = Time.valueOf(scanner.next() + ":00");
+                    Time departureTime = Time.valueOf(scanner.next() + ":00");
                     System.out.println("Enter estimated flight duration in minutes:");
-                    estimatedDuration = scanner.nextLong();
+                    Long estimatedDuration = scanner.nextLong();
                     flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
                 }
 
@@ -144,18 +149,18 @@ public class FlightSchedulePlanClient implements SystemClient {
 
                 System.out.println("Flight schedule plan created successfully!");
                 break;
-
-            case 3:
+            }
+            case 3: {
                 System.out.println("Enter the frequency of the flight schedule in days: ");
                 System.out.println("(Minimum n = 1, maximum n = 6)");
                 final int nDays = scanner.nextInt();
 
                 System.out.println("Enter the first departure date in YYYY-MM-DD:");
-                departureDate = Date.valueOf(scanner.next());
+                Date departureDate = Date.valueOf(scanner.next());
                 System.out.println("Enter departure time in hh:mm");
-                departureTime = Time.valueOf(scanner.next() + ":00");
+                Time departureTime = Time.valueOf(scanner.next() + ":00");
                 System.out.println("Enter estimated flight duration in minutes:");
-                estimatedDuration = scanner.nextLong();
+                Long estimatedDuration = scanner.nextLong();
                 System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
                 Date endDate = Date.valueOf(scanner.next());
 
@@ -166,16 +171,16 @@ public class FlightSchedulePlanClient implements SystemClient {
 
                 System.out.println("Flight schedule plan created successfully!");
                 break;
-
-            case 4:                    
+            }
+            case 4: {                    
                 System.out.println("Enter the first departure date in YYYY-MM-DD:");
-                departureDate = Date.valueOf(scanner.next());
+                Date departureDate = Date.valueOf(scanner.next());
                 System.out.println("Enter departure time in hh:mm");
-                departureTime = Time.valueOf(scanner.next() + ":00");
+                Time departureTime = Time.valueOf(scanner.next() + ":00");
                 System.out.println("Enter estimated flight duration in minutes:");
-                estimatedDuration = scanner.nextLong();
+                Long estimatedDuration = scanner.nextLong();
                 System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
-                endDate = Date.valueOf(scanner.next());
+                Date endDate = Date.valueOf(scanner.next());
 
 
                 flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
@@ -183,6 +188,58 @@ public class FlightSchedulePlanClient implements SystemClient {
                 this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
                 System.out.println("Flight schedule plan created successfully!");
+                break;
+            }
+            default:
+                break;
+        }
+        return flightSchedulePlan;
+    }
+    
+    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+        List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
+        FlightSchedulePlanType flightSchedulePlanType = flightSchedulePlan.getFlightSchedulePlanType();
+        List<FlightSchedule> returnFlightSchedules = new ArrayList<>();
+        
+        switch (flightSchedulePlanType) {
+            case SINGLE: {
+                // Assume that return flight schedules don't happen the next day
+                System.out.println("Enter layover duration in minutes: ");
+                Long layoverDuration = scanner.nextLong();
+                
+                Date departureDate = flightSchedules.get(0).getDate();
+                Time departureTime = Time.valueOf(flightSchedules.get(0).getTime().toLocalTime().plusMinutes(layoverDuration));
+                Long estimatedDuration = flightSchedules.get(0).getEstimatedDuration();
+
+                returnFlightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
+                FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanBeanRemote.create(flightSchedulePlanType, returnFlightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+                
+                System.out.println("Return flight schedule plan created successfully!");
+                break;
+            }
+
+            case MULTIPLE:
+            case RECURRENT_N_DAYS:
+            case RECURRENT_WEEKLY: {
+                int noOfSchedules = flightSchedules.size();
+
+                for (int i = 0; i < noOfSchedules; i++) {
+                    System.out.println("Enter layover duration in minutes: ");
+                    Long layoverDuration = scanner.nextLong();
+                    Date departureDate = flightSchedules.get(i).getDate();
+                    Time departureTime = Time.valueOf(flightSchedules.get(0).getTime().toLocalTime().plusMinutes(layoverDuration));
+                    Long estimatedDuration = flightSchedules.get(i).getEstimatedDuration();
+                    returnFlightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
+                }
+
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(flightSchedulePlanType, flightSchedules);
+                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+
+                System.out.println("Flight schedule plan created successfully!");
+                break;
+            }
+            default:
                 break;
         }
     }
@@ -251,17 +308,180 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("--------------------------------------------");
         System.out.println("Flight schedule plan type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
         
+        List<Fare> fares = flightSchedulePlan.getFares();
+        String availableFares = fares.stream()
+                    .map(fare -> fare.getCabinClass().getCabinClassId().getCabinClassType().name() + ": $" + fare.getFareAmount().toString())
+                    .collect(Collectors.joining(", "));
+        System.out.println("Available fares: " + availableFares);
+        
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         Flight flight = flightSchedules.get(0).getFlight();
-        System.out.println("Flight number: " + flight.getFlightRoute());
+        System.out.println("Flight number: " + flight.getFlightCode());
         System.out.println("Origin airport: " + flight.getFlightRoute().getOrigin().getIataCode());
         System.out.println("Destination airport: " + flight.getFlightRoute().getDest().getIataCode());
-        System.out.println("----------------------");
+        System.out.println("------------------------------------");
         
         for(FlightSchedule flightSchedule : flightSchedules) {
             System.out.println("Departure date/time: " + flightSchedule.getDepartureDateTime());
+            System.out.println("Estimated flight duration: " + flightSchedule.getEstimatedDuration() + " minutes");
             System.out.println("Estimated arrival date/time: " + flightSchedule.getArrivalDateTime());
-            System.out.println("----------------------");
+            System.out.println("------------------------------------");
+        }
+    }
+    
+    private void displayUpdateFlightSchedulePlanMenu() {
+        System.out.println("*** Update Flight Schedule Plan ***");
+        System.out.println("Enter the ID of the flight schedule plan you would like to update:");
+        Long flightSchedulePlanId = scanner.nextLong();
+        
+        try {
+            FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanBeanRemote.getFlightSchedulePlanById(flightSchedulePlanId);
+            this.printFlightSchedulePlanDetails(flightSchedulePlan);
+
+            System.out.println("What details would you like to update?");
+            System.out.println("1. Fare(s)");
+            System.out.println("2. Add Flight Schedule");
+            System.out.println("3. Delete Flight Schedule");
+            System.out.println("4. Update Flight Schedule Details");
+            final int option = scanner.nextInt();
+            switch(option) {
+                case 1:
+                    displayUpdateFares(flightSchedulePlan);
+                    break;
+                case 2:
+                    displayAddFlightSchedule(flightSchedulePlan);
+                    break;
+                case 3:
+                    displayDeleteFlightSchedule(flightSchedulePlan);
+                    break;
+                case 4:
+                    displayUpdateFlightScheduleDetails(flightSchedulePlan);
+                    break;
+            }
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid flight schedule plan ID.");
+        }
+    }
+    
+    private void displayUpdateFares(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Update Fares For Flight Schedule Plan ---");
+        ListIterator<Fare> iterateFares = flightSchedulePlan.getFares().listIterator();
+        while (iterateFares.hasNext()) {
+            System.out.println((iterateFares.nextIndex() + 1) + ". " + iterateFares.next().getCabinClass().getCabinClassId().getCabinClassType().name() + 
+                    ": $" + iterateFares.next().getFareAmount().toString());
+        }
+        List<Fare> updatedFares = new ArrayList<>();
+        boolean update = true;
+        while (update) {
+            System.out.println("Enter the index of the fare you would like to update: ");
+            int index = scanner.nextInt();
+            System.out.println("Enter the new fare amount: ");
+            BigDecimal newFareAmount = scanner.nextBigDecimal();
+            Fare updatedFare = flightSchedulePlan.getFares().get(index-1);
+            updatedFare.setFareAmount(newFareAmount);
+            updatedFares.add(updatedFare);
+            System.out.println("Update another fare? (1: Yes, 2: No)");
+            int option = scanner.nextInt();
+            if (option == 2) {
+                update = false;
+            }
+        }
+        try {
+            this.flightSchedulePlanBeanRemote.updateFares(updatedFares);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayAddFlightSchedule(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Add Flight Schedule ---");
+        String flightCode = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightCode();
+        List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+        boolean add = true; 
+        try {
+            while(add) {
+                System.out.println("Enter departure date in YYYY-MM-DD:");
+                Date departureDate = Date.valueOf(scanner.next());
+                System.out.println("Enter departure time in hh:mm");
+                Time departureTime = Time.valueOf(scanner.next() + ":00");
+                System.out.println("Enter estimated flight duration in minutes:");
+                Long estimatedDuration = scanner.nextLong();
+                FlightSchedule flightSchedule = this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration);
+                newFlightSchedules.add(flightSchedule);
+                System.out.println("Add another flight schedule? (1: Yes, 2: No)");
+                int option = scanner.nextInt();
+                if (option == 2) {
+                    add = false;
+                }
+            }
+            this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidConstraintException e) {
+            displayConstraintErrorMessage(e);
+        }
+    }
+    
+    private void displayDeleteFlightSchedule(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Delete Flight Schedule ---");
+        ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
+        while (iterateSchedules.hasNext()) {
+            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
+                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
+                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+        }
+        
+        System.out.println("Enter the index of the flight schedule you would like to delete: ");
+        int index = scanner.nextInt();
+        FlightSchedule flightSchedule = flightSchedulePlan.getFlightSchedules().get(index-1);
+        try {
+            this.flightSchedulePlanBeanRemote.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (EntityInUseException e) {
+            e.getMessage();
+        }
+    }
+    
+    private void displayUpdateFlightScheduleDetails(FlightSchedulePlan flightSchedulePlan) {
+        System.out.println("--- Update Flight Schedule Details ---");
+        ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
+        while (iterateSchedules.hasNext()) {
+            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
+                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
+                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+        }
+        
+        List<FlightSchedule> updatedFlightSchedules = new ArrayList<>();
+        boolean update = true;
+        while (update) {
+            System.out.println("Enter the index of the flight schedule you would like to update: ");
+            int index = scanner.nextInt();
+            System.out.println("Enter the new departure date in YYYY-MM-DD: ");
+            Date newDate = Date.valueOf(scanner.next());
+            System.out.println("Enter the new departure time in hh:mm: ");
+            Time newTime = Time.valueOf(scanner.next());
+            System.out.println("Enter the new estimated duration: ");
+            Long newDuration = scanner.nextLong();
+            
+            FlightSchedule updatedFlightSchedule = flightSchedulePlan.getFlightSchedules().get(index-1);
+            updatedFlightSchedule.setDate(newDate);
+            updatedFlightSchedule.setTime(newTime);
+            updatedFlightSchedule.setEstimatedDuration(newDuration);
+            updatedFlightSchedules.add(updatedFlightSchedule);
+
+            System.out.println("Update another flight schedule? (1: Yes, 2: No)");
+            int option = scanner.nextInt();
+            if (option == 2) {
+                update = false;
+            }
+        }
+        try {
+            this.flightSchedulePlanBeanRemote.updateFlightSchedules(updatedFlightSchedules);
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
         }
     }
     
@@ -277,5 +497,10 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (InvalidEntityIdException e) {
             System.out.println("Invalid flight schedule plan ID.");
         }
+    }
+    
+    private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
+        System.out.println("There were some validation errors!");
+        System.out.println(invalidConstraintException.toString());
     }
 }

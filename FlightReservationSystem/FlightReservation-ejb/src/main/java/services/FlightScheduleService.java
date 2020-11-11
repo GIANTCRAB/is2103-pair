@@ -69,25 +69,20 @@ public class FlightScheduleService {
         return flightSchedules;
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void updateFlightForFlightSchedules(List<FlightSchedule> flightSchedules, Flight newFlight) {
-        // Only newFlight is managed
-        Flight oldFlight = em.find(Flight.class, flightSchedules.get(0).getFlight().getFlightId());
-        
-        for (FlightSchedule flightSchedule : flightSchedules) {
-            FlightSchedule managedFlightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
-            oldFlight.getFlightSchedules().remove(managedFlightSchedule);
-            newFlight.getFlightSchedules().add(managedFlightSchedule);
-            managedFlightSchedule.setFlight(newFlight);            
-        }
+    public void updateFlightSchedules(List<FlightSchedule> flightSchedules) {
+        flightSchedules.forEach(flightSchedule -> em.merge(flightSchedule));
+        em.flush();
     }
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteFlightSchedule(FlightSchedule flightSchedule) {
+    public void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) {
         Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());
         FlightSchedule managedFlightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
         
+        flightSchedulePlan.getFlightSchedules().remove(managedFlightSchedule);
         flight.getFlightSchedules().remove(managedFlightSchedule);
+        
+        em.merge(flightSchedulePlan);
         em.remove(managedFlightSchedule);
         em.flush();
     }
