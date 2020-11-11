@@ -92,7 +92,7 @@ public class FlightService {
     }
 
     public Set<List<Flight>> getPossibleFlights(@NonNull Airport origin, @NonNull Airport destination) {
-        final HashSet<Flight> markedRoutes = new HashSet<>();
+        final Set<Flight> markedRoutes = new HashSet<>();
         final Set<List<Flight>> correctFlightPaths = new HashSet<>();
 
         final List<Flight> startingRoutes = this.getFlightsForOrigin(origin);
@@ -135,7 +135,7 @@ public class FlightService {
         return this.getPossibleFlights(returnOriginAirport, returnDestinationAirport);
     }
 
-    private List<List<Flight>> getUnmarkedRoutes(HashSet<Flight> markedRoutes, List<Flight> existingFlightRoute) {
+    private List<List<Flight>> getUnmarkedRoutes(Set<Flight> markedRoutes, List<Flight> existingFlightRoute) {
         // Retrieve last flight node's flight route destination as the starting point
         final Airport origin = existingFlightRoute.get(existingFlightRoute.size() - 1).getFlightRoute().getDest();
         final List<List<Flight>> allFlightRoutes = new ArrayList<>();
