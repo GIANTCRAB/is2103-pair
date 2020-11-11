@@ -115,8 +115,8 @@ public class CustomerClient extends ReservationClient {
             System.out.println("Enter flight reservation ID or type 0 to exit view.");
 
             final int option = this.scanner.nextInt();
-            if (option > 0 && option < flightReservations.size()) {
-                this.displayViewSpecificReservation(flightReservations.get(option));
+            if (option > 0 && option <= flightReservations.size()) {
+                this.displayViewSpecificReservation(flightReservations.get(option - 1));
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("Invalid customer details. Please re-authenticate.");
@@ -142,7 +142,7 @@ public class CustomerClient extends ReservationClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("Invalid customer details. Please re-authenticate.");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid flight reservation ID.");
+            System.out.println(e.getMessage());
         }
     }
 
