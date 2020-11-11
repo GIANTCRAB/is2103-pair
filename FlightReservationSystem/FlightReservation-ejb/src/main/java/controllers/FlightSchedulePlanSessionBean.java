@@ -147,7 +147,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
     
     @Override
-    // Works if end date is earlier than current date
+    // Only works if end date is earlier than current date
     public void updateEndDate(Long flightSchedulePlanId, Date newEndDate) throws NotAuthenticatedException, InvalidEntityIdException, EntityInUseException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
