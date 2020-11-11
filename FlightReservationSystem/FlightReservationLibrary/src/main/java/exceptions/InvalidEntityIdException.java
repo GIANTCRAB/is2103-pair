@@ -1,11 +1,11 @@
 package exceptions;
 
 public class InvalidEntityIdException extends Exception {
-    InvalidEntityIdException() {
+    public InvalidEntityIdException() {
 
     }
 
-    InvalidEntityIdException(String message) {
+    public InvalidEntityIdException(String message) {
         super(message);
     }
 }
