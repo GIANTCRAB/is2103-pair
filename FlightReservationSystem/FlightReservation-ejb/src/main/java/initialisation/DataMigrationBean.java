@@ -156,6 +156,7 @@ public class DataMigrationBean {
         final Time timeToday = Time.valueOf(localTime);
         final Long estimatedFlightDuration = 9L;
         final FlightSchedule sinToNrtFS = this.flightScheduleService.create(sinToNrtFlight, dateToday, timeToday, estimatedFlightDuration);
+        sinToNrtFlight.getFlightSchedules().add(sinToNrtFS);
 
         final List<FlightSchedule> flightSchedules = new ArrayList<>();
         flightSchedules.add(sinToNrtFS);
@@ -197,6 +198,7 @@ public class DataMigrationBean {
         final Time timeToday = Time.valueOf(localTime);
         final Long estimatedFlightDuration = 7L;
         final FlightSchedule sinToTpeFS = this.flightScheduleService.create(sinToTpeFlight, dateToday, timeToday, estimatedFlightDuration);
+        sinToTpeFlight.getFlightSchedules().add(sinToTpeFS);
 
         final List<FlightSchedule> flightSchedules = new ArrayList<>();
         flightSchedules.add(sinToTpeFS);
@@ -238,6 +240,7 @@ public class DataMigrationBean {
         final Time timeToday = Time.valueOf(localTime);
         final Long estimatedFlightDuration = 2L;
         final FlightSchedule tpeToNrtFS = this.flightScheduleService.create(tpeToNrtFlight, dateToday, timeToday, estimatedFlightDuration);
+        tpeToNrtFlight.getFlightSchedules().add(tpeToNrtFS);
 
         final List<FlightSchedule> flightSchedules = new ArrayList<>();
         flightSchedules.add(tpeToNrtFS);
