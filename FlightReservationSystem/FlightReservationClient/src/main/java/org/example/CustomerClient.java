@@ -95,7 +95,7 @@ public class CustomerClient extends ReservationClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You are not logged in as customer.");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Flight schedule ID does not exists!");
+            System.out.println(e.getMessage());
         } catch (InvalidConstraintException e) {
             e.printStackTrace();
         }
