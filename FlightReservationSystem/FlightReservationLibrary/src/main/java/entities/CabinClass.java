@@ -65,7 +65,7 @@ public class CabinClass implements Serializable {
     private Integer maxCapacity;
 
     @Transient
-    private Integer getMaxCapacity() {
+    public Integer getMaxCapacity() {
         return this.getNoOfCols() * this.getNoOfRows();
     }
 }
