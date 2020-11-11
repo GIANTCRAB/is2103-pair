@@ -84,7 +84,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         
         try {  
             displayCreateFlightSchedule(flightCode);
-
+            
             Flight returnFlight = this.flightBeanRemote.getDirectReturnFlightByFlightCode(flightCode);
             if (returnFlight != null) {
                 System.out.println("A return flight exists. Create a flight schedule plan for return flight?");
@@ -221,9 +221,9 @@ public class FlightSchedulePlanClient implements SystemClient {
                 System.out.println("Flight Schedule Plan: " + flightSchedulePlan.getFlightSchedulePlanId() + ", Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
                 
                 // Not sure why this gives NullPointerException
-                flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
-                    System.out.println("\tFlight number: " + flightSchedule.getFlight().getFlightCode() + " , Departure date/time: " + flightSchedule.getDepartureDateTime());
-                });
+//                flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
+//                    System.out.println("\tFlight number: " + flightSchedule.getFlight().getFlightCode() + " , Departure date/time: " + flightSchedule.getDepartureDateTime());
+//                });
                 // Print return flight schedule plan
             }
         } catch (NotAuthenticatedException e) {

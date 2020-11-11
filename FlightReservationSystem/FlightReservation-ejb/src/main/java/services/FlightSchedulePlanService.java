@@ -67,9 +67,10 @@ public class FlightSchedulePlanService {
         flightSchedulePlan.getFlightSchedules().forEach(f -> f.getFlight());
         return flightSchedulePlan;
     }
-
+    
+    // Something wrong with this query
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
-        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp JOIN FETCH fsp.flightSchedules fs JOIN FETCH fs.flight f"
+        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f"
                 + " ORDER BY f.flightCode ASC, fs.date DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(f -> {
