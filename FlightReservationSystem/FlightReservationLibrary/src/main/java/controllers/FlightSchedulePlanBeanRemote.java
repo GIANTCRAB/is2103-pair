@@ -34,8 +34,6 @@ public interface FlightSchedulePlanBeanRemote {
 
     List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
     
-    void updateFlight(Long flightSchedulePlanId, String newFlightCode) throws NotAuthenticatedException, InvalidEntityIdException;
-    
     void updateFares(List<Fare> fares) throws NotAuthenticatedException;
     
     void updateEndDate(Long flightSchedulePlanId, Date newEndDate) throws NotAuthenticatedException, InvalidEntityIdException, EntityInUseException;
