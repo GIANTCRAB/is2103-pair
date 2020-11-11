@@ -175,7 +175,7 @@ public class FlightSchedulePlanClient implements SystemClient {
     
     private void displayEnterFareForCabinClass(String flightCode, FlightSchedulePlan flightSchedulePlan) {
         try {    
-            final Flight flight = this.flightBeanRemote.getFlightByFlightCode(this.authenticatedEmployee, flightCode);
+            final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
             List<CabinClass> cabinClasses = flight.getAircraftConfiguration().getCabinClasses();
 
             System.out.println("--- Entering fares for cabin classes ---");
@@ -188,7 +188,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     String fareBasisCode = scanner.next();
                     System.out.println("Enter fare amount: ");
                     BigDecimal fareAmount = scanner.nextBigDecimal();
-                    this.fareBeanRemote.create(this.authenticatedEmployee, fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
+                    this.fareBeanRemote.create(fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
                 }
             }
         } catch (NotAuthenticatedException e) {
