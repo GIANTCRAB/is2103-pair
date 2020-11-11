@@ -211,11 +211,17 @@ public class FlightService {
     }
 
     public void delete(Flight flight) {
-        this.em.remove(flight);
+        AircraftConfiguration aircraftConfiguration = em.find(AircraftConfiguration.class, flight.getAircraftConfiguration().getAircraftConfigurationId());
+        FlightRoute flightRoute = em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
+        
+        aircraftConfiguration.getFlights().remove(flight);
+        flightRoute.getFlights().remove(flight);
+        em.remove(flight);
+        em.flush();
     }
     
     public void disable(Flight flight) {
-        Flight managedFlight = this.em.find(Flight.class, flight.getFlightId());
+        Flight managedFlight = em.find(Flight.class, flight.getFlightId());
         flight.setEnabled(false);
     }
 }
