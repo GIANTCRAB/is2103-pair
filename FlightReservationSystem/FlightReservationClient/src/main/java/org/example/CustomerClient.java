@@ -103,6 +103,8 @@ public class CustomerClient extends ReservationClient {
 
     private void displayViewReservationsMenu() {
         try {
+            System.out.println("==== Displaying personal reservations ====");
+
             final List<FlightReservation> flightReservations = this.customerBeanRemote.getFlightReservations();
 
             flightReservations.forEach(flightReservation -> {
