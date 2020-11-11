@@ -84,4 +84,13 @@ public class CustomerSessionBean implements CustomerBeanRemote {
 
         return managedFlightReservationPayment;
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInCustomer == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInCustomer = null;
+    }
 }

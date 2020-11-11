@@ -48,6 +48,7 @@ public class CustomerClient implements SystemClient {
                     break;
                 case 3:
                 default:
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -69,7 +70,7 @@ public class CustomerClient implements SystemClient {
             if (option > 0 && option < flightReservations.size()) {
                 this.displayViewSpecificReservation(flightReservations.get(option));
             }
-         } catch (NotAuthenticatedException e) {
+        } catch (NotAuthenticatedException e) {
             System.out.println("Invalid customer details. Please re-authenticate.");
         }
     }
@@ -94,6 +95,15 @@ public class CustomerClient implements SystemClient {
             System.out.println("Invalid customer details. Please re-authenticate.");
         } catch (InvalidEntityIdException e) {
             System.out.println("Invalid flight reservation ID.");
+        }
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.customerBeanRemote.logout();
+            System.out.println("Logged out successfully!");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("Invalid customer details. Please re-authenticate.");
         }
     }
 }
