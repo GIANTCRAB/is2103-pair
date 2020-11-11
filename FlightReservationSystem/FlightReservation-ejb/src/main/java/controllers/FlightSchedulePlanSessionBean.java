@@ -125,6 +125,16 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
     }
+    
+    @Override
+    public void updateFlight(Long flightSchedulePlanId, String newFlightCode) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        FlightSchedulePlan flightSchedulePlan = getFlightSchedulePlanById(flightSchedulePlanId);
+        Flight newFlight = this.flightService.getFlightByFlightCode(newFlightCode);
+        this.flightScheduleService.updateFlightForFlightSchedules(flightSchedulePlan.getFlightSchedules(), newFlight);
+    }
 
     @Override
     public String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException {
