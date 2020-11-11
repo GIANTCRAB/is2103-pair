@@ -101,11 +101,11 @@ public class FlightService {
         return searchQuery.getSingleResult();
     }
 
-    public Flight getFlightByOriginDest(Airport origin, Airport destination) throws NoResultException {
+    public List<Flight> getFlightByOriginDest(Airport origin, Airport destination) throws NoResultException {
         TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.flightRouteId.originId =?1 AND f.flightRoute.flightRouteId.destId =?2", Flight.class)
                 .setParameter(1, origin.getIataCode())
                 .setParameter(2, destination.getIataCode());
-        return searchQuery.getSingleResult();
+        return searchQuery.getResultList();
     }
 
     public Set<List<Flight>> getPossibleFlights(@NonNull Airport origin, @NonNull Airport destination) {
