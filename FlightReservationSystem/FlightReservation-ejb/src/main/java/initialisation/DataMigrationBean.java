@@ -166,7 +166,7 @@ public class DataMigrationBean {
         // Add fares to the flight schedule plan
         final List<Fare> fares = new ArrayList<>();
         final Fare economyFare = fareService.create("123", BigDecimal.valueOf(550), sinNrtCabinClassF, flightSchedulePlan);
-        final Fare premiumEconomy = fareService.create("124", BigDecimal.valueOf(850), sinNrtCabinClassF, flightSchedulePlan);
+        final Fare premiumEconomy = fareService.create("124", BigDecimal.valueOf(850), sinNrtCabinClassJ, flightSchedulePlan);
         fares.add(economyFare);
         fares.add(premiumEconomy);
 
@@ -207,7 +207,7 @@ public class DataMigrationBean {
         // Add fares to the flight schedule plan
         final List<Fare> fares = new ArrayList<>();
         final Fare economyFare = fareService.create("200", BigDecimal.valueOf(350), sinTpeCabinClassF, flightSchedulePlan);
-        final Fare premiumEconomy = fareService.create("201", BigDecimal.valueOf(550), sinTpeCabinClassF, flightSchedulePlan);
+        final Fare premiumEconomy = fareService.create("201", BigDecimal.valueOf(550), sinTpeCabinClassJ, flightSchedulePlan);
         fares.add(economyFare);
         fares.add(premiumEconomy);
 
@@ -248,7 +248,7 @@ public class DataMigrationBean {
         // Add fares to the flight schedule plan
         final List<Fare> fares = new ArrayList<>();
         final Fare economyFare = fareService.create("205", BigDecimal.valueOf(150), tpeNrtCabinClassF, flightSchedulePlan);
-        final Fare premiumEconomy = fareService.create("206", BigDecimal.valueOf(250), tpeNrtCabinClassF, flightSchedulePlan);
+        final Fare premiumEconomy = fareService.create("206", BigDecimal.valueOf(250), tpeNrtCabinClassJ, flightSchedulePlan);
         fares.add(economyFare);
         fares.add(premiumEconomy);
 
