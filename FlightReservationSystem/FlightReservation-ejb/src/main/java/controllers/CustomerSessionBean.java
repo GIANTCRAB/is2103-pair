@@ -84,7 +84,7 @@ public class CustomerSessionBean implements CustomerBeanRemote {
         final FlightReservationPayment managedFlightReservationPayment = this.flightReservationPaymentService.findById(flightReservationPayment.getPaymentId());
 
         if (!this.loggedInCustomer.getCustomerId().equals(managedFlightReservationPayment.getCustomer().getCustomerId())) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Logged in customer does not matched paying customer.");
         }
 
         // Load its flight reservations
