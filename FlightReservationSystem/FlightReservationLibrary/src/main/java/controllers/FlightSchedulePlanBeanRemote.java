@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Employee;
+import entities.Fare;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
@@ -33,6 +34,8 @@ public interface FlightSchedulePlanBeanRemote {
     List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
     
     void updateFlight(Long flightSchedulePlanId, String newFlightCode) throws NotAuthenticatedException, InvalidEntityIdException;
+    
+    void updateFares(List<Fare> fares) throws NotAuthenticatedException;
 
     String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException;
 }

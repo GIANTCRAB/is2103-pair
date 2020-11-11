@@ -79,4 +79,11 @@ public class FareService {
         em.remove(managedFare);
         em.flush();
     }
+    
+    public void updateFares(List<Fare> fares) {
+        for (Fare fare:fares) {
+            em.merge(fare);
+        }
+        em.flush();
+    }
 }

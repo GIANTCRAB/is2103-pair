@@ -2,6 +2,7 @@ package controllers;
 
 import entities.Employee;
 import entities.EmployeeRole;
+import entities.Fare;
 import entities.Flight;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
@@ -134,6 +135,14 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         FlightSchedulePlan flightSchedulePlan = getFlightSchedulePlanById(flightSchedulePlanId);
         Flight newFlight = this.flightService.getFlightByFlightCode(newFlightCode);
         this.flightScheduleService.updateFlightForFlightSchedules(flightSchedulePlan.getFlightSchedules(), newFlight);
+    }
+    
+    @Override
+    public void updateFares(List<Fare> fares) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        this.fareService.updateFares(fares);
     }
 
     @Override

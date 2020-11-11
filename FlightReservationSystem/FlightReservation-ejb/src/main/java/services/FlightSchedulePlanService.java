@@ -57,7 +57,7 @@ public class FlightSchedulePlanService {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedulePlan associateWithFares(@NonNull FlightSchedulePlan flightSchedulePlan, List<Fare> fares) {
         flightSchedulePlan.setFares(fares);
-        em.persist(flightSchedulePlan);
+        em.merge(flightSchedulePlan);
         return flightSchedulePlan;
     }
 
