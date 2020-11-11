@@ -2,6 +2,7 @@ package services;
 
 import entities.*;
 import exceptions.InvalidConstraintException;
+import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
 
 import javax.ejb.TransactionAttribute;
@@ -31,8 +32,14 @@ public class FlightScheduleService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
-    public FlightSchedule findById(Long id) {
-        return this.em.find(FlightSchedule.class, id);
+    public FlightSchedule findById(Long id) throws InvalidEntityIdException {
+        final FlightSchedule flightSchedule = this.em.find(FlightSchedule.class, id);
+
+        if (flightSchedule == null) {
+            throw new InvalidEntityIdException("Flight Schedule could not be found.");
+        }
+
+        return flightSchedule;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
