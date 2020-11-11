@@ -143,7 +143,27 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         }
         this.flightScheduleService.updateFlightSchedules(flightSchedules);
     }
-
+    
+    @Override
+    public void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        this.flightSchedulePlanService.addFlightSchedules(flightSchedulePlan, flightSchedules);
+    }
+    
+    @Override
+    public void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) throws NotAuthenticatedException, EntityInUseException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        if (flightSchedule.getFlightReservations().isEmpty()) {
+            this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
+        } else {
+            throw new EntityInUseException();
+        }
+    }
+    
     @Override
     public String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
@@ -157,7 +177,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         String msg = "";
         if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
-            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule));
             flightSchedulePlan.getFares().forEach(fare -> this.fareService.delete(fare));
             this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
             msg = "Flight schedule plan successfully deleted.";

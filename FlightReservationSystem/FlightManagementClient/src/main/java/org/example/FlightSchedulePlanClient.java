@@ -352,7 +352,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         List<FlightSchedule> updatedFlightSchedules = new ArrayList<>();
         boolean update = true;
         while (update) {
-            System.out.println("Enter the index of the flight schedules you would like to update: ");
+            System.out.println("Enter the index of the flight schedule you would like to update: ");
             int index = scanner.nextInt();
             System.out.println("Enter the new departure date in YYYY-MM-DD: ");
             Date newDate = Date.valueOf(scanner.next());
