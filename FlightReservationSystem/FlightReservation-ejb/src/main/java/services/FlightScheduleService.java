@@ -30,7 +30,11 @@ public class FlightScheduleService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-    
+
+    public FlightSchedule findById(Long id) {
+        return this.em.find(FlightSchedule.class, id);
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedule create(@NonNull Flight flight, @NonNull Date departureDate, @NonNull Time departureTime, @NonNull Long estimatedDuration) throws InvalidConstraintException {
         final FlightSchedule flightSchedule = new FlightSchedule();
