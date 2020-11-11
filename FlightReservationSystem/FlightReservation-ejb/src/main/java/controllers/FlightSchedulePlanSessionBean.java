@@ -122,4 +122,36 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
     }
+
+    @Override
+    public String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlanId);
+
+        if (flightSchedulePlan == null) {
+            throw new InvalidEntityIdException();
+        }
+
+        String msg = "";
+        if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
+            this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
+            msg = "Flight schedule plan successfully deleted.";
+        } else {
+            this.flightSchedulePlanService.disableFlightSchedulePlan(flightSchedulePlan);
+            msg = "Flight schedule plan is in use, will be disabled instead.";
+        }
+        return msg;
+    }
+    
+    private boolean canDeleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        for (FlightSchedule flightSchedule : flightSchedulePlan.getFlightSchedules()) {
+            if (!flightSchedule.getFlightReservations().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

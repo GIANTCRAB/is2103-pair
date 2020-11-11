@@ -74,4 +74,16 @@ public class FlightSchedulePlanService {
         flightSchedulePlans.forEach(f -> f.getFlightSchedules().size());
         return searchQuery.getResultList();
     }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        flightSchedulePlan.getFlightSchedules().clear();
+        em.remove(flightSchedulePlan);
+        em.flush();
+    }
+    
+    public void disableFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        FlightSchedulePlan managedFlightSchedulePlan = em.find(FlightSchedulePlan.class, flightSchedulePlan.getFlightSchedulePlanId());
+        managedFlightSchedulePlan.setEnabled(false);
+    }
 }
