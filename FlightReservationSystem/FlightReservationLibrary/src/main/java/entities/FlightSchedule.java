@@ -52,10 +52,12 @@ public class FlightSchedule implements Serializable {
 
     @OneToMany(mappedBy = "flightSchedule")
     private List<FlightReservation> flightReservations = new ArrayList<>();
-    
-    @Transient 
-    private boolean enabled = flightSchedulePlan.getEnabled();
-    
+
+    @Transient
+    public Boolean getEnabled() {
+        return this.flightSchedulePlan.getEnabled();
+    }
+
     @Transient
     public ZonedDateTime getDepartureDateTime() {
         final FlightRoute flightRoute = this.getFlight().getFlightRoute();
@@ -68,6 +70,7 @@ public class FlightSchedule implements Serializable {
     }
 
     // Given a departure date time of the origin airport location, save the date time in UTC into the entity
+    @Transient
     public void setDepartureDateTime(Date departureDate, Time departureTime) {
         final FlightRoute flightRoute = this.getFlight().getFlightRoute();
         final Airport originAirport = flightRoute.getOrigin();
