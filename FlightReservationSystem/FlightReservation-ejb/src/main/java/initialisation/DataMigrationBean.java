@@ -2,10 +2,7 @@ package initialisation;
 
 import entities.*;
 import lombok.SneakyThrows;
-import services.AircraftConfigurationService;
-import services.CabinClassService;
-import services.FlightRouteService;
-import services.FlightService;
+import services.*;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -14,6 +11,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Startup
 @Singleton
@@ -29,6 +34,12 @@ public class DataMigrationBean {
     @Inject
     FlightService flightService;
     @Inject
+    FlightScheduleService flightScheduleService;
+    @Inject
+    FlightSchedulePlanService flightSchedulePlanService;
+    @Inject
+    FareService fareService;
+    @Inject
     private Pbkdf2PasswordHash passwordHash;
 
     private final Airport sinAirport = new Airport();
@@ -37,7 +48,10 @@ public class DataMigrationBean {
     private FlightRoute nrtToSinFR;
     private AircraftType boeingSecondType;
     private AircraftConfiguration sinNrtAC = new AircraftConfiguration();
+    private CabinClass sinNrtCabinClassF;
+    private CabinClass sinNrtCabinClassJ;
     private AircraftConfiguration nrtSinAC = new AircraftConfiguration();
+    private Flight sinToNrtFlight;
 
     @PostConstruct
     public void init() {
@@ -46,6 +60,7 @@ public class DataMigrationBean {
         this.initFlightRouteData();
         this.initAircraftConfiguration();
         this.initFlightData();
+        this.initFlightSchedulePlanData();
         this.initEmployeeData();
     }
 
@@ -101,18 +116,49 @@ public class DataMigrationBean {
     @SneakyThrows
     private void initAircraftConfiguration() {
         sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
-        CabinClass cabinClass1 = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
-        sinNrtAC.getCabinClasses().add(cabinClass1);
+        sinNrtCabinClassF = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+        sinNrtCabinClassJ = cabinClassService.create(CabinClassType.J, 3, "3-2-3", sinNrtAC);
+        sinNrtAC.getCabinClasses().add(sinNrtCabinClassF);
+        sinNrtAC.getCabinClasses().add(sinNrtCabinClassJ);
+        this.em.persist(sinNrtAC);
 
         nrtSinAC = this.aircraftConfigurationService.create("basic2", boeingSecondType);
         CabinClass cabinClass2 = cabinClassService.create(CabinClassType.J, 3, "3-2-3", nrtSinAC);
         nrtSinAC.getCabinClasses().add(cabinClass2);
+        this.em.persist(nrtSinAC);
     }
 
     @SneakyThrows
     private void initFlightData() {
-        this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
+        sinToNrtFlight = this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
         this.flightService.create("ML124", nrtToSinFR, nrtSinAC);
+    }
+
+    @SneakyThrows
+    private void initFlightSchedulePlanData() {
+        // Create flight schedules
+        final LocalDateTime timeFourHoursFromNow = LocalDateTime.now().plusHours(4);
+        final LocalDate localDate = LocalDate.from(timeFourHoursFromNow);
+        final LocalTime localTime = LocalTime.from(timeFourHoursFromNow);
+        final Date dateToday = Date.valueOf(localDate);
+        final Time timeToday = Time.valueOf(localTime);
+        final Long estimatedFlightDuration = 9L;
+        final FlightSchedule sinToNrtFS = this.flightScheduleService.create(sinToNrtFlight, dateToday, timeToday, estimatedFlightDuration);
+
+        final List<FlightSchedule> flightSchedules = new ArrayList<>();
+        flightSchedules.add(sinToNrtFS);
+
+        // Create flight schedule plans
+        final FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.create(FlightSchedulePlanType.SINGLE, flightSchedules);
+
+        // Add fares to the flight schedule plan
+        final List<Fare> fares = new ArrayList<>();
+        final Fare economyFare = fareService.create("123", BigDecimal.valueOf(150), sinNrtCabinClassF, flightSchedulePlan);
+        final Fare premiumEconomy = fareService.create("124", BigDecimal.valueOf(350), sinNrtCabinClassF, flightSchedulePlan);
+        fares.add(economyFare);
+        fares.add(premiumEconomy);
+
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan, fares);
     }
 
     private void initEmployeeData() {
