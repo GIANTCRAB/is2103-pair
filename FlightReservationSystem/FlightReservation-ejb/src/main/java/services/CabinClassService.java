@@ -31,7 +31,7 @@ public class CabinClassService {
         final CabinClass cabinClass = this.em.find(CabinClass.class, cabinClassId);
 
         if (cabinClass == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Cabin Class could not be found.");
         }
 
         return cabinClass;
