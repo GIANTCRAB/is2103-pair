@@ -44,14 +44,9 @@ public class DataMigrationBean {
 
     private final Airport sinAirport = new Airport();
     private final Airport nrtAirport = new Airport();
-    private FlightRoute sinToNrtFR;
     private FlightRoute nrtToSinFR;
     private AircraftType boeingSecondType;
-    private AircraftConfiguration sinNrtAC = new AircraftConfiguration();
-    private CabinClass sinNrtCabinClassF;
-    private CabinClass sinNrtCabinClassJ;
     private AircraftConfiguration nrtSinAC = new AircraftConfiguration();
-    private Flight sinToNrtFlight;
 
     @PostConstruct
     public void init() {
@@ -61,6 +56,7 @@ public class DataMigrationBean {
         this.initAircraftConfiguration();
         this.initFlightData();
         this.initFlightSchedulePlanData();
+        this.initSinToNrtData();
         this.initEmployeeData();
         this.initPartnerData();
     }
@@ -110,19 +106,11 @@ public class DataMigrationBean {
 
     @SneakyThrows
     private void initFlightRouteData() {
-        sinToNrtFR = this.flightRouteService.create(sinAirport, nrtAirport);
         nrtToSinFR = this.flightRouteService.create(nrtAirport, sinAirport);
     }
 
     @SneakyThrows
     private void initAircraftConfiguration() {
-        sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
-        sinNrtCabinClassF = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
-        sinNrtCabinClassJ = cabinClassService.create(CabinClassType.J, 3, "3-2-3", sinNrtAC);
-        sinNrtAC.getCabinClasses().add(sinNrtCabinClassF);
-        sinNrtAC.getCabinClasses().add(sinNrtCabinClassJ);
-        this.em.persist(sinNrtAC);
-
         nrtSinAC = this.aircraftConfigurationService.create("basic2", boeingSecondType);
         CabinClass cabinClass2 = cabinClassService.create(CabinClassType.J, 3, "3-2-3", nrtSinAC);
         nrtSinAC.getCabinClasses().add(cabinClass2);
@@ -131,12 +119,29 @@ public class DataMigrationBean {
 
     @SneakyThrows
     private void initFlightData() {
-        sinToNrtFlight = this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
         this.flightService.create("ML124", nrtToSinFR, nrtSinAC);
     }
 
     @SneakyThrows
     private void initFlightSchedulePlanData() {
+    }
+
+    @SneakyThrows
+    private void initSinToNrtData() {
+        // Create Flight route
+        FlightRoute sinToNrtFR = this.flightRouteService.create(sinAirport, nrtAirport);
+
+        // Create Aircraft configuration
+        AircraftConfiguration sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
+        CabinClass sinNrtCabinClassF = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+        CabinClass sinNrtCabinClassJ = cabinClassService.create(CabinClassType.J, 3, "3-2-3", sinNrtAC);
+        sinNrtAC.getCabinClasses().add(sinNrtCabinClassF);
+        sinNrtAC.getCabinClasses().add(sinNrtCabinClassJ);
+        this.em.persist(sinNrtAC);
+
+        // Create Flight
+        Flight sinToNrtFlight = this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
+
         // Create flight schedules
         final LocalDateTime timeFourHoursFromNow = LocalDateTime.now().plusHours(4);
         final LocalDate localDate = LocalDate.from(timeFourHoursFromNow);
