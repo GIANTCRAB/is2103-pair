@@ -96,7 +96,7 @@ public class FlightService {
         final Set<List<Flight>> correctFlightPaths = new HashSet<>();
 
         final List<Flight> startingRoutes = this.getFlightsForOrigin(origin);
-        List<List<Flight>> routePaths = new ArrayList<>();
+        Set<List<Flight>> routePaths = new HashSet<>();
         for (Flight startingFlight : startingRoutes) {
             final List<Flight> routePath = new LinkedList<>();
             routePath.add(startingFlight);
@@ -106,10 +106,10 @@ public class FlightService {
 
         for (int i = 0; i < 2; i++) {
             for (List<Flight> flightPath : routePaths) {
-                final List<List<Flight>> deepUnmarkedRoutes = this.getUnmarkedRoutes(markedRoutes, flightPath);
+                final Set<List<Flight>> deepUnmarkedRoutes = this.getUnmarkedRoutes(markedRoutes, flightPath);
                 routePaths = Stream.of(routePaths, deepUnmarkedRoutes)
                         .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toSet());
             }
         }
 
@@ -135,10 +135,10 @@ public class FlightService {
         return this.getPossibleFlights(returnOriginAirport, returnDestinationAirport);
     }
 
-    private List<List<Flight>> getUnmarkedRoutes(Set<Flight> markedRoutes, List<Flight> existingFlightRoute) {
+    private Set<List<Flight>> getUnmarkedRoutes(Set<Flight> markedRoutes, List<Flight> existingFlightRoute) {
         // Retrieve last flight node's flight route destination as the starting point
         final Airport origin = existingFlightRoute.get(existingFlightRoute.size() - 1).getFlightRoute().getDest();
-        final List<List<Flight>> allFlightRoutes = new ArrayList<>();
+        final Set<List<Flight>> allFlightRoutes = new HashSet<>();
         final List<Flight> flightRoutes = this.getFlightsForOrigin(origin);
 
         for (Flight flightRoute : flightRoutes) {
