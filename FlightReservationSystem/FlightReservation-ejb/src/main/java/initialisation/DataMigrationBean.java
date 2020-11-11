@@ -62,6 +62,7 @@ public class DataMigrationBean {
         this.initFlightData();
         this.initFlightSchedulePlanData();
         this.initEmployeeData();
+        this.initPartnerData();
     }
 
     private void initAirportData() {
@@ -195,5 +196,13 @@ public class DataMigrationBean {
         em.persist(scheduleManager);
 
         em.flush();
+    }
+
+    private void initPartnerData() {
+        final Partner partner = new Partner();
+        partner.setCompanyName("Pepega Co.");
+        partner.setUsername("partner1");
+        partner.setPassword(this.passwordHash.generate("123".toCharArray()));
+        em.persist(partner);
     }
 }
