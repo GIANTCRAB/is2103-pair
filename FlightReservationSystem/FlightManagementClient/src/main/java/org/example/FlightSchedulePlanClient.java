@@ -188,7 +188,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     String fareBasisCode = scanner.next();
                     System.out.println("Enter fare amount: ");
                     BigDecimal fareAmount = scanner.nextBigDecimal();
-                    this.fareBeanRemote.create(this.authenticatedEmployee, fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
+                    this.fareBeanRemote.create(fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
                 }
             }
         } catch (NotAuthenticatedException e) {

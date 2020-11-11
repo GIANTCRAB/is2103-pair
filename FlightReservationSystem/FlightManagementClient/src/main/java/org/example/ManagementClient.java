@@ -89,6 +89,7 @@ public class ManagementClient implements SystemClient {
                 return this.flightRouteBeanRemote.login(username, password);
             case SCHEDULE_MANAGER:
                 this.flightSchedulePlanBeanRemote.login(username, password);
+                this.fareBeanRemote.login(username, password);
                 return this.flightBeanRemote.login(username, password);
             case FLEET_MANAGER:
                 return this.aircraftConfigurationBeanRemote.login(username, password);
