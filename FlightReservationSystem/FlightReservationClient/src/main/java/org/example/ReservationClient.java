@@ -8,27 +8,20 @@ import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ReservationClient implements SystemClient {
     @NonNull
-    private final VisitorBeanRemote visitorBeanRemote;
+    protected final VisitorBeanRemote visitorBeanRemote;
     @NonNull
-    private final CustomerBeanRemote customerBeanRemote;
-
-    @Setter(AccessLevel.PRIVATE)
-    private Scanner scanner;
+    protected final CustomerBeanRemote customerBeanRemote;
+    protected Scanner scanner;
 
     @Override
     public void runApp() {

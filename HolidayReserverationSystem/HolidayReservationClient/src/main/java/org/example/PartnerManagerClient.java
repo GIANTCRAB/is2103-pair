@@ -14,7 +14,33 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
 
     //TODO: complete all methods
     public void runApp() {
+        this.displayPartnerManagerMenu();
+    }
 
+    private void displayPartnerManagerMenu() {
+        boolean loop = true;
+        while (loop) {
+            System.out.println("*** Partner Manager Client ***");
+            System.out.println("1: Search flights");
+            System.out.println("2: Reserve flight");
+            System.out.println("3: View Flight Reservations");
+            System.out.println("4: Logout");
+
+            final int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    this.displayViewPartnerFlightReservationsMenu();
+                    break;
+                default:
+                    loop = false;
+                    break;
+
+            }
+        }
     }
 
     private void displayViewPartnerFlightReservationsMenu() {

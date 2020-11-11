@@ -91,14 +91,11 @@ public class FlightService {
         return flight;
     }
 
-    public Set<List<Flight>> getReturnFlights(@NonNull Flight flight) {
-        final Airport returnDestinationAirport = flight.getFlightRoute().getOrigin();
-        final Airport returnOriginAirport = flight.getFlightRoute().getDest();
-
+    public Set<List<Flight>> getPossibleFlights(@NonNull Airport origin, @NonNull Airport destination) {
         final HashSet<Flight> markedRoutes = new HashSet<>();
         final Set<List<Flight>> correctFlightPaths = new HashSet<>();
 
-        final List<Flight> startingRoutes = this.getFlightsForOrigin(returnOriginAirport);
+        final List<Flight> startingRoutes = this.getFlightsForOrigin(origin);
         List<List<Flight>> routePaths = new ArrayList<>();
         for (Flight startingFlight : startingRoutes) {
             final List<Flight> routePath = new LinkedList<>();
@@ -121,7 +118,7 @@ public class FlightService {
             final List<Flight> trueFlightPath = new LinkedList<>();
             for (Flight flightForPath : flightPath) {
                 trueFlightPath.add(flightForPath);
-                if (flightForPath.getFlightRoute().getDest().equals(returnDestinationAirport)) {
+                if (flightForPath.getFlightRoute().getDest().equals(destination)) {
                     correctFlightPaths.add(trueFlightPath);
                     break;
                 }
@@ -129,6 +126,13 @@ public class FlightService {
         }
 
         return correctFlightPaths;
+    }
+
+    public Set<List<Flight>> getReturnFlights(@NonNull Flight flight) {
+        final Airport returnDestinationAirport = flight.getFlightRoute().getOrigin();
+        final Airport returnOriginAirport = flight.getFlightRoute().getDest();
+
+        return this.getPossibleFlights(returnOriginAirport, returnDestinationAirport);
     }
 
     private List<List<Flight>> getUnmarkedRoutes(HashSet<Flight> markedRoutes, List<Flight> existingFlightRoute) {

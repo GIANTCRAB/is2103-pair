@@ -8,21 +8,21 @@ import entities.FlightReservationPayment;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Scanner;
 
-@RequiredArgsConstructor
-public class CustomerClient implements SystemClient {
-    @NonNull
-    private final Scanner scanner;
-    @NonNull
-    private final VisitorBeanRemote visitorBeanRemote;
-    @NonNull
-    private final CustomerBeanRemote customerBeanRemote;
+public class CustomerClient extends ReservationClient {
     @NonNull
     private final Customer customer;
+
+    public CustomerClient(@NonNull Scanner scanner,
+                          @NonNull VisitorBeanRemote visitorBeanRemote,
+                          @NonNull CustomerBeanRemote customerBeanRemote,
+                          @NonNull Customer customer) {
+        super(visitorBeanRemote, customerBeanRemote, scanner);
+        this.customer = customer;
+    }
 
     @Override
     public void runApp() {
@@ -35,18 +35,22 @@ public class CustomerClient implements SystemClient {
         while (loop) {
             System.out.println("*** Customer Flight Reservation Client ***");
             System.out.println("1: Search Flight");
-            System.out.println("2: View My Reservations");
-            System.out.println("3: Logout");
+            System.out.println("2: Reserve Flight");
+            System.out.println("3: View My Reservations");
+            System.out.println("4: Logout");
             final int option = this.scanner.nextInt();
 
             switch (option) {
                 case 1:
-                    //TODO: implement flight search, flight reservation
+                    this.displayFlightSearchMenu();
                     break;
                 case 2:
-                    this.displayViewReservationsMenu();
+                    //TODO: reserve flight
                     break;
                 case 3:
+                    this.displayViewReservationsMenu();
+                    break;
+                case 4:
                 default:
                     this.displayLogoutMenu();
                     loop = false;
