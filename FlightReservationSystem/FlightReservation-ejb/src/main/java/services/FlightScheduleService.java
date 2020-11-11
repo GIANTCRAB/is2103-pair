@@ -130,6 +130,20 @@ public class FlightScheduleService {
         return this.searchFlightSchedules(query, passengerCount);
     }
 
+    public List<FlightSchedule> searchFlightSchedules(Flight flight, Date departureDate, Integer passengerCount, CabinClassType cabinClassType) {
+        final LocalDate localDate = departureDate.toLocalDate();
+        final Date threeDaysBefore = Date.valueOf(localDate.minusDays(3));
+        final Date threeDaysAfter = Date.valueOf(localDate.plusDays(3));
+
+        final TypedQuery<FlightSchedule> query = this.em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightId = ?1 AND fs.date >= ?2 AND fs.date <= ?3 AND EXISTS (SELECT fare FROM Fare fare WHERE fare.flightSchedulePlan.flightSchedulePlanId = fs.flightSchedulePlan.flightSchedulePlanId AND fare.cabinClass.cabinClassId.cabinClassType = ?4) ORDER BY fs.date", FlightSchedule.class)
+                .setParameter(1, flight.getFlightId())
+                .setParameter(2, threeDaysBefore)
+                .setParameter(3, threeDaysAfter)
+                .setParameter(4, cabinClassType);
+
+        return this.searchFlightSchedules(query, passengerCount);
+    }
+
     public List<FlightSchedule> searchFlightSchedules(TypedQuery<FlightSchedule> typedQuery, Integer passengerCount) {
         final List<FlightSchedule> countFilteredFlightSchedules = new ArrayList<>();
         final List<FlightSchedule> flightSchedules = typedQuery.getResultList();
