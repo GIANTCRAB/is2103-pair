@@ -1,10 +1,7 @@
 package org.example;
 
 import lombok.NonNull;
-import webservices.HolidayReservationService.FlightReservation;
-import webservices.HolidayReservationService.HolidayReservationServiceBean;
-import webservices.HolidayReservationService.InvalidEntityIdException_Exception;
-import webservices.HolidayReservationService.Partner;
+import webservices.HolidayReservationService.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,7 +19,7 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
 
     private void displayViewPartnerFlightReservationsMenu() {
         try {
-            final List<FlightReservation> flightReservationList = this.holidayReservationServiceBean.getFlightReservations(this.partner);
+            final List<FlightReservation> flightReservationList = this.holidayReservationServiceBean.getFlightReservations();
             for (FlightReservation flightReservation : flightReservationList) {
                 System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
             }
@@ -31,6 +28,8 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
             System.out.println("Enter flight reservation ID or type 0 to exit view.");
         } catch (InvalidEntityIdException_Exception e) {
             System.out.println("Partner ID invalid!");
+        } catch (NotAuthenticatedException_Exception e) {
+            System.out.println("Not logged in!");
         }
     }
 }
