@@ -56,15 +56,6 @@ public class AuthService {
         throw new IncorrectCredentialsException();
     }
 
-    public void checkPermission(Employee employee, EmployeeRole employeeRoleNeeded) throws NotAuthenticatedException {
-        final Employee foundEmployee = this.em.find(Employee.class, employee.getEmployeeId());
-        if (foundEmployee != null && foundEmployee.getEmployeeRole().equals(employeeRoleNeeded)) {
-            return;
-        }
-
-        throw new NotAuthenticatedException();
-    }
-
     public Partner partnerLogin(String username, String password) throws IncorrectCredentialsException {
         final TypedQuery<Partner> searchQuery = this.em.createQuery("select p from Partner p where p.username = ?1", Partner.class)
                 .setParameter(1, username);
