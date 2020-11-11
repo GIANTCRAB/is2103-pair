@@ -28,7 +28,7 @@ public class AircraftConfiguration implements Serializable {
     @Size(min = 1, max = 32)
     @Column(length = 32, nullable = false)
     private String aircraftConfigurationName;
-    
+
     @NotNull
     @OneToMany(mappedBy = "aircraftConfiguration")
     private List<CabinClass> cabinClasses = new ArrayList<>();
@@ -42,6 +42,17 @@ public class AircraftConfiguration implements Serializable {
 
     @Transient
     public Integer getNoOfCabinClasses() {
-        return this.cabinClasses.size();
+        return this.getCabinClasses().size();
+    }
+
+    @Transient
+    public Integer getTotalCabinClassCapacity() {
+        Integer totalCapacity = 0;
+        final List<CabinClass> cabinClassList = this.getCabinClasses();
+        for (CabinClass cabinClass : cabinClassList) {
+            totalCapacity += cabinClass.getMaxCapacity();
+        }
+
+        return totalCapacity;
     }
 }

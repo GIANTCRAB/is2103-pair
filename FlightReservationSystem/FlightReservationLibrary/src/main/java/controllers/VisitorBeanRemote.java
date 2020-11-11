@@ -22,8 +22,6 @@ public interface VisitorBeanRemote {
                       String phoneNumber,
                       String address) throws InvalidConstraintException;
 
-    Customer login(String email, String password) throws IncorrectCredentialsException;
-
     List<FlightSchedule> searchFlight(@NonNull Airport departureAirport,
                                       @NonNull Airport destinationAirport,
                                       @NonNull Date departureDate,

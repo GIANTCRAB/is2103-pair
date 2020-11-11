@@ -1,11 +1,13 @@
 package controllers;
 
 import entities.*;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
+import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.Passenger;
-import services.CustomerService;
+import services.AuthService;
 import services.FlightReservationPaymentService;
 import services.FlightReservationService;
 
@@ -15,21 +17,31 @@ import java.util.List;
 
 @Stateful
 public class CustomerSessionBean implements CustomerBeanRemote {
+    private Customer loggedInCustomer = null;
     @Inject
-    CustomerService customerService;
+    AuthService authService;
     @Inject
     FlightReservationService flightReservationService;
     @Inject
     FlightReservationPaymentService flightReservationPaymentService;
 
+    @Override
+    public Customer login(String email, String password) throws IncorrectCredentialsException {
+        final Customer customer = this.authService.customerLogin(email, password);
+        this.loggedInCustomer = customer;
+        return customer;
+    }
+
     //TODO: implement this
     @Override
-    public FlightReservationPayment reserveFlightForPassengers(@NonNull Customer customer, String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException {
-        final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
+    public FlightReservationPayment reserveFlightForPassengers(String creditCard, @NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException, NotAuthenticatedException {
+        if (loggedInCustomer == null) {
+            throw new NotAuthenticatedException();
+        }
         // TODO: find the managed flight schedule
 
         final List<FlightReservation> flightReservations = this.flightReservationService.create(flightSchedule, passengers);
-        final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, managedCustomer);
+        final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, loggedInCustomer);
         this.flightReservationPaymentService.associateFlightReservations(flightReservations, flightReservationPayment);
 
         // Load its flight reservations
@@ -43,19 +55,23 @@ public class CustomerSessionBean implements CustomerBeanRemote {
     }
 
     @Override
-    public List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException {
-        final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
+    public List<FlightReservation> getFlightReservations() throws NotAuthenticatedException {
+        if (loggedInCustomer == null) {
+            throw new NotAuthenticatedException();
+        }
 
-        return this.flightReservationService.getFlightReservations(managedCustomer);
+        return this.flightReservationService.getFlightReservations(loggedInCustomer);
     }
 
     @Override
-    public FlightReservationPayment getFlightReservationDetails(@NonNull Customer customer, FlightReservationPayment flightReservationPayment) throws InvalidEntityIdException {
-        final Customer managedCustomer = this.customerService.findById(customer.getCustomerId());
+    public FlightReservationPayment getFlightReservationDetails(FlightReservationPayment flightReservationPayment) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (loggedInCustomer == null) {
+            throw new NotAuthenticatedException();
+        }
 
         final FlightReservationPayment managedFlightReservationPayment = this.flightReservationPaymentService.findById(flightReservationPayment.getPaymentId());
 
-        if (!managedCustomer.getCustomerId().equals(managedFlightReservationPayment.getCustomer().getCustomerId())) {
+        if (!this.loggedInCustomer.getCustomerId().equals(managedFlightReservationPayment.getCustomer().getCustomerId())) {
             throw new InvalidEntityIdException();
         }
 
