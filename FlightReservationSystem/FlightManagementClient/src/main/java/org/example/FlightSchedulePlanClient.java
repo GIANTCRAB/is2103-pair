@@ -67,7 +67,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     //this.displayUpdateFlightSchedulePlanMenu();
                     break;
                 case 5:
-                    //this.displayDeleteFlightSchedulePlanMenu();
+                    this.displayDeleteFlightSchedulePlanMenu();
                     break;
                 default:
                     System.out.println("Exiting...");
@@ -246,6 +246,20 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println("Departure date/time: " + flightSchedule.getDepartureDateTime());
             System.out.println("Estimated arrival date/time: " + flightSchedule.getArrivalDateTime());
             System.out.println("----------------------");
+        }
+    }
+    
+    private void displayDeleteFlightSchedulePlanMenu() {
+        System.out.println("*** View Flight Schedule Plan Details ***");
+        System.out.println("Enter the ID of the flight schedule plan you would like to delete:");
+        Long flightSchedulePlanId = scanner.nextLong();
+               
+        try {
+            System.out.println(this.flightSchedulePlanBeanRemote.deleteFlightSchedulePlan(this.authenticatedEmployee, flightSchedulePlanId));
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid flight schedule plan ID.");
         }
     }
 }

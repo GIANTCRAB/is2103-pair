@@ -32,7 +32,7 @@ public class FlightScheduleService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-
+    
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedule create(@NonNull Flight flight, @NonNull Date departureDate, @NonNull Time departureTime, @NonNull Long estimatedDuration, @NonNull List<Fare> fares) throws InvalidConstraintException {
         final FlightSchedule flightSchedule = new FlightSchedule();
@@ -62,6 +62,12 @@ public class FlightScheduleService {
             f.getFlight();
         });
         return flightSchedules;
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteFlightSchedule(FlightSchedule flightSchedule) {
+        em.remove(flightSchedule);
+        em.flush();
     }
 
     public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) {

@@ -31,7 +31,6 @@ public class FlightSchedulePlanService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
@@ -61,5 +60,17 @@ public class FlightSchedulePlanService {
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(f -> f.getFlightSchedules().size());
         return searchQuery.getResultList();
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        flightSchedulePlan.getFlightSchedules().clear();
+        em.remove(flightSchedulePlan);
+        em.flush();
+    }
+    
+    public void disableFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        FlightSchedulePlan managedFlightSchedulePlan = em.find(FlightSchedulePlan.class, flightSchedulePlan.getFlightSchedulePlanId());
+        managedFlightSchedulePlan.setEnabled(false);
     }
 }
