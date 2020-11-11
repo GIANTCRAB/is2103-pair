@@ -1,7 +1,6 @@
 package controllers;
 
 import entities.*;
-import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
@@ -18,8 +17,6 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     @Inject
     CustomerService customerService;
     @Inject
-    AuthService authService;
-    @Inject
     AirportService airportService;
     @Inject
     FlightRouteService flightRouteService;
@@ -34,11 +31,6 @@ public class VisitorSessionBean implements VisitorBeanRemote {
                              String phoneNumber,
                              String address) throws InvalidConstraintException {
         return this.customerService.create(firstName, lastName, email, password, phoneNumber, address);
-    }
-
-    @Override
-    public Customer login(String email, String password) throws IncorrectCredentialsException {
-        return this.authService.customerLogin(email, password);
     }
 
     //TODO: implement this
