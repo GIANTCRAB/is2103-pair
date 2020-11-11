@@ -6,7 +6,9 @@ import entities.Flight;
 import entities.FlightRoute;
 import entities.Airport;
 import entities.AircraftConfiguration;
+
 import exceptions.EntityAlreadyExistException;
+import exceptions.EntityIsDisabledException;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -56,7 +58,7 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+    public Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityIsDisabledException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -65,10 +67,13 @@ public class FlightSessionBean implements FlightBeanRemote {
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
         AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
 
-        if (aircraftConfiguration == null) {
-            throw new InvalidEntityIdException();
+        if (!flightRoute.getEnabled()) {
+            throw new EntityIsDisabledException("Selected flight route is disabled.");
         }
-
+        
+        if (aircraftConfiguration == null) {
+            throw new InvalidEntityIdException("Invalid aircraft configuration ID.");
+        }
         return this.flightService.create(flightCode, flightRoute, aircraftConfiguration);
 
     }
@@ -118,7 +123,7 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException, EntityAlreadyExistException {
+    public void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException, EntityAlreadyExistException, EntityIsDisabledException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -127,7 +132,10 @@ public class FlightSessionBean implements FlightBeanRemote {
         final Airport originAirport = this.airportService.findAirportByCode(newOrigin);
         final Airport destinationAirport = this.airportService.findAirportByCode(newDestination);
         FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport);
-
+        
+        if (!flightRoute.getEnabled()) {
+            throw new EntityIsDisabledException("Selected flight route is disabled.");
+        }
         if(flightRoute.getFlights().contains(flight)) {
             throw new EntityAlreadyExistException("There is an existing flight with the chosen flight route.");
         } else {

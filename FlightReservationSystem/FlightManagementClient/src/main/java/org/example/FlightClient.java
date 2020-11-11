@@ -7,6 +7,7 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityIsDisabledException;
 import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -106,6 +107,8 @@ public class FlightClient implements SystemClient {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
             e.printStackTrace();
+        } catch (EntityIsDisabledException e) {
+            e.getMessage();
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -197,6 +200,8 @@ public class FlightClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
+            e.getMessage();
+        } catch (EntityIsDisabledException e) {
             e.getMessage();
         }
     }
