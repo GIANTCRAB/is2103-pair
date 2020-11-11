@@ -137,6 +137,10 @@ public class ReservationClient implements SystemClient {
                     System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
                     System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
                     System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
+                    flightSchedule.getFlightSchedulePlan().getFares().forEach(fare -> {
+                        System.out.println("Cabin Class Type: " + fare.getCabinClass().getCabinClassId().getCabinClassType());
+                        System.out.println("Fare Amount: " + fare.getFareAmount());
+                    });
                     System.out.println("=======================");
                 });
                 System.out.println("=================================================");
