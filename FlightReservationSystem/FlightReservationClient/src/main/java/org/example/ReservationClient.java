@@ -3,6 +3,7 @@ package org.example;
 import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
 import entities.Airport;
+import entities.CabinClassType;
 import entities.Customer;
 import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
@@ -11,6 +12,7 @@ import exceptions.InvalidEntityIdException;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -125,10 +127,17 @@ public class ReservationClient implements SystemClient {
         final Date departureDate = Date.valueOf(this.scanner.next());
         System.out.println("Enter passenger count: ");
         final Integer passengerCount = this.scanner.nextInt();
+        System.out.println("Any preference for cabin class? Type 1 if yes.");
+        final int cabinClassPref = this.scanner.nextInt();
+        CabinClassType cabinClassType = null;
+        if (cabinClassPref == 1) {
+            System.out.println("What's your preference? (" + Arrays.toString(CabinClassType.values()) + ")");
+            cabinClassType = CabinClassType.valueOf(this.scanner.next());
+        }
         System.out.println("=======================");
 
         try {
-            Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
+            Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, passengerCount, null, cabinClassType);
             for (List<FlightSchedule> flightScheduleList : possibleFlightScheduleList) {
                 System.out.println("========== Possible schedule route ==========");
                 flightScheduleList.forEach(flightSchedule -> {
@@ -145,8 +154,6 @@ public class ReservationClient implements SystemClient {
                 });
                 System.out.println("=================================================");
             }
-        } catch (InvalidConstraintException e) {
-            this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
             System.out.println("Invalid airport codes.");
         }

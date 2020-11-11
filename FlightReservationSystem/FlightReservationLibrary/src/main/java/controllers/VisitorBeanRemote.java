@@ -25,8 +25,7 @@ public interface VisitorBeanRemote {
     Set<List<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
                                            @NonNull Airport destinationAirport,
                                            @NonNull Date departureDate,
-                                           Date returnDate,
                                            @NonNull Integer passengerCount,
                                            Boolean directOnly,
-                                           CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException;
+                                           CabinClassType cabinClassType) throws InvalidEntityIdException;
 }
