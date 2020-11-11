@@ -14,16 +14,13 @@ import java.util.Scanner;
 
 public class CustomerClient extends ReservationClient {
     @NonNull
-    private final Scanner scanner;
-    @NonNull
     private final Customer customer;
 
     public CustomerClient(@NonNull Scanner scanner,
                           @NonNull VisitorBeanRemote visitorBeanRemote,
                           @NonNull CustomerBeanRemote customerBeanRemote,
                           @NonNull Customer customer) {
-        super(visitorBeanRemote, customerBeanRemote);
-        this.scanner = scanner;
+        super(visitorBeanRemote, customerBeanRemote, scanner);
         this.customer = customer;
     }
 
