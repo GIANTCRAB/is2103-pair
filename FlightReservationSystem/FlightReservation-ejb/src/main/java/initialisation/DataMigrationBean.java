@@ -129,18 +129,18 @@ public class DataMigrationBean {
     @SneakyThrows
     private void initSinToNrtData() {
         // Create Flight route
-        FlightRoute sinToNrtFR = this.flightRouteService.create(sinAirport, nrtAirport);
+        final FlightRoute sinToNrtFR = this.flightRouteService.create(sinAirport, nrtAirport);
 
         // Create Aircraft configuration
-        AircraftConfiguration sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
-        CabinClass sinNrtCabinClassF = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
-        CabinClass sinNrtCabinClassJ = cabinClassService.create(CabinClassType.J, 3, "3-2-3", sinNrtAC);
+        final AircraftConfiguration sinNrtAC = this.aircraftConfigurationService.create("basic", boeingSecondType);
+        final CabinClass sinNrtCabinClassF = cabinClassService.create(CabinClassType.F, 3, "3-2-3", sinNrtAC);
+        final CabinClass sinNrtCabinClassJ = cabinClassService.create(CabinClassType.J, 3, "3-2-3", sinNrtAC);
         sinNrtAC.getCabinClasses().add(sinNrtCabinClassF);
         sinNrtAC.getCabinClasses().add(sinNrtCabinClassJ);
         this.em.persist(sinNrtAC);
 
         // Create Flight
-        Flight sinToNrtFlight = this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
+        final Flight sinToNrtFlight = this.flightService.create("ML123", sinToNrtFR, sinNrtAC);
 
         // Create flight schedules
         final LocalDateTime timeFourHoursFromNow = LocalDateTime.now().plusHours(4);
