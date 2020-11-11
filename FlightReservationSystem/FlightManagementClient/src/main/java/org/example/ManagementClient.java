@@ -87,6 +87,8 @@ public class ManagementClient implements SystemClient {
         switch (employeeRole) {
             case ROUTE_PLANNER:
                 return this.flightRouteBeanRemote.login(username, password);
+            case SCHEDULE_MANAGER:
+                return this.flightSchedulePlanBeanRemote.login(username, password);
         }
 
         throw new IncorrectCredentialsException();
