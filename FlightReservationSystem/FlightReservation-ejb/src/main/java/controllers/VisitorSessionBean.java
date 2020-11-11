@@ -37,42 +37,47 @@ public class VisitorSessionBean implements VisitorBeanRemote {
         return this.customerService.create(firstName, lastName, email, password, phoneNumber, address);
     }
 
-    //TODO: implement this
     @Override
     public Set<List<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
                                                   @NonNull Airport destinationAirport,
                                                   @NonNull Date departureDate,
-                                                  Date returnDate,
                                                   @NonNull Integer passengerCount,
                                                   Boolean directOnly,
-                                                  CabinClassType cabinClassType) throws InvalidConstraintException, InvalidEntityIdException {
+                                                  CabinClassType cabinClassType) throws InvalidEntityIdException {
         final Airport managedDepartureAirport = this.airportService.findAirportByCode(departureAirport.getIataCode());
         final Airport managedDestinationAirport = this.airportService.findAirportByCode(destinationAirport.getIataCode());
         final FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(managedDepartureAirport, managedDestinationAirport);
         final Set<List<FlightSchedule>> possibleFlightSchedules = new HashSet<>();
 
-        if (returnDate != null) {
-            // Return date specified
-            // Check if departure date is earlier than return date
-            if (departureDate.before(returnDate)) {
-                // Valid
-            }
-        } else {
-            if (directOnly != null && directOnly) {
+        final Set<List<Flight>> possibleFlights = this.flightService.getPossibleFlights(flightRoute.getOrigin(), flightRoute.getDest());
 
+        if (directOnly != null && directOnly) {
+            final List<FlightSchedule> searchResult = new ArrayList<>();
+            final List<Flight> simpleFlightPath = this.flightService.getFlightByOriginDest(flightRoute.getOrigin(), flightRoute.getDest());
+            if (cabinClassType != null) {
+                simpleFlightPath.forEach(simpleFlightPathNode -> searchResult.addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount, cabinClassType)));
             } else {
-                if (cabinClassType != null) {
-
-                } else {
-                    // Basic search only
-                    final Set<List<Flight>> possibleFlights = this.flightService.getPossibleFlights(flightRoute.getOrigin(), flightRoute.getDest());
-                    for (List<Flight> possibleFlight : possibleFlights) {
-                        final List<FlightSchedule> searchResult = new ArrayList<>();
-                        for (Flight flightPathNode : possibleFlight) {
-                            searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
-                        }
-                        possibleFlightSchedules.add(searchResult);
+                simpleFlightPath.forEach(simpleFlightPathNode -> searchResult.addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount)));
+            }
+            possibleFlightSchedules.add(searchResult);
+        } else {
+            if (cabinClassType != null) {
+                // The flight schedule MUST have the cabin class
+                for (List<Flight> possibleFlight : possibleFlights) {
+                    final List<FlightSchedule> searchResult = new ArrayList<>();
+                    for (Flight flightPathNode : possibleFlight) {
+                        searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount, cabinClassType));
                     }
+                    possibleFlightSchedules.add(searchResult);
+                }
+            } else {
+                // Basic search only
+                for (List<Flight> possibleFlight : possibleFlights) {
+                    final List<FlightSchedule> searchResult = new ArrayList<>();
+                    for (Flight flightPathNode : possibleFlight) {
+                        searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
+                    }
+                    possibleFlightSchedules.add(searchResult);
                 }
             }
         }

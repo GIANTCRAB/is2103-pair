@@ -3,6 +3,7 @@ package org.example;
 import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
 import entities.Airport;
+import entities.CabinClassType;
 import entities.Customer;
 import entities.FlightSchedule;
 import exceptions.IncorrectCredentialsException;
@@ -11,6 +12,7 @@ import exceptions.InvalidEntityIdException;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -123,32 +125,60 @@ public class ReservationClient implements SystemClient {
         destinationAirport.setIataCode(destinationAirportCode);
         System.out.println("Enter departure date: (yyyy-mm-dd)");
         final Date departureDate = Date.valueOf(this.scanner.next());
+        System.out.println("Is this a round-trip? If yes, type 1.");
+        final int roundTripPref = this.scanner.nextInt();
+        Date returnDate = null;
+        if (roundTripPref == 1) {
+            System.out.println("Enter date of return: (yyyy-mm-dd)");
+            returnDate = Date.valueOf(this.scanner.next());
+        }
         System.out.println("Enter passenger count: ");
         final Integer passengerCount = this.scanner.nextInt();
+        System.out.println("Any preference for cabin class? Type 1 if yes.");
+        final int cabinClassPref = this.scanner.nextInt();
+        CabinClassType cabinClassType = null;
+        if (cabinClassPref == 1) {
+            System.out.println("What's your preference? (" + Arrays.toString(CabinClassType.values()) + ")");
+            cabinClassType = CabinClassType.valueOf(this.scanner.next());
+        }
+        System.out.println("If you prefer directly flights only, type 1.");
+        final int directFlightPref = this.scanner.nextInt();
+        boolean directOnly = false;
+        if (directFlightPref == 1) {
+            directOnly = true;
+        }
         System.out.println("=======================");
 
         try {
-            Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, null, passengerCount, null, null);
-            for (List<FlightSchedule> flightScheduleList : possibleFlightScheduleList) {
-                System.out.println("========== Possible schedule route ==========");
-                flightScheduleList.forEach(flightSchedule -> {
-                    System.out.println("Flight Schedule ID: " + flightSchedule.getFlightScheduleId());
-                    System.out.println("Departure Airport: " + flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode());
-                    System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
-                    System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
-                    System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
-                    flightSchedule.getFlightSchedulePlan().getFares().forEach(fare -> {
-                        System.out.println("Cabin Class Type: " + fare.getCabinClass().getCabinClassId().getCabinClassType());
-                        System.out.println("Fare Amount: " + fare.getFareAmount());
-                    });
-                    System.out.println("=======================");
-                });
-                System.out.println("=================================================");
+            System.out.println("============ **** Departure Flight Search Result **** =============");
+            final Set<List<FlightSchedule>> possibleFlightScheduleList = this.visitorBeanRemote.searchFlight(departureAirport, destinationAirport, departureDate, passengerCount, directOnly, cabinClassType);
+            this.displayFlightScheduleListDetails(possibleFlightScheduleList);
+            if (returnDate != null) {
+                System.out.println("============ **** Return Flight Search Result **** =============");
+                final Set<List<FlightSchedule>> possibleReturnFlightScheduleList = this.visitorBeanRemote.searchFlight(destinationAirport, departureAirport, returnDate, passengerCount, directOnly, cabinClassType);
+                this.displayFlightScheduleListDetails(possibleReturnFlightScheduleList);
             }
-        } catch (InvalidConstraintException e) {
-            this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
             System.out.println("Invalid airport codes.");
+        }
+    }
+
+    private void displayFlightScheduleListDetails(Set<List<FlightSchedule>> possibleFlightScheduleList) {
+        for (List<FlightSchedule> flightScheduleList : possibleFlightScheduleList) {
+            System.out.println("========== Possible schedule route ==========");
+            flightScheduleList.forEach(flightSchedule -> {
+                System.out.println("Flight Schedule ID: " + flightSchedule.getFlightScheduleId());
+                System.out.println("Departure Airport: " + flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode());
+                System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
+                System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
+                System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
+                flightSchedule.getFlightSchedulePlan().getFares().forEach(fare -> {
+                    System.out.println("Cabin Class Type: " + fare.getCabinClass().getCabinClassId().getCabinClassType());
+                    System.out.println("Fare Amount: " + fare.getFareAmount());
+                });
+                System.out.println("=======================");
+            });
+            System.out.println("=================================================");
         }
     }
 
