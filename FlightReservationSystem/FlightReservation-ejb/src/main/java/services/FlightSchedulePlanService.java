@@ -1,9 +1,11 @@
 package services;
 
+import entities.Fare;
 import exceptions.InvalidConstraintException;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -19,23 +21,24 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import lombok.NonNull;
 
+import lombok.NonNull;
 
 @LocalBean
 @Stateless
 public class FlightSchedulePlanService {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
-    
+
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-    
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules, List<Fare> fares) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
         flightSchedulePlan.setFlightSchedules(flightSchedules);
+        flightSchedulePlan.setFares(fares);
 
         Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
@@ -48,14 +51,18 @@ public class FlightSchedulePlanService {
 
         return flightSchedulePlan;
     }
-    
+
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
+        return this.create(flightSchedulePlanType, flightSchedules, null);
+    }
+
     public FlightSchedulePlan getFlightSchedulePlanById(Long id) {
         FlightSchedulePlan flightSchedulePlan = em.find(FlightSchedulePlan.class, id);
         flightSchedulePlan.getFlightSchedules();
         flightSchedulePlan.getFlightSchedules().forEach(f -> f.getFlight());
         return flightSchedulePlan;
     }
-    
+
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
         TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedule fsp JOIN fsp.flightSchedules fs ORDER BY fs.flight.flightCode ASC, fs.flight.date DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
