@@ -22,10 +22,10 @@ import java.util.Scanner;
 
 @RequiredArgsConstructor
 public class ReservationClient implements SystemClient {
-    @NotNull
-    private final InitialContext initialContext;
     @NonNull
     private final VisitorBeanRemote visitorBeanRemote;
+    @NonNull
+    private final CustomerBeanRemote customerBeanRemote;
 
     @Setter(AccessLevel.PRIVATE)
     private Scanner scanner;
@@ -105,16 +105,13 @@ public class ReservationClient implements SystemClient {
             final String password = this.scanner.next();
 
             try {
-                final Customer customer = this.visitorBeanRemote.login(email, password);
+                final Customer customer = this.customerBeanRemote.login(email, password);
                 System.out.println("Logged in as " + customer.getFirstName() + " (ID: " + customer.getCustomerId() + ")");
-                final CustomerBeanRemote customerBeanRemote = (CustomerBeanRemote) this.initialContext.lookup(CustomerBeanRemote.class.getName());
                 final CustomerClient customerClient = new CustomerClient(scanner, visitorBeanRemote, customerBeanRemote, customer);
                 customerClient.runApp();
                 loop = false;
             } catch (IncorrectCredentialsException e) {
                 System.out.println("Invalid login details!");
-            } catch (NamingException e) {
-                System.out.println("Server error, could not create customer session.");
             }
         }
     }

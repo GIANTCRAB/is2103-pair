@@ -1,8 +1,10 @@
 package controllers;
 
 import entities.*;
+import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
+import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.Passenger;
 
@@ -11,13 +13,14 @@ import java.util.List;
 
 @Remote
 public interface CustomerBeanRemote {
-    FlightReservationPayment reserveFlightForPassengers(@NonNull Customer customer,
-                                                       String creditCard,
+    Customer login(String email, String password) throws IncorrectCredentialsException;
+
+    FlightReservationPayment reserveFlightForPassengers(String creditCard,
                                                        @NonNull FlightSchedule flightSchedule,
                                                        @NonNull CabinClassType cabinClassType,
-                                                       @NonNull List<Passenger> passengers) throws InvalidEntityIdException, InvalidConstraintException;
+                                                       @NonNull List<Passenger> passengers) throws NotAuthenticatedException, InvalidEntityIdException, InvalidConstraintException;
 
-    List<FlightReservation> getFlightReservations(@NonNull Customer customer) throws InvalidEntityIdException;
+    List<FlightReservation> getFlightReservations() throws NotAuthenticatedException;
 
-    FlightReservationPayment getFlightReservationDetails(@NonNull Customer customer, FlightReservationPayment flightReservationPayment) throws InvalidEntityIdException;
+    FlightReservationPayment getFlightReservationDetails(FlightReservationPayment flightReservationPayment) throws NotAuthenticatedException, InvalidEntityIdException;
 }

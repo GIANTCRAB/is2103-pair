@@ -6,6 +6,7 @@ import entities.Customer;
 import entities.FlightReservation;
 import entities.FlightReservationPayment;
 import exceptions.InvalidEntityIdException;
+import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -55,7 +56,7 @@ public class CustomerClient implements SystemClient {
 
     private void displayViewReservationsMenu() {
         try {
-            final List<FlightReservation> flightReservations = this.customerBeanRemote.getFlightReservations(this.customer);
+            final List<FlightReservation> flightReservations = this.customerBeanRemote.getFlightReservations();
 
             flightReservations.forEach(flightReservation -> {
                 System.out.println("ID: " + flightReservation.getFlightReservationId() + " FROM " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin().getIataCode() + " -> " + flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest().getIataCode());
@@ -68,14 +69,14 @@ public class CustomerClient implements SystemClient {
             if (option > 0 && option < flightReservations.size()) {
                 this.displayViewSpecificReservation(flightReservations.get(option));
             }
-        } catch (InvalidEntityIdException e) {
+         } catch (NotAuthenticatedException e) {
             System.out.println("Invalid customer details. Please re-authenticate.");
         }
     }
 
     private void displayViewSpecificReservation(FlightReservation flightReservation) {
         try {
-            final FlightReservationPayment flightReservationPayment = this.customerBeanRemote.getFlightReservationDetails(this.customer, flightReservation.getFlightReservationPayment());
+            final FlightReservationPayment flightReservationPayment = this.customerBeanRemote.getFlightReservationDetails(flightReservation.getFlightReservationPayment());
 
             System.out.println("======================================================");
             System.out.println("*****All associated flight reservations*****");
@@ -89,8 +90,10 @@ public class CustomerClient implements SystemClient {
             System.out.println("******************************************************");
             System.out.println("Total Cost: " + flightReservationPayment.getTotalCost());
             System.out.println("======================================================");
-        } catch (InvalidEntityIdException e) {
+        } catch (NotAuthenticatedException e) {
             System.out.println("Invalid customer details. Please re-authenticate.");
+        } catch (InvalidEntityIdException e) {
+            System.out.println("Invalid flight reservation ID.");
         }
     }
 }
