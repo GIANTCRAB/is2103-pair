@@ -92,7 +92,7 @@ public class AircraftConfigurationClient implements SystemClient {
             }
 
             try {
-                final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.createConfiguration(this.authenticatedEmployee, aircraftConfigurationName, aircraftTypeId, cabinClassList);
+                final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.createConfiguration(aircraftConfigurationName, aircraftTypeId, cabinClassList);
                 System.out.println("Aircraft configuration created successfully with ID " + aircraftConfiguration.getAircraftConfigurationId());
             } catch (NotAuthenticatedException e) {
                 e.printStackTrace();
@@ -117,7 +117,7 @@ public class AircraftConfigurationClient implements SystemClient {
         System.out.println("*** View All Aircraft Configurations ***");
 
         try {
-            final List<Object[]> resultList = this.aircraftConfigurationBeanRemote.getAircraftConfigurations(this.authenticatedEmployee);
+            final List<Object[]> resultList = this.aircraftConfigurationBeanRemote.getAircraftConfigurations();
             resultList.forEach(result -> System.out.println("Aircraft Type: " + result[0] + ", Aircraft Configuration: " + result[1]));
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
@@ -131,7 +131,7 @@ public class AircraftConfigurationClient implements SystemClient {
 
         try {
             // 
-            final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.getAircraftConfigurationById(this.authenticatedEmployee, aircraftConfigurationId);
+            final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.getAircraftConfigurationById(aircraftConfigurationId);
             final List<CabinClass> cabinClassList = aircraftConfiguration.getCabinClasses();
             
             System.out.println("Viewing details for aircraft configuration: " + aircraftConfiguration.getAircraftConfigurationName() + "\n");
