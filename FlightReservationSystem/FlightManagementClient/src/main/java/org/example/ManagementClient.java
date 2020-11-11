@@ -106,7 +106,14 @@ public class ManagementClient implements SystemClient {
                 case ROUTE_PLANNER:
                     return new FlightRouteClient(this.scanner, this.authenticatedEmployee, flightRouteBeanRemote);
                 case SCHEDULE_MANAGER:
-                    return new ScheduleManagerClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, flightRouteBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
+                    System.out.println("1: Flight Client");
+                    System.out.println("2: Flight Schedule Plan Client");
+                    final int option = this.scanner.nextInt();
+                    if (option == 1) {
+                        return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
+                    } else {
+                        return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
+                    }
                 case SALES_MANAGER:
                     break;
                 default:

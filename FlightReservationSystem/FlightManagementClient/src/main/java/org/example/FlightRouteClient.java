@@ -102,7 +102,7 @@ public class FlightRouteClient implements SystemClient {
     }
 
     private void displayDeleteFlightRouteMenu() {
-        System.out.println("*** Delete Flight Route");
+        System.out.println("*** Delete Flight Route***");
         System.out.println("Enter origin airport code:");
         final String originCode = this.scanner.next();
         System.out.println("Enter destination airport code:");
@@ -116,9 +116,9 @@ public class FlightRouteClient implements SystemClient {
 
         try {
             this.flightRouteBeanRemote.deleteFlightRoute(flightRoute);
-            System.out.println("Route deleted successfully.");
+            System.out.println("Route deleted/disabled successfully.");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Flight route does not exists");
+            System.out.println("Flight route does not exist.");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } 

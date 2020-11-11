@@ -129,7 +129,12 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
     
     @Override
-    public String deleteFlight(String flightCode) {
+    public String deleteFlight(String flightCode) throws NotAuthenticatedException {
+        
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        
         Flight flight = this.flightService.getFlightByFlightCode(flightCode);
         String msg;
         
