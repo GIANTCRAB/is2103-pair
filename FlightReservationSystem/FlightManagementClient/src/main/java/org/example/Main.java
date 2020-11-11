@@ -1,6 +1,6 @@
 package org.example;
 
-import controllers.EmployeeAuthBeanRemote;
+import controllers.*;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -8,9 +8,13 @@ import javax.naming.NamingException;
 public class Main {
     public static void main(String[] a) throws NamingException {
         final InitialContext ic = new InitialContext();
-        final EmployeeAuthBeanRemote employeeAuthBeanRemote = (EmployeeAuthBeanRemote) ic.lookup(EmployeeAuthBeanRemote.class.getName());
+        final FlightRouteBeanRemote flightRouteBeanRemote = (FlightRouteBeanRemote) ic.lookup(FlightRouteBeanRemote.class.getName());
+        final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote = (AircraftConfigurationBeanRemote) ic.lookup(AircraftConfigurationBeanRemote.class.getName());
+        final FareBeanRemote fareBeanRemote = (FareBeanRemote) ic.lookup(FareBeanRemote.class.getName());
+        final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) ic.lookup(FlightBeanRemote.class.getName());
+        final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote = (FlightSchedulePlanBeanRemote) ic.lookup(FlightSchedulePlanBeanRemote.class.getName());
 
-        final ManagementClient managementClient = new ManagementClient(ic, employeeAuthBeanRemote);
+        final ManagementClient managementClient = new ManagementClient(flightRouteBeanRemote, aircraftConfigurationBeanRemote, fareBeanRemote, flightBeanRemote, flightSchedulePlanBeanRemote);
 
         managementClient.runApp();
     }

@@ -69,9 +69,9 @@ public class FlightRouteClient implements SystemClient {
 
         try {
             if (roundTrip == 1) {
-                this.flightRouteBeanRemote.createRoundTrip(this.authenticatedEmployee, originCode, destinationCode);
+                this.flightRouteBeanRemote.createRoundTrip(originCode, destinationCode);
             } else {
-                this.flightRouteBeanRemote.create(this.authenticatedEmployee, originCode, destinationCode);
+                this.flightRouteBeanRemote.create(originCode, destinationCode);
             }
         } catch (InvalidConstraintException e) {
             this.displayConstraintErrorMessage(e);
@@ -88,7 +88,7 @@ public class FlightRouteClient implements SystemClient {
         System.out.println("*** View All Flight Routes ***");
 
         try {
-            final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes(this.authenticatedEmployee);
+            final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes();
             for (FlightRoute flightRoute : flightRouteList) {
                 System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode());
 //                if(flightRoute.getReturnFlightRoute() != null) {
@@ -115,7 +115,7 @@ public class FlightRouteClient implements SystemClient {
         flightRoute.setFlightRouteId(flightRouteId);
 
         try {
-            this.flightRouteBeanRemote.deleteFlightRoute(this.authenticatedEmployee, flightRoute);
+            this.flightRouteBeanRemote.deleteFlightRoute(flightRoute);
             System.out.println("Route deleted successfully.");
         } catch (InvalidEntityIdException e) {
             System.out.println("Flight route does not exists");

@@ -2,23 +2,22 @@ package controllers;
 
 import entities.Employee;
 import entities.FlightRoute;
-import exceptions.FlightRouteAlreadyExistException;
-import exceptions.InvalidConstraintException;
-import exceptions.InvalidEntityIdException;
-import exceptions.NotAuthenticatedException;
+import exceptions.*;
 
 import javax.ejb.Remote;
 import java.util.List;
 
 @Remote
 public interface FlightRouteBeanRemote {
+    Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
+
     boolean checkFlightRoute(String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException;
 
-    FlightRoute create(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
+    FlightRoute create(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
 
-    FlightRoute createRoundTrip(Employee employee, String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
+    FlightRoute createRoundTrip(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException;
 
-    List<FlightRoute> getFlightRoutes(Employee employee) throws NotAuthenticatedException;
+    List<FlightRoute> getFlightRoutes() throws NotAuthenticatedException;
 
-    void deleteFlightRoute(Employee employee, FlightRoute flightRoute) throws InvalidEntityIdException, NotAuthenticatedException;
+    void deleteFlightRoute(FlightRoute flightRoute) throws InvalidEntityIdException, NotAuthenticatedException;
 }
