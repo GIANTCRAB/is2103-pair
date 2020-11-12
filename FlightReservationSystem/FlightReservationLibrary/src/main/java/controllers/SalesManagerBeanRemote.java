@@ -21,7 +21,7 @@ public interface SalesManagerBeanRemote {
 
     FlightSchedule getFlightScheduleDetails(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException, InvalidEntityIdException;
 
-    List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException, InvalidEntityIdException;
+    List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException;
     
     int getNoOfSeatsReservedForCabinClass(FlightSchedule flightSchedule,  CabinClassType cabinClassType) throws NotAuthenticatedException;
 }

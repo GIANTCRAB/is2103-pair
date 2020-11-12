@@ -87,6 +87,19 @@ public class FlightReservationService {
 
         return query.getResultList();
     }
+    
+    /**
+     * Retrieve Flight Reservations and order them by the cabinClassType
+     *
+     * @param flightSchedule
+     * @return
+     */
+    public List<FlightReservation> getFlightReservationsOrderByName(@NonNull FlightSchedule flightSchedule) {
+        TypedQuery<FlightReservation> query = this.em.createQuery("SELECT fr FROM FlightReservation fr WHERE fr.flightSchedule.flightScheduleId = ?1 ORDER BY fr.passengerFirstName", FlightReservation.class)
+                .setParameter(1, flightSchedule.getFlightScheduleId());
+
+        return query.getResultList();
+    }
 
     /**
      * Retrieve flight reservation information about a specific customer

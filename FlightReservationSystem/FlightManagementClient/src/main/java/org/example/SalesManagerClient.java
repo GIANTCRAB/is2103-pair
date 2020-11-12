@@ -43,7 +43,7 @@ public class SalesManagerClient implements SystemClient {
                     this.displayViewSeatsInventoryMenu();
                     break;
                 case 2:
-                    //this.displayViewFlightReservationsMenu();
+                    this.displayViewFlightReservationsMenu();
                     break;
                 default:
                     System.out.println("Exiting...");
@@ -89,6 +89,42 @@ public class SalesManagerClient implements SystemClient {
             System.out.println("Total no. of seats for flight schedule: " + totalNoOfSeats);
             System.out.println("Total no. of seats reserved for flight schedule: " + totalNoOfSeatsReserved);
             System.out.println("Total no. of seats remaining for flight schedule: " + (totalNoOfSeats - totalNoOfSeatsReserved) + "\n");
+        } catch (InvalidEntityIdException e) {
+            System.out.println(e.getMessage());
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You do not have permission to do this!");
+        }
+    }
+    
+    private void displayViewFlightReservationsMenu() {
+        System.out.println("*** View Seats Inventory ***");
+        System.out.println("Enter flight number: ");
+        String flightCode = scanner.next();
+        
+        try {
+            List<FlightSchedule> flightSchedules = this.salesManagerBeanRemote.getFlightSchedulesByFlightCode(flightCode);
+            ListIterator<FlightSchedule> iterateSchedules = flightSchedules.listIterator();
+            
+            while (iterateSchedules.hasNext()) {
+                FlightSchedule flightSchedule = iterateSchedules.next();
+                System.out.println((iterateSchedules.nextIndex()) + ". " + flightSchedule.getFlight().getFlightCode() + 
+                        " Departure date/time: " + flightSchedule.getDepartureDateTime() +
+                        " Estimated duration: " + flightSchedule.getEstimatedDuration());
+            }
+            System.out.println("-----------------------------------");
+            
+            System.out.println("Enter the index of the flight schedule you would like to select: ");
+            final int index = scanner.nextInt();
+            FlightSchedule selectedFlightSchedule = flightSchedules.get(index-1);
+            List<FlightReservation> flightReservations = this.salesManagerBeanRemote.getFlightReservations(selectedFlightSchedule);
+            
+            for (FlightReservation flightReservation : flightReservations) {
+                System.out.println("Seat number: " + flightReservation.getSeatNumber());
+                System.out.println("Passenger name: " + flightReservation.getPassengerFirstName() + " " + flightReservation.getPassengerLastName());
+                // Print fare basis code
+                System.out.println("-----------------------------------");
+            }
+            
         } catch (InvalidEntityIdException e) {
             System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {

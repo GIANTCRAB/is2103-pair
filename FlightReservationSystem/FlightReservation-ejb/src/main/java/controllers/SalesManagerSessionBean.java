@@ -9,6 +9,7 @@ import pojo.SeatInventory;
 import services.AuthService;
 import services.FlightScheduleService;
 import services.FlightService;
+import services.FlightReservationService;
 import services.CabinClassService;
 
 import javax.ejb.Stateful;
@@ -25,6 +26,8 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
     FlightService flightService;
     @Inject
     FlightScheduleService flightScheduleService;
+    @Inject
+    FlightReservationService flightReservationService;
     @Inject
     CabinClassService cabinClassService;
 
@@ -90,7 +93,10 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
     }
 
     @Override
-    public List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException, InvalidEntityIdException {
-        return null;
+    public List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        return this.flightReservationService.getFlightReservationsOrderByName(flightSchedule);
     }
 }
