@@ -119,14 +119,8 @@ public class FlightClient implements SystemClient {
 
         try {
             final List<Flight> flightList = this.flightBeanRemote.getFlights();
-            // Need to figure out how not to display duplicate flights
             for (Flight flight : flightList) {
                 System.out.println("Flight: " + flight.getFlightCode() + ", " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-
-                Set<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(flight);
-                for(List<Flight> flightPath : returnFlights) {
-                    flightPath.forEach(f -> System.out.println("Flight: " + flight.getFlightCode() + ", " + f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
-                }
             }
             
         } catch (NotAuthenticatedException e) {
