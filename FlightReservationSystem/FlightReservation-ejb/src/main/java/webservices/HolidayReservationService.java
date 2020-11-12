@@ -5,11 +5,11 @@ import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
+import pojo.PossibleFlightSchedules;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 
 @WebService
 public interface HolidayReservationService {
@@ -17,13 +17,17 @@ public interface HolidayReservationService {
     Partner partnerLogin(String username, String password) throws IncorrectCredentialsException;
 
     @WebMethod
-    HashSet<ArrayList<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
-                                                    @NonNull Airport destinationAirport,
-                                                    @NonNull Long departureDate,
-                                                    @NonNull Integer passengerCount,
-                                                    Boolean directOnly,
-                                                    CabinClassType cabinClassType) throws InvalidEntityIdException;
+    PossibleFlightSchedules searchFlight(@NonNull Airport departureAirport,
+                                         @NonNull Airport destinationAirport,
+                                         @NonNull Long departureDate,
+                                         @NonNull Integer passengerCount,
+                                         Boolean directOnly,
+                                         CabinClassType cabinClassType) throws InvalidEntityIdException;
 
     @WebMethod
-    ArrayList<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
+    Fare getFlightScheduleFare(@NonNull FlightSchedule flightSchedule,
+                               @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException;
+
+    @WebMethod
+    List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
 }
