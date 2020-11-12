@@ -110,4 +110,13 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
         }
         return this.fareService.findByFlightReservation(flightReservation);
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }

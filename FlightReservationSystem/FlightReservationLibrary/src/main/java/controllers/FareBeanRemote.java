@@ -19,4 +19,6 @@ public interface FareBeanRemote {
     Fare create(String fareBasisCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException, InvalidConstraintException;
 
     void delete(Fare fare) throws NotAuthenticatedException;
+
+    void logout() throws NotAuthenticatedException;
 }

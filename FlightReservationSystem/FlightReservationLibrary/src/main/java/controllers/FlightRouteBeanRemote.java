@@ -20,4 +20,6 @@ public interface FlightRouteBeanRemote {
     List<FlightRoute> getFlightRoutes() throws NotAuthenticatedException, InvalidEntityIdException;
 
     void deleteFlightRoute(FlightRoute flightRoute) throws InvalidEntityIdException, NotAuthenticatedException;
+
+    void logout() throws NotAuthenticatedException;
 }

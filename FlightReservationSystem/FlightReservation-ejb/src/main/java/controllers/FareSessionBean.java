@@ -51,5 +51,13 @@ public class FareSessionBean implements FareBeanRemote {
         }
         this.fareService.delete(fare);
     }
-    
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }

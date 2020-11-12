@@ -43,4 +43,6 @@ public interface FlightSchedulePlanBeanRemote {
     void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) throws NotAuthenticatedException, EntityInUseException;
 
     String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException;
+
+    void logout() throws NotAuthenticatedException;
 }

@@ -217,4 +217,13 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         }
         return true;
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }

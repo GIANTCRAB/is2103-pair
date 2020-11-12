@@ -193,4 +193,13 @@ public class FlightSessionBean implements FlightBeanRemote {
         }
         return msg;
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }

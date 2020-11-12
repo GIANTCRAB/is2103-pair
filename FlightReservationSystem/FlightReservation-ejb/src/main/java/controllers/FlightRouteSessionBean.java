@@ -118,4 +118,13 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
         return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport));
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }
