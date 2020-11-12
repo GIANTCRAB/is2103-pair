@@ -105,9 +105,9 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You are not allowed to do this!");
         } catch (InvalidEntityIdException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (EntityIsDisabledException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
     
@@ -268,9 +268,9 @@ public class FlightSchedulePlanClient implements SystemClient {
                 }
             }
         } catch (NotAuthenticatedException e) {
-            e.printStackTrace();
+            System.out.println("You do not have permission to do this!");
         } catch (InvalidConstraintException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
     
@@ -304,7 +304,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid flight schedule plan ID.");
+            System.out.println(e.getMessage());
         }
     }
     
@@ -366,7 +366,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid flight schedule plan ID.");
+            System.out.println(e.getMessage());
         }
     }
     
@@ -435,9 +435,9 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (InvalidConstraintException e) {
             displayConstraintErrorMessage(e);
         } catch (EntityIsDisabledException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (InvalidEntityIdException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
     
@@ -459,7 +459,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (EntityInUseException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
     
@@ -514,7 +514,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid flight schedule plan ID.");
+            System.out.println(e.getMessage());
         }
     }
     
