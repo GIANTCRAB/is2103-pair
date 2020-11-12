@@ -279,7 +279,7 @@ public class DataMigrationBean {
         this.em.persist(nrtSinAC);
 
         // Create Flight
-        final Flight nrtToSinFlight = this.flightService.create("ML123", nrtToSinFR, nrtSinAC);
+        final Flight nrtToSinFlight = this.flightService.create("ML128", nrtToSinFR, nrtSinAC);
 
         // Create flight schedules
         final LocalDateTime timeFourDaysFromNow = LocalDateTime.now().plusDays(4);
