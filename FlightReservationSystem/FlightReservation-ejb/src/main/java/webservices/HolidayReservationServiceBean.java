@@ -1,10 +1,10 @@
 package webservices;
 
-import entities.FlightReservation;
-import entities.Partner;
+import entities.*;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import lombok.NonNull;
 import services.AuthService;
 import services.FlightReservationService;
 import services.PartnerService;
@@ -17,7 +17,9 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpSession;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import java.util.List;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @WebService(serviceName = "HolidayReservationService", targetNamespace = "http://localhost:8080/ws/HolidayReservationService")
 public class HolidayReservationServiceBean implements HolidayReservationService {
@@ -40,8 +42,18 @@ public class HolidayReservationServiceBean implements HolidayReservationService 
     }
 
     @Override
-    public List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException {
-        return this.flightReservationService.getFlightReservations(this.getPartner());
+    public HashSet<ArrayList<FlightSchedule>> searchFlight(@NonNull @WebParam(name = "departureAirport")  Airport departureAirport,
+                                                           @NonNull @WebParam(name = "destinationAirport")  Airport destinationAirport,
+                                                           @NonNull @WebParam(name = "departureDate")  Date departureDate,
+                                                           @NonNull @WebParam(name = "passengerCount")  Integer passengerCount,
+                                                           @WebParam(name = "directOnly") Boolean directOnly,
+                                                           @WebParam(name = "cabinClassType") CabinClassType cabinClassType) throws InvalidEntityIdException {
+        return null;
+    }
+
+    @Override
+    public ArrayList<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException {
+        return (ArrayList<FlightReservation>) this.flightReservationService.getFlightReservations(this.getPartner());
     }
 
     private Partner getPartner() throws InvalidEntityIdException, NotAuthenticatedException {

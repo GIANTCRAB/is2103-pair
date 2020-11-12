@@ -1,14 +1,16 @@
 package webservices;
 
-import entities.FlightReservation;
-import entities.Partner;
+import entities.*;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import lombok.NonNull;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import java.util.List;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @WebService
 public interface HolidayReservationService {
@@ -16,5 +18,13 @@ public interface HolidayReservationService {
     Partner partnerLogin(String username, String password) throws IncorrectCredentialsException;
 
     @WebMethod
-    List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
+    HashSet<ArrayList<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
+                                                    @NonNull Airport destinationAirport,
+                                                    @NonNull Date departureDate,
+                                                    @NonNull Integer passengerCount,
+                                                    Boolean directOnly,
+                                                    CabinClassType cabinClassType) throws InvalidEntityIdException;
+
+    @WebMethod
+    ArrayList<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
 }
