@@ -396,6 +396,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         }
         try {
             this.flightSchedulePlanBeanRemote.updateFares(updatedFares);
+            System.out.println("Fare(s) updated successfully!\n");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
@@ -429,6 +430,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     }
                 }
                 this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
+                System.out.println("Flight schedule(s) added successfully!\n");
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
@@ -481,7 +483,7 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println("Enter the new departure date in YYYY-MM-DD: ");
             Date newDate = Date.valueOf(scanner.next());
             System.out.println("Enter the new departure time in hh:mm: ");
-            Time newTime = Time.valueOf(scanner.next());
+            Time newTime = Time.valueOf(scanner.next() + ":00");
             System.out.println("Enter the new estimated duration: ");
             Long newDuration = scanner.nextLong();
             
@@ -499,6 +501,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         }
         try {
             this.flightSchedulePlanBeanRemote.updateFlightSchedules(updatedFlightSchedules);
+            System.out.println("Flight schedule(s) updated successfully!\n");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
