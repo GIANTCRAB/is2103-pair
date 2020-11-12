@@ -14,5 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PossibleFlightSchedules implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Set<PossibleFlightPathNodes> possibleFlightPathNodesSet = new HashSet<>();
 }

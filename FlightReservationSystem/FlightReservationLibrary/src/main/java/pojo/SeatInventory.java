@@ -13,13 +13,15 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatInventory implements Serializable {
-    Long flightScheduleId;
+    private static final long serialVersionUID = 1L;
 
-    CabinClassType cabinClassType;
+    private Long flightScheduleId;
 
-    Integer seatsTaken;
+    private CabinClassType cabinClassType;
 
-    Integer maxSeats;
+    private Integer seatsTaken;
+
+    private Integer maxSeats;
 
     public Integer getSeatsRemaining() {
         return this.getMaxSeats() - this.getSeatsTaken();
