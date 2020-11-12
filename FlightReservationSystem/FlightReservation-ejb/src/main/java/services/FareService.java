@@ -69,6 +69,30 @@ public class FareService {
 
         return query.getSingleResult();
     }
+
+    // TODO: test this with partner and customer
+    public Fare findByFlightReservation(@NonNull FlightReservation flightReservation) throws InvalidEntityIdException {
+        final FlightReservationPayment flightReservationPayment = flightReservation.getFlightReservationPayment();
+        if(flightReservationPayment == null) {
+            throw new InvalidEntityIdException("Invalid flight reservation payment in flight reservation");
+        }
+
+        Fare fare;
+
+        if(flightReservationPayment.getCustomer() != null) {
+            // Get lowest fare
+             fare = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId.cabinClassType = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2 ORDER BY f.fareAmount ASC", Fare.class)
+                    .setParameter(1, flightReservation.getCabinClassType())
+                    .setParameter(2, flightReservation.getFlightSchedule().getFlightSchedulePlan().getFlightSchedulePlanId()).getSingleResult();
+        } else {
+            // Get the highest fare
+            fare = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId.cabinClassType = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2 ORDER BY f.fareAmount DESC", Fare.class)
+                    .setParameter(1, flightReservation.getCabinClassType())
+                    .setParameter(2, flightReservation.getFlightSchedule().getFlightSchedulePlan().getFlightSchedulePlanId()).getSingleResult();
+        }
+
+        return fare;
+    }
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void delete(Fare fare) {

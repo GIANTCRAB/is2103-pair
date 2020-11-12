@@ -28,13 +28,13 @@ public class FlightReservationService {
     @PersistenceContext(unitName = "frs")
     EntityManager em;
     @Inject
-    CabinClassService cabinClassService;
+    FareService fareService;
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException {
+    public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException, InvalidEntityIdException {
         final FlightReservation flightReservation = new FlightReservation();
         flightReservation.setFlightSchedule(flightSchedule);
         flightReservation.setPassengerFirstName(passenger.getFirstName());
@@ -43,7 +43,7 @@ public class FlightReservationService {
         flightReservation.setSeatNumber(passenger.getSeatNumber());
         flightReservation.setFlightReservationPayment(flightReservationPayment);
         flightReservation.setCabinClassType(cabinClass.getCabinClassId().getCabinClassType());
-        final Fare fare = this.getFlightReservationFare(flightReservation);
+        final Fare fare = this.fareService.findByFlightReservation(flightReservation);
         flightReservation.setReservationCost(fare.getFareAmount());
         Set<ConstraintViolation<FlightReservation>> violations = this.validator.validate(flightReservation);
         // There are invalid data
@@ -62,12 +62,12 @@ public class FlightReservationService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull Passenger passenger) throws InvalidConstraintException {
+    public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull Passenger passenger) throws InvalidConstraintException, InvalidEntityIdException {
         return this.create(flightSchedule, cabinClass, passenger, null);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public List<FlightReservation> create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull List<Passenger> passengers) throws InvalidConstraintException {
+    public List<FlightReservation> create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull List<Passenger> passengers) throws InvalidConstraintException, InvalidEntityIdException {
         final List<FlightReservation> flightReservations = new ArrayList<>();
         for (Passenger passenger : passengers) {
             flightReservations.add(this.create(flightSchedule, cabinClass, passenger));
@@ -123,12 +123,5 @@ public class FlightReservationService {
         });
 
         return flightReservations;
-    }
-
-    //TODO: test this
-    public Fare getFlightReservationFare(@NonNull FlightReservation flightReservation) {
-        return this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId.cabinClassType = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2", Fare.class)
-                .setParameter(1, flightReservation.getCabinClassType())
-                .setParameter(2, flightReservation.getFlightSchedule().getFlightSchedulePlan().getFlightSchedulePlanId()).getSingleResult();
     }
 }
