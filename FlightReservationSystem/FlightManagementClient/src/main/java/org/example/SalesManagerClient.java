@@ -34,7 +34,7 @@ public class SalesManagerClient implements SystemClient {
             System.out.println("*** Sales Manager Menu ***");
             System.out.println("1: View Seats Inventory");
             System.out.println("2: View Flight Reservations");
-            System.out.println("3: Exit\n");
+            System.out.println("3: Logout\n");
 
             final int option = this.scanner.nextInt();
 
@@ -46,7 +46,7 @@ public class SalesManagerClient implements SystemClient {
                     this.displayViewFlightReservationsMenu();
                     break;
                 default:
-                    System.out.println("Exiting...");
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -130,6 +130,15 @@ public class SalesManagerClient implements SystemClient {
             System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        }
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.salesManagerBeanRemote.logout();
+            System.out.println("You have logged out successfully.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in.");
         }
     }
 }
