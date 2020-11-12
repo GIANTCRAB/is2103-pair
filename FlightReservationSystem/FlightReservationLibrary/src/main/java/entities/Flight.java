@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Getter
@@ -26,6 +27,7 @@ public class Flight implements Serializable {
     private Long flightId;
 
     @Size(min = 5, max = 32)
+    @Pattern(regexp = "ML[0-9][0-9][0-9]*", message = "Must begin with ML")
     @Column(length = 32, nullable = false, unique = true)
     @NotNull
     private String flightCode;
