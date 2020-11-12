@@ -14,7 +14,9 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Stateful
 public class FlightRouteSessionBean implements FlightRouteBeanRemote {
@@ -26,13 +28,14 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     @Inject
     FlightRouteService flightRouteService;
 
-    private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.ROUTE_PLANNER;
-
     @Override
     public Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException {
+        final Set<EmployeeRole> PERMISSION_REQUIRED = new HashSet<>();
+        PERMISSION_REQUIRED.add(EmployeeRole.ROUTE_PLANNER);
+        PERMISSION_REQUIRED.add(EmployeeRole.SCHEDULE_MANAGER);
         final Employee employee = this.authService.employeeLogin(username, password);
 
-        if (employee.getEmployeeRole().equals(PERMISSION_REQUIRED)) {
+        if (PERMISSION_REQUIRED.contains(employee.getEmployeeRole())) {
             this.loggedInEmployee = employee;
             return employee;
         } else {
