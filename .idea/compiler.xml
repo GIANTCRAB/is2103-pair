@@ -20,7 +20,7 @@
       <module name="FlightReservationClient" target="1.8" />
       <module name="FlightReservationLibrary" target="1.8" />
       <module name="FlightReservationSystem" target="1.5" />
-      <module name="HolidayReservationClient" target="1.5" />
+      <module name="HolidayReservationClient" target="8" />
       <module name="HolidayReserverationSystem" target="1.5" />
     </bytecodeTargetLevel>
   </component>
