@@ -53,9 +53,6 @@ public class DataMigrationBean {
     public void init() {
         this.initAirportData();
         this.initAircraftTypeData();
-        this.initFlightRouteData();
-        this.initAircraftConfiguration();
-        this.initFlightData();
         this.initSinToNrtData();
         this.initSinToTpeData();
         this.initTpeToNrtData();
@@ -113,24 +110,6 @@ public class DataMigrationBean {
         em.persist(this.boeingSecondType);
 
         em.flush();
-    }
-
-    @SneakyThrows
-    private void initFlightRouteData() {
-        nrtToSinFR = this.flightRouteService.create(nrtAirport, sinAirport);
-    }
-
-    @SneakyThrows
-    private void initAircraftConfiguration() {
-        nrtSinAC = this.aircraftConfigurationService.create("basic2", boeingSecondType);
-        CabinClass cabinClass2 = cabinClassService.create(CabinClassType.J, 3, "3-2-3", nrtSinAC);
-        nrtSinAC.getCabinClasses().add(cabinClass2);
-        this.em.persist(nrtSinAC);
-    }
-
-    @SneakyThrows
-    private void initFlightData() {
-        this.flightService.create("ML124", nrtToSinFR, nrtSinAC);
     }
 
     @SneakyThrows
