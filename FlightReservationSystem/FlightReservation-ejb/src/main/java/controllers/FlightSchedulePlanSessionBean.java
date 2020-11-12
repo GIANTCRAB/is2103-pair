@@ -8,6 +8,7 @@ import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
 import exceptions.EntityInUseException;
+import exceptions.EntityIsDisabledException;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -65,17 +66,23 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException {
+    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
+        
         Flight flight = this.flightService.getFlightByFlightCode(flightCode);
-
+        if (flight == null) {
+            throw new InvalidEntityIdException("Flight does not exist.");
+        }
+        if (!flight.getEnabled()) {
+            throw new EntityIsDisabledException("Selected flight is disabled.");
+        }
         return this.flightScheduleService.create(flight, departureDate, departureTime, estimatedDuration);
     }
 
     @Override
-    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException {
+    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }

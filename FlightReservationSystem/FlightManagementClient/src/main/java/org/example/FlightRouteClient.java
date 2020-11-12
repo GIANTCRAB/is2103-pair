@@ -7,7 +7,7 @@ import entities.FlightRouteId;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
-import exceptions.FlightRouteAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -76,11 +76,11 @@ public class FlightRouteClient implements SystemClient {
         } catch (InvalidConstraintException e) {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
-            System.out.println("Invalid airport codes.");
+            e.getMessage();
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
-        } catch (FlightRouteAlreadyExistException e) {
-            System.out.println("Flight route already exists.");
+        } catch (EntityAlreadyExistException e) {
+            e.getMessage();
         }
     }
 

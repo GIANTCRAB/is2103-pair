@@ -48,7 +48,7 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     }
 
     @Override
-    public FlightRoute create(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException {
+    public FlightRoute create(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -61,7 +61,7 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightRoute createRoundTrip(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, FlightRouteAlreadyExistException {
+    public FlightRoute createRoundTrip(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }

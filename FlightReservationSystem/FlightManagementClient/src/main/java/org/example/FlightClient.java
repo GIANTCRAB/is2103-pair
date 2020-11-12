@@ -7,6 +7,8 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityIsDisabledException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -105,6 +107,8 @@ public class FlightClient implements SystemClient {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
             e.printStackTrace();
+        } catch (EntityIsDisabledException e) {
+            e.getMessage();
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -115,12 +119,13 @@ public class FlightClient implements SystemClient {
 
         try {
             final List<Flight> flightList = this.flightBeanRemote.getFlights();
+            // Need to figure out how not to display duplicate flights
             for (Flight flight : flightList) {
                 System.out.println("Flight: " + flight.getFlightCode() + ", " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-                
+
                 Set<List<Flight>> returnFlights = this.flightBeanRemote.getReturnFlights(flight);
                 for(List<Flight> flightPath : returnFlights) {
-                    flightPath.forEach(f -> System.out.println(f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
+                    flightPath.forEach(f -> System.out.println("Flight: " + flight.getFlightCode() + ", " + f.getFlightRoute().getOrigin().getIataCode() + " -> " + f.getFlightRoute().getDest().getIataCode())); 
                 }
             }
             
@@ -136,31 +141,39 @@ public class FlightClient implements SystemClient {
 
         try {
             final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
-            List<CabinClass> cabinClasses = flight.getAircraftConfiguration().getCabinClasses();
-            String availableCabinClasses = cabinClasses.stream()
-                    .map(c -> c.getCabinClassId().getCabinClassType().name())
-                    .collect(Collectors.joining(", "));
-
-            System.out.println("Viewing details for flight: " + flightCode + "\n");
-            System.out.println("-----------------");
-            System.out.println("Flight route: " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
-            System.out.println("Aircraft configuration: " + flight.getAircraftConfiguration().getAircraftConfigurationName());
-            System.out.println("Available cabin classes: " + availableCabinClasses + "\n");
+            printFlightDetails(flight);
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
     }
     
+    private void printFlightDetails(Flight flight) {
+        List<CabinClass> cabinClasses = flight.getAircraftConfiguration().getCabinClasses();
+        String availableCabinClasses = cabinClasses.stream()
+                .map(c -> c.getCabinClassId().getCabinClassType().name())
+                .collect(Collectors.joining(", "));
+
+        System.out.println("Viewing details for flight: " + flight.getFlightCode() + "\n");
+        System.out.println("-----------------------------------");
+        System.out.println("Flight route: " + flight.getFlightRoute().getOrigin().getIataCode() + " -> " + flight.getFlightRoute().getDest().getIataCode());
+        System.out.println("Aircraft configuration: " + flight.getAircraftConfiguration().getAircraftConfigurationName());
+        System.out.println("Available cabin classes: " + availableCabinClasses);
+        System.out.println("-----------------------------------");
+    }
+    
     private void displayUpdateFlightMenu() {
-        System.out.println("*** Update Aircraft Configuration Details ***");
+        System.out.println("*** Update Flight Details ***");
         System.out.println("Enter the flight number of the flight details you would like to update:");
         String flightCode = scanner.next();
-        
-        System.out.println("1. Update flight route");
-        System.out.println("2. Update aircraft configuration");
-        int updateOption = scanner.nextInt();
-        
         try {
+            Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
+            printFlightDetails(flight);
+
+            System.out.println("Which details would you like to update?");
+            System.out.println("1. Update flight route");
+            System.out.println("2. Update aircraft configuration");
+            int updateOption = scanner.nextInt();
+
             if(updateOption == 1) {
                 System.out.println("Enter the IATA code for the new origin airport: ");
                 String origin = scanner.next();
@@ -170,6 +183,7 @@ public class FlightClient implements SystemClient {
 
                 if (flightRouteBeanRemote.checkFlightRoute(origin, dest)) {
                     this.flightBeanRemote.updateFlightRoute(flightCode, origin, dest);
+                    System.out.println("Flight updated successfully!");
                 } else {
                     System.out.println("Flight route does not exist!");
                 }
@@ -177,13 +191,18 @@ public class FlightClient implements SystemClient {
                 System.out.println("Enter the ID of the new aircraft configuration: ");
                 Long aircraftConfigurationId = scanner.nextLong();
                 this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationId);
+                System.out.println("Flight updated successfully!");
             } else {
                 System.out.println("Invalid input. Please try again.");
             }
-        } catch (InvalidEntityIdException e) {
-            e.printStackTrace();
+        } catch (EntityAlreadyExistException e) {
+            e.getMessage();
         } catch (NotAuthenticatedException e) {
-            e.printStackTrace();
+            System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            e.getMessage();
+        } catch (EntityIsDisabledException e) {
+            e.getMessage();
         }
     }
     
@@ -191,11 +210,18 @@ public class FlightClient implements SystemClient {
         System.out.println("*** Delete Flight ***");
         System.out.println("Enter the flight number of the flight you would like to delete:");
         String flightCode = scanner.next();
-               
+        
         try { 
-            System.out.println(this.flightBeanRemote.deleteFlight(flightCode));
+            Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
+            printFlightDetails(flight);
+            System.out.println("Confirm deletion of flight? (1: Yes, 2: No");
+            int option = scanner.nextInt();
+
+            if (option == 1) {
+                System.out.println(this.flightBeanRemote.deleteFlight(flightCode));
+            }
         } catch (NotAuthenticatedException e) {
-            e.printStackTrace();
+            System.out.println("You do not have permission to do this!");
         }
     }
 

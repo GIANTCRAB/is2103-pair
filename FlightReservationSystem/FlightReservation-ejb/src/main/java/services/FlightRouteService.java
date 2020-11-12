@@ -3,7 +3,7 @@ package services;
 import entities.Airport;
 import entities.FlightRoute;
 import entities.FlightRouteId;
-import exceptions.FlightRouteAlreadyExistException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 
@@ -45,11 +45,11 @@ public class FlightRouteService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, FlightRouteAlreadyExistException, InvalidEntityIdException {
-        try {
-            findFlightRouteByOriginDest(origin, destination);
-            throw new FlightRouteAlreadyExistException();
-        } catch (InvalidEntityIdException e) {
+    public FlightRoute create(Airport origin, Airport destination) throws InvalidConstraintException, EntityAlreadyExistException, InvalidEntityIdException {
+
+        if (findFlightRouteByOriginDest(origin, destination) != null) {
+            throw new EntityAlreadyExistException("Flight route already exists!");
+        } else {
             final FlightRoute newFlightRoute = new FlightRoute();
             newFlightRoute.setOrigin(origin);
             newFlightRoute.setDest(destination);
@@ -88,13 +88,9 @@ public class FlightRouteService {
         return flightRoutes;
     }
 
-    public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) throws InvalidEntityIdException {
+    public FlightRoute findFlightRouteByOriginDest(Airport origin, Airport destination) {
         final FlightRouteId flightRouteId = new FlightRouteId(origin.getIataCode(), destination.getIataCode());
         final FlightRoute flightRoute = em.find(FlightRoute.class, flightRouteId);
-
-        if (flightRoute == null) {
-            throw new InvalidEntityIdException();
-        }
 
         return flightRoute;
     }

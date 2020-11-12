@@ -9,6 +9,7 @@ import entities.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import exceptions.EntityIsDisabledException;
 import exceptions.EntityInUseException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -100,13 +101,17 @@ public class FlightSchedulePlanClient implements SystemClient {
                 }         
             }
         } catch (InvalidConstraintException e) {
-            e.printStackTrace();
+            displayConstraintErrorMessage(e);
         } catch (NotAuthenticatedException e) {
-            e.printStackTrace();
-        } 
+            System.out.println("You are not allowed to do this!");
+        } catch (InvalidEntityIdException e) {
+            e.getMessage();
+        } catch (EntityIsDisabledException e) {
+            e.getMessage();
+        }
     }
     
-    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException, EntityIsDisabledException, InvalidEntityIdException {
         System.out.println("Enter flight schedule plan type:");
         System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
         final int option = scanner.nextInt();
@@ -196,7 +201,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         return flightSchedulePlan;
     }
     
-    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException {
+    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException, EntityIsDisabledException {
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         FlightSchedulePlanType flightSchedulePlanType = flightSchedulePlan.getFlightSchedulePlanType();
         List<FlightSchedule> returnFlightSchedules = new ArrayList<>();
@@ -398,29 +403,40 @@ public class FlightSchedulePlanClient implements SystemClient {
     private void displayAddFlightSchedule(FlightSchedulePlan flightSchedulePlan) {
         System.out.println("--- Add Flight Schedule ---");
         String flightCode = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightCode();
-        List<FlightSchedule> newFlightSchedules = new ArrayList<>();
-        boolean add = true; 
         try {
-            while(add) {
-                System.out.println("Enter departure date in YYYY-MM-DD:");
-                Date departureDate = Date.valueOf(scanner.next());
-                System.out.println("Enter departure time in hh:mm");
-                Time departureTime = Time.valueOf(scanner.next() + ":00");
-                System.out.println("Enter estimated flight duration in minutes:");
-                Long estimatedDuration = scanner.nextLong();
-                FlightSchedule flightSchedule = this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration);
-                newFlightSchedules.add(flightSchedule);
-                System.out.println("Add another flight schedule? (1: Yes, 2: No)");
-                int option = scanner.nextInt();
-                if (option == 2) {
-                    add = false;
+            Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
+
+            if (!flight.getEnabled()) {
+                System.out.println("Selected flight is disabled.");
+            } else {
+                List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+                boolean add = true; 
+
+                while(add) {
+                    System.out.println("Enter departure date in YYYY-MM-DD:");
+                    Date departureDate = Date.valueOf(scanner.next());
+                    System.out.println("Enter departure time in hh:mm");
+                    Time departureTime = Time.valueOf(scanner.next() + ":00");
+                    System.out.println("Enter estimated flight duration in minutes:");
+                    Long estimatedDuration = scanner.nextLong();
+                    FlightSchedule flightSchedule = this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration);
+                    newFlightSchedules.add(flightSchedule);
+                    System.out.println("Add another flight schedule? (1: Yes, 2: No)");
+                    int option = scanner.nextInt();
+                    if (option == 2) {
+                        add = false;
+                    }
                 }
+                this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
             }
-            this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidConstraintException e) {
             displayConstraintErrorMessage(e);
+        } catch (EntityIsDisabledException e) {
+            e.getMessage();
+        } catch (InvalidEntityIdException e) {
+            e.getMessage();
         }
     }
     

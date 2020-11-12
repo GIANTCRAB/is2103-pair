@@ -190,14 +190,15 @@ public class FlightService {
         return flightList;
     }
 
-    public void updateFlightRoute(String flightCode, FlightRoute flightRoute) {
-        Flight flight = this.getFlightByFlightCode(flightCode);
+    public void updateFlightRoute(Flight flight, FlightRoute flightRoute) {
         FlightRoute oldFlightRoute = this.em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
         FlightRoute newFlightRoute = this.em.find(FlightRoute.class, flightRoute.getFlightRouteId());
 
         flight.setFlightRoute(flightRoute);
+        em.merge(flight);
         oldFlightRoute.getFlights().remove(flight);
         newFlightRoute.getFlights().add(flight);
+        em.flush();
     }
 
     public void updateAircraftConfiguration(String flightCode, AircraftConfiguration aircraftConfiguration) {
@@ -211,11 +212,17 @@ public class FlightService {
     }
 
     public void delete(Flight flight) {
-        this.em.remove(flight);
+        AircraftConfiguration aircraftConfiguration = em.find(AircraftConfiguration.class, flight.getAircraftConfiguration().getAircraftConfigurationId());
+        FlightRoute flightRoute = em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
+        
+        aircraftConfiguration.getFlights().remove(flight);
+        flightRoute.getFlights().remove(flight);
+        em.remove(flight);
+        em.flush();
     }
     
     public void disable(Flight flight) {
-        Flight managedFlight = this.em.find(Flight.class, flight.getFlightId());
+        Flight managedFlight = em.find(Flight.class, flight.getFlightId());
         flight.setEnabled(false);
     }
 }
