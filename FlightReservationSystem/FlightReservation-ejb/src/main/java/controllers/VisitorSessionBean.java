@@ -26,6 +26,10 @@ public class VisitorSessionBean implements VisitorBeanRemote {
     FlightService flightService;
     @Inject
     FlightScheduleService flightScheduleService;
+    @Inject
+    FareService fareService;
+    @Inject
+    CabinClassService cabinClassService;
 
     @Override
     public Customer register(String firstName,
@@ -83,5 +87,18 @@ public class VisitorSessionBean implements VisitorBeanRemote {
         }
 
         return possibleFlightSchedules;
+    }
+
+    @Override
+    public Fare getFlightScheduleFare(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException {
+        final FlightSchedule managedFlightSchedule = this.flightScheduleService.findById(flightSchedule.getFlightScheduleId());
+
+        final AircraftConfiguration aircraftConfiguration = managedFlightSchedule.getFlight().getAircraftConfiguration();
+        final CabinClassId cabinClassId = new CabinClassId();
+        cabinClassId.setAircraftConfigurationId(aircraftConfiguration.getAircraftConfigurationId());
+        cabinClassId.setCabinClassType(cabinClassType);
+        final CabinClass cabinClass = this.cabinClassService.findById(cabinClassId);
+
+        return this.fareService.findByScheduleAndCabinClass(managedFlightSchedule, cabinClass);
     }
 }

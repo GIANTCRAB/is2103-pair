@@ -1,9 +1,6 @@
 package controllers;
 
-import entities.Airport;
-import entities.CabinClassType;
-import entities.Customer;
-import entities.FlightSchedule;
+import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
@@ -28,4 +25,7 @@ public interface VisitorBeanRemote {
                                            @NonNull Integer passengerCount,
                                            Boolean directOnly,
                                            CabinClassType cabinClassType) throws InvalidEntityIdException;
+
+    Fare getFlightScheduleFare(@NonNull FlightSchedule flightSchedule,
+                               @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException;
 }
