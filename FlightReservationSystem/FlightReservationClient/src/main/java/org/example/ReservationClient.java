@@ -8,11 +8,9 @@ import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -162,23 +160,39 @@ public class ReservationClient implements SystemClient {
     private void displayFlightScheduleListDetails(Set<List<FlightSchedule>> possibleFlightScheduleList) {
         for (List<FlightSchedule> flightScheduleList : possibleFlightScheduleList) {
             System.out.println("========== Possible schedule route ==========");
-            flightScheduleList.forEach(flightSchedule -> {
+            final int routeCount = flightScheduleList.size();
+            final Map<CabinClassType, BigDecimal> cabinClassTypeMap = new HashMap<>();
+            for (FlightSchedule flightSchedule : flightScheduleList) {
                 System.out.println("Flight Schedule ID: " + flightSchedule.getFlightScheduleId());
                 System.out.println("Departure Airport: " + flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode());
                 System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
                 System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
                 System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
-                flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
+                final List<CabinClass> cabinClassList = flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses();
+                for (CabinClass cabinClass : cabinClassList) {
                     try {
-                        final Fare fare = this.visitorBeanRemote.getFlightScheduleFare(flightSchedule, cabinClass.getCabinClassId().getCabinClassType());
-                        System.out.println("Cabin Class Type: " + cabinClass.getCabinClassId().getCabinClassType());
-                        System.out.println("Fare Amount: " + fare.getFareAmount());
+                        final CabinClassType cabinClassType = cabinClass.getCabinClassId().getCabinClassType();
+                        final Fare fare = this.visitorBeanRemote.getFlightScheduleFare(flightSchedule, cabinClassType);
+                        System.out.println("Has Cabin Class Type: " + cabinClass.getCabinClassId().getCabinClassType());
+                        if (routeCount == 1) {
+                            // only one, so just display it immediately
+                            System.out.println("Fare Amount: " + fare.getFareAmount());
+                        } else {
+                            // more than one, do not provide breakdown
+                            final BigDecimal totalFareSum = cabinClassTypeMap.getOrDefault(cabinClassType, BigDecimal.valueOf(0));
+                            final BigDecimal newSum = totalFareSum.add(fare.getFareAmount());
+                            cabinClassTypeMap.put(cabinClass.getCabinClassId().getCabinClassType(), newSum);
+                        }
                     } catch (InvalidEntityIdException e) {
-                        System.out.println("No associated fare found!");
+                        System.out.println(e.getMessage());
                     }
-                });
+                }
                 System.out.println("=======================");
-            });
+            }
+            if (routeCount > 1) {
+                // Display accumulated
+                cabinClassTypeMap.forEach((cabinClassType, totalFareAmount) -> System.out.println("Total Fare Amount For Cabin Class Type " + cabinClassType + ": " + totalFareAmount));
+            }
             System.out.println("=================================================");
         }
     }
