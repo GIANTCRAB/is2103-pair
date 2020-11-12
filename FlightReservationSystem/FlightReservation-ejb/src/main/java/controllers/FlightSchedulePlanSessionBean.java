@@ -17,6 +17,8 @@ import exceptions.NotAuthenticatedException;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
@@ -127,15 +129,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         return this.flightScheduleService.getFlightSchedules();
     }
-
-    @Override
-    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-
-        return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
-    }
     
     @Override
     public void updateFares(List<Fare> fares) throws NotAuthenticatedException {
@@ -205,6 +198,17 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             if (!flightSchedule.getFlightReservations().isEmpty()) {
                 return false;
             }
+        }
+        return true;
+    }
+    
+    private boolean checkExistingFlightSchedules(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) {
+        LocalDateTime arrivalDateTime = LocalDateTime.of(departureDate.toLocalDate(), departureTime.toLocalTime().plusMinutes(estimatedDuration));
+        List<FlightSchedule> sameDateFlightSchedules = this.flightScheduleService.getFlightSchedulesByFlightAndDate(flightCode, departureDate, departureDate);
+        for (FlightSchedule flightSchedule : sameDateFlightSchedules) {
+             if (!flightSchedule.getArrivalDateTime().toLocalDateTime().isAfter(arrivalDateTime.plusHours(2))) {
+                 return false;
+             }
         }
         return true;
     }

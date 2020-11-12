@@ -32,8 +32,6 @@ public interface FlightSchedulePlanBeanRemote {
     List<FlightSchedulePlan> getFlightSchedulePlans() throws NotAuthenticatedException;
 
     List<FlightSchedule> getFlightSchedules() throws NotAuthenticatedException;
-
-    List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
     
     void updateFares(List<Fare> fares) throws NotAuthenticatedException;
     
