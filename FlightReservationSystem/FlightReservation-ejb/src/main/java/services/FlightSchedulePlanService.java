@@ -81,18 +81,18 @@ public class FlightSchedulePlanService {
         flightSchedulePlan.getFares();
         flightSchedulePlan.getFares().forEach(fare -> fare.getCabinClass());
         
-        flightSchedulePlan.getFlightSchedules().forEach(f -> {
-            f.getFlight();
-            f.getFlight().getFlightRoute();
-            f.getFlight().getAircraftConfiguration();
+        flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
+            flightSchedule.getFlight();
+            flightSchedule.getFlight().getFlightRoute();
+            flightSchedule.getFlight().getAircraftConfiguration();
+            flightSchedule.getFlightReservations().size();
         });
         return flightSchedulePlan;
     }
     
     // Something wrong with this query
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
-        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f"
-                + " ORDER BY f.flightCode ASC, fs.date DESC", FlightSchedulePlan.class);
+        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp ORDER BY DISTINCT(fsp.flightSchedules.flightCode) ASC, MIN(fsp.flightSchedules.date) DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(f -> {
             f.getFlightSchedules().size();
@@ -107,6 +107,7 @@ public class FlightSchedulePlanService {
         em.flush();
     }
     
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void disableFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
         FlightSchedulePlan managedFlightSchedulePlan = em.find(FlightSchedulePlan.class, flightSchedulePlan.getFlightSchedulePlanId());
         managedFlightSchedulePlan.setEnabled(false);
