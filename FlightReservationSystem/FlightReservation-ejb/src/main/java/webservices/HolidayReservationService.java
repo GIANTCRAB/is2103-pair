@@ -25,5 +25,9 @@ public interface HolidayReservationService {
                                          CabinClassType cabinClassType) throws InvalidEntityIdException;
 
     @WebMethod
+    Fare getFlightScheduleFare(@NonNull FlightSchedule flightSchedule,
+                               @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException;
+
+    @WebMethod
     List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
 }
