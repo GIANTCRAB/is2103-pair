@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import exceptions.EntityIsDisabledException;
 import exceptions.EntityInUseException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -108,10 +109,12 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println(e.getMessage());
         } catch (EntityIsDisabledException e) {
             System.out.println(e.getMessage());
+        } catch(EntityAlreadyExistException e) {
+            System.out.println(e.getMessage());
         }
     }
     
-    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException, EntityIsDisabledException, InvalidEntityIdException {
+    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         System.out.println("Enter flight schedule plan type:");
         System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
         final int option = scanner.nextInt();
@@ -201,7 +204,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         return flightSchedulePlan;
     }
     
-    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException, EntityIsDisabledException {
+    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException, EntityIsDisabledException, EntityAlreadyExistException {
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         FlightSchedulePlanType flightSchedulePlanType = flightSchedulePlan.getFlightSchedulePlanType();
         List<FlightSchedule> returnFlightSchedules = new ArrayList<>();
@@ -439,6 +442,8 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (EntityIsDisabledException e) {
             System.out.println(e.getMessage());
         } catch (InvalidEntityIdException e) {
+            System.out.println(e.getMessage());
+        } catch (EntityAlreadyExistException e) {
             System.out.println(e.getMessage());
         }
     }

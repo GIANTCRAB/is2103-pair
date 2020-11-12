@@ -7,6 +7,7 @@ import entities.Flight;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
+import exceptions.EntityAlreadyExistException;
 import exceptions.EntityInUseException;
 import exceptions.EntityIsDisabledException;
 import exceptions.IncorrectCredentialsException;
@@ -70,7 +71,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
+    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -82,11 +83,15 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         if (!flight.getEnabled()) {
             throw new EntityIsDisabledException("Selected flight is disabled.");
         }
+        if (!checkExistingFlightSchedules(flightCode, departureDate, departureTime, estimatedDuration)) {
+            throw new EntityAlreadyExistException("An overlapping flight schedule already exists.");
+        }
+        
         return this.flightScheduleService.create(flight, departureDate, departureTime, estimatedDuration);
     }
 
     @Override
-    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
+    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
