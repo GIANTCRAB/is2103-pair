@@ -109,7 +109,6 @@ public class ReservationClient implements SystemClient {
         }
     }
 
-    // TODO: implement all search
     protected void displayFlightSearchMenu() {
         System.out.println("**** Flight Search ****");
         System.out.println("Enter departure airport: ");
