@@ -15,7 +15,6 @@ import exceptions.NotAuthenticatedException;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -64,7 +63,7 @@ public class FlightClient implements SystemClient {
                     this.displayDeleteFlightMenu();
                     break;
                 default:
-                    System.out.println("Exiting...");
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -222,5 +221,15 @@ public class FlightClient implements SystemClient {
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
         System.out.println("There were some validation errors!");
         System.out.println(invalidConstraintException.toString());
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.flightBeanRemote.logout();
+            this.flightRouteBeanRemote.logout();
+            System.out.println("You have logged out successfully.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in.");
+        }
     }
 }
