@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import services.AuthService;
@@ -164,13 +166,15 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        if (flightSchedule.getFlightReservations().isEmpty()) {
-            this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule);
+        
+        if (flightSchedule.getFlightReservations().isEmpty() && flightSchedulePlan.getFlightSchedules().size() > 1) {
+            this.flightScheduleService.deleteFlightSchedule(flightSchedule);
         } else {
             throw new EntityInUseException("Flight schedule is in use and cannot be deleted!");
         }
     }
     
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     @Override
     public String deleteFlightSchedulePlan(Long flightSchedulePlanId) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
@@ -184,9 +188,10 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
 
         String msg = "";
         if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
-            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedulePlan, flightSchedule));
-            flightSchedulePlan.getFares().forEach(fare -> this.fareService.delete(fare));
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
+            flightSchedulePlan.getFares().forEach(fare -> this.fareService.deleteFare(fare));
             this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
+            
             msg = "Flight schedule plan successfully deleted.";
         } else {
             this.flightSchedulePlanService.disableFlightSchedulePlan(flightSchedulePlan);
