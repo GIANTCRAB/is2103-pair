@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import exceptions.EntityIsDisabledException;
 import exceptions.EntityInUseException;
+import exceptions.EntityAlreadyExistException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
@@ -108,10 +109,12 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println(e.getMessage());
         } catch (EntityIsDisabledException e) {
             System.out.println(e.getMessage());
+        } catch(EntityAlreadyExistException e) {
+            System.out.println(e.getMessage());
         }
     }
     
-    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException, EntityIsDisabledException, InvalidEntityIdException {
+    private FlightSchedulePlan createFlightSchedulePlan(String flightCode) throws InvalidConstraintException, NotAuthenticatedException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         System.out.println("Enter flight schedule plan type:");
         System.out.println("(1: Single, 2: Multiple, 3: Recurrent (n days), 4: Recurrent (weekly)");
         final int option = scanner.nextInt();
@@ -201,7 +204,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         return flightSchedulePlan;
     }
     
-    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException, EntityIsDisabledException {
+    private void displayCreateReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, String flightCode) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException, EntityIsDisabledException, EntityAlreadyExistException {
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         FlightSchedulePlanType flightSchedulePlanType = flightSchedulePlan.getFlightSchedulePlanType();
         List<FlightSchedule> returnFlightSchedules = new ArrayList<>();
@@ -396,6 +399,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         }
         try {
             this.flightSchedulePlanBeanRemote.updateFares(updatedFares);
+            System.out.println("Fare(s) updated successfully!\n");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
@@ -429,6 +433,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     }
                 }
                 this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
+                System.out.println("Flight schedule(s) added successfully!\n");
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
@@ -437,6 +442,8 @@ public class FlightSchedulePlanClient implements SystemClient {
         } catch (EntityIsDisabledException e) {
             System.out.println(e.getMessage());
         } catch (InvalidEntityIdException e) {
+            System.out.println(e.getMessage());
+        } catch (EntityAlreadyExistException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -481,7 +488,7 @@ public class FlightSchedulePlanClient implements SystemClient {
             System.out.println("Enter the new departure date in YYYY-MM-DD: ");
             Date newDate = Date.valueOf(scanner.next());
             System.out.println("Enter the new departure time in hh:mm: ");
-            Time newTime = Time.valueOf(scanner.next());
+            Time newTime = Time.valueOf(scanner.next() + ":00");
             System.out.println("Enter the new estimated duration: ");
             Long newDuration = scanner.nextLong();
             
@@ -499,6 +506,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         }
         try {
             this.flightSchedulePlanBeanRemote.updateFlightSchedules(updatedFlightSchedules);
+            System.out.println("Flight schedule(s) updated successfully!\n");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }

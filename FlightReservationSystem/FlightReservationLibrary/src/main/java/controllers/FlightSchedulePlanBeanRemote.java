@@ -5,6 +5,7 @@ import entities.Fare;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
+import exceptions.EntityAlreadyExistException;
 import exceptions.EntityInUseException;
 import exceptions.EntityIsDisabledException;
 import exceptions.IncorrectCredentialsException;
@@ -23,17 +24,15 @@ public interface FlightSchedulePlanBeanRemote {
 
     FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
 
-    FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException;
+    FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
 
-    List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException;
+    List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
 
     FlightSchedulePlan getFlightSchedulePlanById(Long id) throws NotAuthenticatedException, InvalidEntityIdException;
 
     List<FlightSchedulePlan> getFlightSchedulePlans() throws NotAuthenticatedException;
 
     List<FlightSchedule> getFlightSchedules() throws NotAuthenticatedException;
-
-    List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException;
     
     void updateFares(List<Fare> fares) throws NotAuthenticatedException;
     

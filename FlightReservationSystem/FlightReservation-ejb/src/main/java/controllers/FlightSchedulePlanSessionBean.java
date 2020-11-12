@@ -7,6 +7,7 @@ import entities.Flight;
 import entities.FlightSchedule;
 import entities.FlightSchedulePlan;
 import entities.FlightSchedulePlanType;
+import exceptions.EntityAlreadyExistException;
 import exceptions.EntityInUseException;
 import exceptions.EntityIsDisabledException;
 import exceptions.IncorrectCredentialsException;
@@ -17,6 +18,8 @@ import exceptions.NotAuthenticatedException;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
@@ -68,7 +71,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
+    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -80,11 +83,15 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         if (!flight.getEnabled()) {
             throw new EntityIsDisabledException("Selected flight is disabled.");
         }
+        if (!checkExistingFlightSchedules(flightCode, departureDate, departureTime, estimatedDuration)) {
+            throw new EntityAlreadyExistException("An overlapping flight schedule already exists.");
+        }
+        
         return this.flightScheduleService.create(flight, departureDate, departureTime, estimatedDuration);
     }
 
     @Override
-    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException {
+    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -114,7 +121,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(id);
 
         if (flightSchedulePlan == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Invalid flight schedule plan ID.");
         }
         return flightSchedulePlan;
     }
@@ -126,15 +133,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         }
 
         return this.flightScheduleService.getFlightSchedules();
-    }
-
-    @Override
-    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) throws NotAuthenticatedException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-
-        return this.flightScheduleService.getFlightSchedulesByDate(startDate, endDate);
     }
     
     @Override
@@ -183,7 +181,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlanId);
 
         if (flightSchedulePlan == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Invalid flight schedule plan ID.");
         }
 
         String msg = "";
@@ -205,6 +203,17 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             if (!flightSchedule.getFlightReservations().isEmpty()) {
                 return false;
             }
+        }
+        return true;
+    }
+    
+    private boolean checkExistingFlightSchedules(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) {
+        LocalDateTime arrivalDateTime = LocalDateTime.of(departureDate.toLocalDate(), departureTime.toLocalTime().plusMinutes(estimatedDuration));
+        List<FlightSchedule> sameDateFlightSchedules = this.flightScheduleService.getFlightSchedulesByFlightAndDate(flightCode, departureDate, departureDate);
+        for (FlightSchedule flightSchedule : sameDateFlightSchedules) {
+             if (!flightSchedule.getArrivalDateTime().toLocalDateTime().isAfter(arrivalDateTime.plusHours(2))) {
+                 return false;
+             }
         }
         return true;
     }

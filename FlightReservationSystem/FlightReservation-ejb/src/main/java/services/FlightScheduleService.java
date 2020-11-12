@@ -85,9 +85,10 @@ public class FlightScheduleService {
         em.flush();
     }
 
-    public List<FlightSchedule> getFlightSchedulesByDate(Date startDate, Date endDate) {
-        TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.date >= :date1 AND fs.date <= :date2"
+    public List<FlightSchedule> getFlightSchedulesByFlightAndDate(String flightCode, Date startDate, Date endDate) {
+        TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightCode =:inFlightCode AND fs.date >= :date1 AND fs.date <= :date2"
                                                                 + " ORDER BY fs.date", FlightSchedule.class)
+                .setParameter("inFlightCode", flightCode)
                 .setParameter("date1", startDate)
                 .setParameter("date2", endDate);
 
