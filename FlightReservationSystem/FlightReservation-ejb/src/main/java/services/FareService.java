@@ -58,16 +58,11 @@ public class FareService {
     /**
      * Used during search of flight
      * @param flightSchedule
-     * @param cabinClassType
+     * @param cabinClass
      * @return
      * @throws InvalidEntityIdException
      */
-    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, Boolean highestOnly) throws InvalidEntityIdException {
-        final AircraftConfiguration aircraftConfiguration = flightSchedule.getFlight().getAircraftConfiguration();
-        final CabinClassId cabinClassId = new CabinClassId();
-        cabinClassId.setAircraftConfigurationId(aircraftConfiguration.getAircraftConfigurationId());
-        cabinClassId.setCabinClassType(cabinClassType);
-        final CabinClass cabinClass = cabinClassService.findById(cabinClassId);
+    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, Boolean highestOnly) throws InvalidEntityIdException {
         final FlightSchedulePlan flightSchedulePlan = flightSchedule.getFlightSchedulePlan();
 
         final TypedQuery<Fare> query;
@@ -85,8 +80,8 @@ public class FareService {
         return query.getSingleResult();
     }
 
-    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException {
-        return this.findByScheduleAndCabinClass(flightSchedule, cabinClassType, null);
+    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass) throws InvalidEntityIdException {
+        return this.findByScheduleAndCabinClass(flightSchedule, cabinClass, null);
     }
 
     // TODO: test this with partner and customer
