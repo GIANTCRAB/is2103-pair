@@ -132,14 +132,9 @@ public class FareService {
     }
 
     public void updateFares(List<Fare> fares) {
-<<<<<<< HEAD
         for (Fare fare:fares) {
             Fare managedFare = em.find(Fare.class, fare.getFareId());
             managedFare.setFareAmount(fare.getFareAmount());
-=======
-        for (Fare fare : fares) {
-            em.merge(fare);
->>>>>>> 4465801b63f7b1ae16ba8b4525d18ba31df7d17c
         }
     }
 }
