@@ -13,8 +13,9 @@ public class Main {
         final FareBeanRemote fareBeanRemote = (FareBeanRemote) ic.lookup(FareBeanRemote.class.getName());
         final FlightBeanRemote flightBeanRemote = (FlightBeanRemote) ic.lookup(FlightBeanRemote.class.getName());
         final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote = (FlightSchedulePlanBeanRemote) ic.lookup(FlightSchedulePlanBeanRemote.class.getName());
-
-        final ManagementClient managementClient = new ManagementClient(flightRouteBeanRemote, aircraftConfigurationBeanRemote, fareBeanRemote, flightBeanRemote, flightSchedulePlanBeanRemote);
+        final SalesManagerBeanRemote salesManagerBeanRemote = (SalesManagerBeanRemote) ic.lookup(SalesManagerBeanRemote.class.getName());
+        
+        final ManagementClient managementClient = new ManagementClient(flightRouteBeanRemote, aircraftConfigurationBeanRemote, fareBeanRemote, flightBeanRemote, flightSchedulePlanBeanRemote, salesManagerBeanRemote);
 
         managementClient.runApp();
     }

@@ -5,6 +5,7 @@ import controllers.FareBeanRemote;
 import controllers.FlightRouteBeanRemote;
 import controllers.FlightBeanRemote;
 import controllers.FlightSchedulePlanBeanRemote;
+import controllers.SalesManagerBeanRemote;
 import entities.Employee;
 import entities.EmployeeRole;
 import exceptions.IncorrectCredentialsException;
@@ -29,6 +30,8 @@ public class ManagementClient implements SystemClient {
     private final FlightBeanRemote flightBeanRemote;
     @NonNull
     private final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote;
+    @NonNull
+    private final SalesManagerBeanRemote salesManagerBeanRemote;
 
     @Setter(AccessLevel.PRIVATE)
     private Scanner scanner;
@@ -93,6 +96,8 @@ public class ManagementClient implements SystemClient {
                 return this.flightBeanRemote.login(username, password);
             case FLEET_MANAGER:
                 return this.aircraftConfigurationBeanRemote.login(username, password);
+            case SALES_MANAGER:
+                return this.salesManagerBeanRemote.login(username, password);
         }
 
         throw new IncorrectCredentialsException();
@@ -115,7 +120,7 @@ public class ManagementClient implements SystemClient {
                         return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
                     }
                 case SALES_MANAGER:
-                    break;
+                    return new SalesManagerClient(this.scanner, this.authenticatedEmployee, salesManagerBeanRemote);
                 default:
                     break;
             }

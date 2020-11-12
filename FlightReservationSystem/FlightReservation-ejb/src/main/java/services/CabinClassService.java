@@ -90,5 +90,10 @@ public class CabinClassService {
 
         return noOfCols;
     }
-
+    
+    public int getSeatsReservedForCabinClass(FlightSchedule flightSchedule, CabinClassType cabinClassType) {
+        int noOfSeatsTaken = flightSchedule.getFlightReservations().stream().
+                filter(r -> r.getCabinClassType() == cabinClassType).mapToInt(i -> 1).sum();
+        return noOfSeatsTaken;
+    }
 }
