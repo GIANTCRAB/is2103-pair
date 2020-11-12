@@ -189,7 +189,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         String msg = "";
         if (canDeleteFlightSchedulePlan(flightSchedulePlan)) {
             flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> this.flightScheduleService.deleteFlightSchedule(flightSchedule));
-            flightSchedulePlan.getFares().forEach(fare -> this.fareService.deleteFare(fare));
+            flightSchedulePlan.getFares().forEach(fare -> this.fareService.delete(fare));
             this.flightSchedulePlanService.deleteFlightSchedulePlan(flightSchedulePlan);
             
             msg = "Flight schedule plan successfully deleted.";
