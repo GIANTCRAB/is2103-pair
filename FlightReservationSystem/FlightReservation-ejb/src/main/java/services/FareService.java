@@ -85,6 +85,10 @@ public class FareService {
         return query.getSingleResult();
     }
 
+    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException {
+        return this.findByScheduleAndCabinClass(flightSchedule, cabinClassType, null);
+    }
+
     // TODO: test this with partner and customer
     /**
      * Used during reservation of a flight
