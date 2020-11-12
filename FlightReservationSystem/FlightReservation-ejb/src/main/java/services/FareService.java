@@ -85,8 +85,6 @@ public class FareService {
         return this.findByScheduleAndCabinClass(flightSchedule, cabinClass, null);
     }
 
-    // TODO: test this with partner and customer
-
     /**
      * Used during reservation of a flight
      *

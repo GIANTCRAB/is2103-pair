@@ -99,7 +99,6 @@ public class FlightScheduleService {
         return flightSchedules;
     }
 
-    //TODO: test this
     /**
      * Basic flight search that takes into account the flight, departure date and passengers
      * @param flight
