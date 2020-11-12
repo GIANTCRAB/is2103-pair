@@ -114,7 +114,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(id);
 
         if (flightSchedulePlan == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Invalid flight schedule plan ID.");
         }
         return flightSchedulePlan;
     }
@@ -183,7 +183,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         FlightSchedulePlan flightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlanId);
 
         if (flightSchedulePlan == null) {
-            throw new InvalidEntityIdException();
+            throw new InvalidEntityIdException("Invalid flight schedule plan ID.");
         }
 
         String msg = "";
