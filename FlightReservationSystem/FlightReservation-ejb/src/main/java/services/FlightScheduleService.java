@@ -144,6 +144,7 @@ public class FlightScheduleService {
         final List<FlightSchedule> flightSchedules = typedQuery.getResultList();
         flightSchedules.forEach(flightSchedule -> {
             final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
+            // Get seats left
             if(flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {
                 // Load flight schedule data
                 flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode();
