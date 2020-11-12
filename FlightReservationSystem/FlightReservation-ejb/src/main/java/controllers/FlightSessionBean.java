@@ -13,6 +13,7 @@ import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,22 @@ public class FlightSessionBean implements FlightBeanRemote {
             throw new NotAuthenticatedException();
         }
 
-        return this.flightService.getFlights();
+        return sortFlights(this.flightService.getFlights());
+    }
+    
+    private List<Flight> sortFlights(List<Flight> flights) throws NotAuthenticatedException {
+        List<Flight> sortedFlights = new ArrayList<>();
+        for (Flight flight : flights) {
+            Flight returnFlight = getDirectReturnFlightByFlightCode(flight.getFlightCode());
+            if(!sortedFlights.contains(flight)) {
+                sortedFlights.add(flight);
+            }
+
+            if(returnFlight != null && !sortedFlights.contains(returnFlight)) {
+                sortedFlights.add(returnFlight);
+            }
+        }
+        return sortedFlights;
     }
 
     @Override

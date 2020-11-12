@@ -5,6 +5,7 @@ import entities.Employee;
 import entities.EmployeeRole;
 import entities.FlightRoute;
 import exceptions.*;
+import java.util.ArrayList;
 import services.AirportService;
 import services.AuthService;
 import services.FlightRouteService;
@@ -40,14 +41,6 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     }
 
     @Override
-    public boolean checkFlightRoute(String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException {
-        final Airport originAirport = this.airportService.findAirportByCode(origin);
-        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
-
-        return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport) != null);
-    }
-
-    @Override
     public FlightRoute create(String origin, String destination) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
@@ -76,12 +69,27 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
     }
 
     @Override
-    public List<FlightRoute> getFlightRoutes() throws NotAuthenticatedException {
+    public List<FlightRoute> getFlightRoutes() throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
 
-        return this.flightRouteService.getFlightRoutes();
+        return sortFlightRoutes(this.flightRouteService.getFlightRoutes());
+    }
+    
+    private List<FlightRoute> sortFlightRoutes(List<FlightRoute> flightRoutes) throws InvalidEntityIdException {
+        List<FlightRoute> sortedFlightRoutes = new ArrayList<>();
+        for (FlightRoute flightRoute : flightRoutes) {
+            FlightRoute returnFlightRoute = getFlightRouteByOriginDest(flightRoute.getDest().getIataCode(), flightRoute.getOrigin().getIataCode());
+            if(!sortedFlightRoutes.contains(flightRoute)) {
+                sortedFlightRoutes.add(flightRoute);
+            }
+
+            if(returnFlightRoute != null && !sortedFlightRoutes.contains(returnFlightRoute)) {
+                sortedFlightRoutes.add(returnFlightRoute);
+            }
+        }
+        return sortedFlightRoutes;
     }
 
     @Override
@@ -93,5 +101,21 @@ public class FlightRouteSessionBean implements FlightRouteBeanRemote {
 
         final FlightRoute managedFlightRoute = this.flightRouteService.findById(flightRoute.getFlightRouteId());
         this.flightRouteService.delete(managedFlightRoute);
+    }
+    
+    @Override
+    public boolean checkFlightRoute(String origin, String destination) throws InvalidEntityIdException, NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        
+        return (getFlightRouteByOriginDest(origin, destination) != null);
+    }
+    
+    private FlightRoute getFlightRouteByOriginDest(String origin, String destination) throws InvalidEntityIdException {
+        final Airport originAirport = this.airportService.findAirportByCode(origin);
+        final Airport destinationAirport = this.airportService.findAirportByCode(destination);
+
+        return (flightRouteService.findFlightRouteByOriginDest(originAirport, destinationAirport));
     }
 }

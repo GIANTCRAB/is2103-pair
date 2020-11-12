@@ -16,6 +16,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -92,13 +93,13 @@ public class FlightSchedulePlanService {
     
     // Something wrong with this query
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
-        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp ORDER BY DISTINCT(fsp.flightSchedules.flightCode) ASC, MIN(fsp.flightSchedules.date) DESC", FlightSchedulePlan.class);
+        Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f GROUP BY fsp.flightSchedulePlanId ORDER BY f.flightCode ASC, MIN(fs.date) DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
-        flightSchedulePlans.forEach(f -> {
-            f.getFlightSchedules().size();
-            f.getFlightSchedules().forEach(flightSchedule -> flightSchedule.getFlight());
+        flightSchedulePlans.forEach(flightSchedulePlan -> {
+            flightSchedulePlan.getFlightSchedules().size();
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> flightSchedule.getFlight());
         });
-        return searchQuery.getResultList();
+        return flightSchedulePlans;
     }
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

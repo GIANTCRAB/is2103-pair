@@ -78,7 +78,6 @@ public class AircraftConfigurationService {
         return aircraftConfiguration;
     }
     
-    // Need to ensure that name is unique if using this
     public AircraftConfiguration getAircraftConfigurationByName(String name) {
         final Query searchQuery = this.em.createQuery("SELECT ac FROM AircraftConfiguration ac WHERE ac.aircraftConfigurationName = :name")
                 .setParameter("name", name);

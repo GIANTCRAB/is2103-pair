@@ -26,7 +26,7 @@ public class AircraftConfiguration implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 32)
-    @Column(length = 32, nullable = false)
+    @Column(length = 32, nullable = false, unique = true)
     private String aircraftConfigurationName;
 
     @NotNull

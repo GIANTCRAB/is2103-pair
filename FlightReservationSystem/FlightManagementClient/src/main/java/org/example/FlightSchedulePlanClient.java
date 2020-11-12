@@ -283,14 +283,12 @@ public class FlightSchedulePlanClient implements SystemClient {
         try {
             final List<FlightSchedulePlan> flightSchedulePlanList = this.flightSchedulePlanBeanRemote.getFlightSchedulePlans();
             for (FlightSchedulePlan flightSchedulePlan : flightSchedulePlanList) {
-                System.out.println("Flight Schedule Plan: " + flightSchedulePlan.getFlightSchedulePlanId() + ", Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
-                
-                // Not sure why this gives NullPointerException
-//                flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
-//                    System.out.println("\tFlight number: " + flightSchedule.getFlight().getFlightCode() + " , Departure date/time: " + flightSchedule.getDepartureDateTime());
-//                });
-                // Print return flight schedule plan
+                System.out.println("Flight schedule plan: " + flightSchedulePlan.getFlightSchedulePlanId() + " Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
+                System.out.println("\tFlight number: " + flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightCode());
+                // Not sure why getDepartureDateTime() returns null
+                flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> System.out.println("\tDeparture date: " + flightSchedule.getDate() + " Departure time: " + flightSchedule.getTime()));
             }
+                // Print return flight schedule plan
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } 
