@@ -91,7 +91,15 @@ public class CustomerClient extends ReservationClient {
         final String creditCardNumber = this.scanner.next();
 
         try {
-            this.customerBeanRemote.reserveFlightForPassengers(creditCardNumber, flightSchedule, cabinClassType, passengers);
+            final FlightReservationPayment flightReservationPayment = this.customerBeanRemote.reserveFlightForPassengers(creditCardNumber, flightSchedule, cabinClassType, passengers);
+            System.out.println("===== Flight reserved! =====");
+            flightReservationPayment.getFlightReservations().forEach(flightReservation -> {
+                System.out.println("Reservation ID: " + flightReservation.getFlightReservationId());
+                System.out.println("Name: " + flightReservation.getPassengerFirstName() + " " + flightReservation.getPassengerLastName());
+                System.out.println("Seat Number: " + flightReservation.getSeatNumber());
+                System.out.println("Cost: " + flightReservation.getReservationCost());
+            });
+            System.out.println("Total Cost: " + flightReservationPayment.getTotalCost());
         } catch (NotAuthenticatedException e) {
             System.out.println("You are not logged in as customer.");
         } catch (InvalidEntityIdException e) {

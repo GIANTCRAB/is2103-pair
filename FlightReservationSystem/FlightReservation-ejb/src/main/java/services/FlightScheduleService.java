@@ -147,9 +147,8 @@ public class FlightScheduleService {
                 // Load flight schedule data
                 flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode();
                 flightSchedule.getFlight().getFlightRoute().getDest().getIataCode();
-                flightSchedule.getFlightSchedulePlan().getFares().forEach(fare -> {
-                    fare.getCabinClass().getCabinClassId();
-                    fare.getFareAmount();
+                flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
+                    cabinClass.getCabinClassId();
                 });
                 countFilteredFlightSchedules.add(flightSchedule);
             }

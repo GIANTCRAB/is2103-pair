@@ -2,10 +2,7 @@ package org.example;
 
 import controllers.CustomerBeanRemote;
 import controllers.VisitorBeanRemote;
-import entities.Airport;
-import entities.CabinClassType;
-import entities.Customer;
-import entities.FlightSchedule;
+import entities.*;
 import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
@@ -172,9 +169,14 @@ public class ReservationClient implements SystemClient {
                 System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
                 System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
                 System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
-                flightSchedule.getFlightSchedulePlan().getFares().forEach(fare -> {
-                    System.out.println("Cabin Class Type: " + fare.getCabinClass().getCabinClassId().getCabinClassType());
-                    System.out.println("Fare Amount: " + fare.getFareAmount());
+                flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
+                    try {
+                        final Fare fare = this.visitorBeanRemote.getFlightScheduleFare(flightSchedule, cabinClass.getCabinClassId().getCabinClassType());
+                        System.out.println("Cabin Class Type: " + cabinClass.getCabinClassId().getCabinClassType());
+                        System.out.println("Fare Amount: " + fare.getFareAmount());
+                    } catch (InvalidEntityIdException e) {
+                        System.out.println("No associated fare found!");
+                    }
                 });
                 System.out.println("=======================");
             });

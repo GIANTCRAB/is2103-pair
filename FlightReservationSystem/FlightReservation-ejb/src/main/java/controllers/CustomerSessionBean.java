@@ -54,6 +54,7 @@ public class CustomerSessionBean implements CustomerBeanRemote {
             flightReservation.getFlightSchedule().getFlight().getFlightRoute().getOrigin();
             flightReservation.getFlightSchedule().getFlight().getFlightRoute().getDest();
         });
+        flightReservationPayment.getTotalCost();
 
         return flightReservationPayment;
     }
