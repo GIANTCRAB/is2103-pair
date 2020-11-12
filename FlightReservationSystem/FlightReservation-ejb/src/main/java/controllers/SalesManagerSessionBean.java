@@ -7,6 +7,7 @@ import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
 import pojo.SeatInventory;
 import services.AuthService;
+import services.FareService;
 import services.FlightScheduleService;
 import services.FlightService;
 import services.FlightReservationService;
@@ -22,6 +23,8 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
     private Employee loggedInEmployee;
     @Inject
     AuthService authService;
+    @Inject
+    FareService fareService;
     @Inject
     FlightService flightService;
     @Inject
@@ -98,5 +101,13 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
             throw new NotAuthenticatedException();
         }
         return this.flightReservationService.getFlightReservationsOrderByName(flightSchedule);
+    }
+    
+    @Override
+    public Fare getFareForFlightReservation(@NonNull FlightReservation flightReservation) throws NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        return this.fareService.findByFlightReservation(flightReservation);
     }
 }

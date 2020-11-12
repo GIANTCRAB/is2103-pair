@@ -121,7 +121,8 @@ public class SalesManagerClient implements SystemClient {
             for (FlightReservation flightReservation : flightReservations) {
                 System.out.println("Seat number: " + flightReservation.getSeatNumber());
                 System.out.println("Passenger name: " + flightReservation.getPassengerFirstName() + " " + flightReservation.getPassengerLastName());
-                // Print fare basis code
+                Fare fare = this.salesManagerBeanRemote.getFareForFlightReservation(flightReservation);
+                System.out.println("Fare basis code: " + fare.getFareBasisCode());
                 System.out.println("-----------------------------------");
             }
             

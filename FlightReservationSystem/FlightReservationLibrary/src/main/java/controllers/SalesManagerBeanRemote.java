@@ -2,6 +2,7 @@ package controllers;
 
 import entities.CabinClassType;
 import entities.Employee;
+import entities.Fare;
 import entities.Flight;
 import entities.FlightReservation;
 import entities.FlightSchedule;
@@ -24,4 +25,7 @@ public interface SalesManagerBeanRemote {
     List<FlightReservation> getFlightReservations(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException;
     
     int getNoOfSeatsReservedForCabinClass(FlightSchedule flightSchedule,  CabinClassType cabinClassType) throws NotAuthenticatedException;
+    
+    Fare getFareForFlightReservation(@NonNull FlightReservation flightReservation) throws NotAuthenticatedException, InvalidEntityIdException;
+    
 }
