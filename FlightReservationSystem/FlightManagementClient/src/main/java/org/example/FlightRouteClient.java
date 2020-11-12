@@ -51,7 +51,7 @@ public class FlightRouteClient implements SystemClient {
                     break;
                 case 4:
                 default:
-                    System.out.println("Exiting...");
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -119,11 +119,20 @@ public class FlightRouteClient implements SystemClient {
             System.out.println("Flight route does not exist.");
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
-        } 
+        }
     }
 
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
         System.out.println("There were some validation errors!");
         System.out.println(invalidConstraintException.toString());
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.flightRouteBeanRemote.logout();
+            System.out.println("You have logged out successfully.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in.");
+        }
     }
 }
