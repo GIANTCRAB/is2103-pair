@@ -37,6 +37,7 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
                     this.displayViewPartnerFlightReservationsMenu();
                     break;
                 default:
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
 

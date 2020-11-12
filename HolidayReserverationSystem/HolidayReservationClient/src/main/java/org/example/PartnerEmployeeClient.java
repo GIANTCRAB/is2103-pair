@@ -19,7 +19,29 @@ public class PartnerEmployeeClient implements SystemClient {
     final Partner partner;
 
     public void runApp() {
+        this.displayPartnerEmployeeMenu();
+    }
 
+    private void displayPartnerEmployeeMenu() {
+        boolean loop = true;
+        while (loop) {
+            System.out.println("*** Partner Employee Client ***");
+            System.out.println("1: Search flights");
+            System.out.println("2: Logout");
+
+            final int option = scanner.nextInt();
+            switch (option) {
+                case 1:
+                    this.displayFlightSearchMenu();
+                    break;
+                case 2:
+                default:
+                    this.displayLogoutMenu();
+                    loop = false;
+                    break;
+
+            }
+        }
     }
 
     protected void displayFlightSearchMenu() {
@@ -96,6 +118,15 @@ public class PartnerEmployeeClient implements SystemClient {
                 System.out.println("=======================");
             });
             System.out.println("=================================================");
+        }
+    }
+
+    protected void displayLogoutMenu() {
+        try {
+            this.holidayReservationServiceBean.logout();
+            System.out.println("You have logged out successfully!");
+        } catch (InvalidEntityIdException_Exception | NotAuthenticatedException_Exception e) {
+            System.out.println("You're not logged in!");
         }
     }
 }
