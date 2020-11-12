@@ -106,8 +106,8 @@ public class FareService {
     
     public void updateFares(List<Fare> fares) {
         for (Fare fare:fares) {
-            em.merge(fare);
+            Fare managedFare = em.find(Fare.class, fare.getFareId());
+            managedFare.setFareAmount(fare.getFareAmount());
         }
-        em.flush();
     }
 }
