@@ -59,6 +59,23 @@ public class FlightSchedule implements Serializable {
     }
 
     @Transient
+    private Long dateLong;
+
+    @Transient
+    private Long timeLong;
+
+    @PostLoad
+    private void postLoadInit() {
+        if (this.date != null) {
+            this.setDateLong(this.date.getTime());
+        }
+
+        if (this.time != null) {
+            this.setTimeLong(this.time.getTime());
+        }
+    }
+
+    @Transient
     public ZonedDateTime getDepartureDateTime() {
         final FlightRoute flightRoute = this.getFlight().getFlightRoute();
         final Airport originAirport = flightRoute.getOrigin();

@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PossibleFlightSchedules implements Serializable {
-    private Set<PossibleFlightPathNodes> possibleFlightPathNodesSet = new HashSet<>();
+    private static final long serialVersionUID = 1L;
+
+    private List<PossibleFlightPathNodes> possibleFlightPathNodesSet = new ArrayList<>();
 }

@@ -2,9 +2,11 @@ package webservices;
 
 import entities.*;
 import exceptions.IncorrectCredentialsException;
+import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
+import pojo.Passenger;
 import pojo.PossibleFlightPathNodes;
 import pojo.PossibleFlightSchedules;
 import services.*;
@@ -18,8 +20,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.sql.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @WebService(serviceName = "HolidayReservationService", targetNamespace = "http://localhost:8080/ws/HolidayReservationService")
 public class HolidayReservationServiceBean implements HolidayReservationService {
@@ -66,40 +67,48 @@ public class HolidayReservationServiceBean implements HolidayReservationService 
         final Airport managedDestinationAirport = this.airportService.findAirportByCode(destinationAirport.getIataCode());
         final FlightRoute flightRoute = this.flightRouteService.findFlightRouteByOriginDest(managedDepartureAirport, managedDestinationAirport);
         final PossibleFlightSchedules possibleFlightSchedules = new PossibleFlightSchedules();
+        final Set<PossibleFlightPathNodes> possibleFlightPathNodesSet = new HashSet<>();
 
         final Set<List<Flight>> possibleFlights = this.flightService.getPossibleFlights(flightRoute.getOrigin(), flightRoute.getDest());
 
         if (directOnly != null && directOnly) {
             final PossibleFlightPathNodes searchResult = new PossibleFlightPathNodes();
+            final List<FlightSchedule> possibleFlightPathNodes = searchResult.getFlightSchedules();
             final List<Flight> simpleFlightPath = this.flightService.getFlightByOriginDest(flightRoute.getOrigin(), flightRoute.getDest());
             if (cabinClassType != null) {
-                simpleFlightPath.forEach(simpleFlightPathNode -> searchResult.getFlightSchedules().addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount, cabinClassType)));
+                simpleFlightPath.forEach(simpleFlightPathNode -> possibleFlightPathNodes.addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount, cabinClassType)));
             } else {
-                simpleFlightPath.forEach(simpleFlightPathNode -> searchResult.getFlightSchedules().addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount)));
+                simpleFlightPath.forEach(simpleFlightPathNode -> possibleFlightPathNodes.addAll(this.flightScheduleService.searchFlightSchedules(simpleFlightPathNode, departureDate, passengerCount)));
             }
-            possibleFlightSchedules.getPossibleFlightPathNodesSet().add(searchResult);
+            searchResult.setFlightSchedules(possibleFlightPathNodes);
+            possibleFlightPathNodesSet.add(searchResult);
         } else {
             if (cabinClassType != null) {
                 // The flight schedule MUST have the cabin class
                 for (List<Flight> possibleFlight : possibleFlights) {
                     final PossibleFlightPathNodes searchResult = new PossibleFlightPathNodes();
+                    final List<FlightSchedule> possibleFlightPathNodes = searchResult.getFlightSchedules();
                     for (Flight flightPathNode : possibleFlight) {
-                        searchResult.getFlightSchedules().addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount, cabinClassType));
+                        possibleFlightPathNodes.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount, cabinClassType));
                     }
-                    possibleFlightSchedules.getPossibleFlightPathNodesSet().add(searchResult);
+                    searchResult.setFlightSchedules(possibleFlightPathNodes);
+                    possibleFlightPathNodesSet.add(searchResult);
                 }
             } else {
                 // Basic search only
                 for (List<Flight> possibleFlight : possibleFlights) {
                     final PossibleFlightPathNodes searchResult = new PossibleFlightPathNodes();
+                    final List<FlightSchedule> possibleFlightPathNodes = searchResult.getFlightSchedules();
                     for (Flight flightPathNode : possibleFlight) {
-                        searchResult.getFlightSchedules().addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
+                        possibleFlightPathNodes.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
                     }
-                    possibleFlightSchedules.getPossibleFlightPathNodesSet().add(searchResult);
+                    searchResult.setFlightSchedules(possibleFlightPathNodes);
+                    possibleFlightPathNodesSet.add(searchResult);
                 }
             }
         }
-
+        // Update the data into the object
+        possibleFlightSchedules.setPossibleFlightPathNodesSet(Arrays.asList(possibleFlightPathNodesSet.toArray(new PossibleFlightPathNodes[]{})));
         return possibleFlightSchedules;
     }
 
@@ -119,8 +128,21 @@ public class HolidayReservationServiceBean implements HolidayReservationService 
     }
 
     @Override
+    public FlightReservationPayment reserveFlightForPassengers(@WebParam(name = "creditCard") String creditCard,
+                                                               @NonNull @WebParam(name = "flightSchedule") FlightSchedule flightSchedule,
+                                                               @NonNull @WebParam(name = "cabinClassType") CabinClassType cabinClassType,
+                                                               @NonNull @WebParam(name = "passengers") List<Passenger> passengers) throws NotAuthenticatedException, InvalidEntityIdException, InvalidConstraintException {
+        return null;
+    }
+
+    @Override
     public List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException {
         return this.flightReservationService.getFlightReservations(this.getPartner());
+    }
+
+    @Override
+    public FlightReservationPayment getFlightReservationDetails(FlightReservationPayment flightReservationPayment) throws NotAuthenticatedException, InvalidEntityIdException {
+        return null;
     }
 
     private Partner getPartner() throws InvalidEntityIdException, NotAuthenticatedException {

@@ -29,6 +29,7 @@ public class PartnerManagerClient extends PartnerEmployeeClient {
             final int option = scanner.nextInt();
             switch (option) {
                 case 1:
+                    this.displayFlightSearchMenu();
                     break;
                 case 2:
                     break;

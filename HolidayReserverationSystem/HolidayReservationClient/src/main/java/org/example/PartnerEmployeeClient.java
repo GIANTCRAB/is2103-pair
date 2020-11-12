@@ -8,7 +8,6 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 @RequiredArgsConstructor
 public class PartnerEmployeeClient implements SystemClient {
@@ -58,5 +57,45 @@ public class PartnerEmployeeClient implements SystemClient {
             directOnly = true;
         }
         System.out.println("=======================");
+
+        try {
+            System.out.println("============ **** Departure Flight Search Result **** =============");
+            final PossibleFlightSchedules possibleFlightScheduleList = this.holidayReservationServiceBean.searchFlight(departureAirport, destinationAirport, departureDate.getTime(), passengerCount, directOnly, cabinClassType);
+            this.displayFlightScheduleListDetails(possibleFlightScheduleList);
+            if (returnDate != null) {
+                System.out.println("============ **** Return Flight Search Result **** =============");
+                final PossibleFlightSchedules possibleReturnFlightScheduleList = this.holidayReservationServiceBean.searchFlight(destinationAirport, departureAirport, returnDate.getTime(), passengerCount, directOnly, cabinClassType);
+                this.displayFlightScheduleListDetails(possibleReturnFlightScheduleList);
+            }
+        } catch (InvalidEntityIdException_Exception e) {
+            System.out.println(e.getFaultInfo().getMessage());
+        }
+    }
+
+    private void displayFlightScheduleListDetails(PossibleFlightSchedules possibleFlightScheduleList) {
+        final List<PossibleFlightPathNodes> possibleFlightPathNodesSet = possibleFlightScheduleList.getPossibleFlightPathNodesSet();
+        for (PossibleFlightPathNodes possibleFlightPathNodes : possibleFlightPathNodesSet) {
+            final List<FlightSchedule> flightScheduleList = possibleFlightPathNodes.getFlightSchedules();
+            System.out.println("========== Possible schedule route ==========");
+            flightScheduleList.forEach(flightSchedule -> {
+                System.out.println("Flight Schedule ID: " + flightSchedule.getFlightScheduleId());
+                System.out.println("Departure Airport: " + flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode());
+                flightSchedule.getDateLong();
+                //System.out.println("Departure DateTime: " + flightSchedule.getDepartureDateTime().toString());
+                System.out.println("Arrival Airport: " + flightSchedule.getFlight().getFlightRoute().getDest().getIataCode());
+                //System.out.println("Estimated Arrival: " + flightSchedule.getArrivalDateTime().toString());
+                flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
+                    try {
+                        final Fare fare = this.holidayReservationServiceBean.getFlightScheduleFare(flightSchedule, cabinClass.getCabinClassId().getCabinClassType());
+                        System.out.println("Cabin Class Type: " + cabinClass.getCabinClassId().getCabinClassType());
+                        System.out.println("Fare Amount: " + fare.getFareAmount());
+                    } catch (InvalidEntityIdException_Exception e) {
+                        System.out.println(e.getFaultInfo().getMessage());
+                    }
+                });
+                System.out.println("=======================");
+            });
+            System.out.println("=================================================");
+        }
     }
 }
