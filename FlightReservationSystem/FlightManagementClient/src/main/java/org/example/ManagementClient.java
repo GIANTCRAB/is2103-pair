@@ -117,7 +117,7 @@ public class ManagementClient implements SystemClient {
                     if (option == 1) {
                         return new FlightClient(this.scanner, this.authenticatedEmployee, flightBeanRemote, flightRouteBeanRemote);
                     } else {
-                        return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, aircraftConfigurationBeanRemote, flightSchedulePlanBeanRemote);
+                        return new FlightSchedulePlanClient(this.scanner, this.authenticatedEmployee, fareBeanRemote, flightBeanRemote, flightSchedulePlanBeanRemote);
                     }
                 case SALES_MANAGER:
                     return new SalesManagerClient(this.scanner, this.authenticatedEmployee, salesManagerBeanRemote);

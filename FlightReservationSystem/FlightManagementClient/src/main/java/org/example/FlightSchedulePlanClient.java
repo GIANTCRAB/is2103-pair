@@ -2,7 +2,6 @@ package org.example;
 
 import controllers.FareBeanRemote;
 import controllers.FlightBeanRemote;
-import controllers.AircraftConfigurationBeanRemote;
 import controllers.FlightSchedulePlanBeanRemote;
 import entities.*;
 
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 import java.sql.Date;
 import java.sql.Time;
 import java.math.BigDecimal;
-import java.time.LocalTime;
 
 @RequiredArgsConstructor
 public class FlightSchedulePlanClient implements SystemClient {
@@ -36,8 +34,6 @@ public class FlightSchedulePlanClient implements SystemClient {
     private final FareBeanRemote fareBeanRemote;
     @NonNull
     private final FlightBeanRemote flightBeanRemote;
-    @NonNull
-    private final AircraftConfigurationBeanRemote aircraftConfigurationBeanRemote;
     @NonNull
     private final FlightSchedulePlanBeanRemote flightSchedulePlanBeanRemote;
     
@@ -76,7 +72,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     this.displayDeleteFlightSchedulePlanMenu();
                     break;
                 default:
-                    System.out.println("Exiting...");
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -527,5 +523,16 @@ public class FlightSchedulePlanClient implements SystemClient {
     private void displayConstraintErrorMessage(InvalidConstraintException invalidConstraintException) {
         System.out.println("There were some validation errors!");
         System.out.println(invalidConstraintException.toString());
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.fareBeanRemote.logout();
+            this.flightBeanRemote.logout();
+            this.flightSchedulePlanBeanRemote.logout();
+            System.out.println("You have logged out successfully.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in.");
+        }
     }
 }
