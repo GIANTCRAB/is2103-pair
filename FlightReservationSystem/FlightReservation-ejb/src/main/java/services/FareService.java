@@ -54,8 +54,15 @@ public class FareService {
   
         return fare;
     }
-    
-    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException {
+
+    /**
+     * Used during search of flight
+     * @param flightSchedule
+     * @param cabinClassType
+     * @return
+     * @throws InvalidEntityIdException
+     */
+    public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClassType cabinClassType, Boolean highestOnly) throws InvalidEntityIdException {
         final AircraftConfiguration aircraftConfiguration = flightSchedule.getFlight().getAircraftConfiguration();
         final CabinClassId cabinClassId = new CabinClassId();
         cabinClassId.setAircraftConfigurationId(aircraftConfiguration.getAircraftConfigurationId());
@@ -63,14 +70,29 @@ public class FareService {
         final CabinClass cabinClass = cabinClassService.findById(cabinClassId);
         final FlightSchedulePlan flightSchedulePlan = flightSchedule.getFlightSchedulePlan();
 
-        TypedQuery<Fare> query = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2", Fare.class)
-                .setParameter(1, cabinClass.getCabinClassId())
-                .setParameter(2, flightSchedulePlan.getFlightSchedulePlanId());
+        final TypedQuery<Fare> query;
+        if (highestOnly != null && highestOnly) {
+            query = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2 ORDER BY f.fareAmount DESC", Fare.class)
+                    .setParameter(1, cabinClass.getCabinClassId())
+                    .setParameter(2, flightSchedulePlan.getFlightSchedulePlanId());
 
+        } else {
+            query = this.em.createQuery("SELECT f FROM Fare f WHERE f.cabinClass.cabinClassId = ?1 AND f.flightSchedulePlan.flightSchedulePlanId = ?2 ORDER BY f.fareAmount ASC", Fare.class)
+                    .setParameter(1, cabinClass.getCabinClassId())
+                    .setParameter(2, flightSchedulePlan.getFlightSchedulePlanId());
+
+        }
         return query.getSingleResult();
     }
 
     // TODO: test this with partner and customer
+    /**
+     * Used during reservation of a flight
+     *
+     * @param flightReservation
+     * @return
+     * @throws InvalidEntityIdException
+     */
     public Fare findByFlightReservation(@NonNull FlightReservation flightReservation) throws InvalidEntityIdException {
         final FlightReservationPayment flightReservationPayment = flightReservation.getFlightReservationPayment();
         if(flightReservationPayment == null) {
