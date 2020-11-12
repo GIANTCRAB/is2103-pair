@@ -83,6 +83,12 @@ public class SalesManagerClient implements SystemClient {
                 System.out.println("No. of seats remaining: " + (cabinClass.getMaxCapacity() - noOfSeatsReserved));
                 System.out.println("-----------------------------------");
             }
+            
+            int totalNoOfSeats = selectedFlightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity();
+            int totalNoOfSeatsReserved = selectedFlightSchedule.getFlightReservations().size();
+            System.out.println("Total no. of seats for flight schedule: " + totalNoOfSeats);
+            System.out.println("Total no. of seats reserved for flight schedule: " + totalNoOfSeatsReserved);
+            System.out.println("Total no. of seats remaining for flight schedule: " + (totalNoOfSeats - totalNoOfSeatsReserved) + "\n");
         } catch (InvalidEntityIdException e) {
             System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
