@@ -5,7 +5,6 @@ import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
-import pojo.SeatInventory;
 import services.AuthService;
 import services.FareService;
 import services.FlightScheduleService;
@@ -15,7 +14,6 @@ import services.CabinClassService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @Stateful
@@ -69,26 +67,18 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        
-        final List<SeatInventory> seatInventories = new ArrayList<>();
 
-        //TODO: think about seat taken logic by cabin
         final FlightSchedule managedFlightSchedule = this.flightScheduleService.findById(flightSchedule.getFlightScheduleId());
         managedFlightSchedule.getFlightReservations().size();
-//        managedFlightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
-//            final SeatInventory seatInventory = new SeatInventory();
-//            seatInventory.setMaxSeats(cabinClass.getMaxCapacity());
-//            seatInventory.setCabinClassType(cabinClass.getCabinClassId().getCabinClassType());
-//        });
         managedFlightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().size();
         managedFlightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity();
-        
+
         return managedFlightSchedule;
     }
-    
-    
+
+
     @Override
-    public int getNoOfSeatsReservedForCabinClass(FlightSchedule flightSchedule,  CabinClassType cabinClassType) throws NotAuthenticatedException {
+    public int getNoOfSeatsReservedForCabinClass(FlightSchedule flightSchedule, CabinClassType cabinClassType) throws NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -102,7 +92,7 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
         }
         return this.flightReservationService.getFlightReservationsOrderByName(flightSchedule);
     }
-    
+
     @Override
     public Fare getFareForFlightReservation(@NonNull FlightReservation flightReservation) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
