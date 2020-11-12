@@ -44,7 +44,7 @@ public class HolidayReservationServiceBean implements HolidayReservationService 
     @Override
     public HashSet<ArrayList<FlightSchedule>> searchFlight(@NonNull @WebParam(name = "departureAirport")  Airport departureAirport,
                                                            @NonNull @WebParam(name = "destinationAirport")  Airport destinationAirport,
-                                                           @NonNull @WebParam(name = "departureDate")  Date departureDate,
+                                                           @NonNull @WebParam(name = "departureDate")  Long departureDate,
                                                            @NonNull @WebParam(name = "passengerCount")  Integer passengerCount,
                                                            @WebParam(name = "directOnly") Boolean directOnly,
                                                            @WebParam(name = "cabinClassType") CabinClassType cabinClassType) throws InvalidEntityIdException {
