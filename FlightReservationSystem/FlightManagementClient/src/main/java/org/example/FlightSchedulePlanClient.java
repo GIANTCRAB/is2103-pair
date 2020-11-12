@@ -374,8 +374,9 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("--- Update Fares For Flight Schedule Plan ---");
         ListIterator<Fare> iterateFares = flightSchedulePlan.getFares().listIterator();
         while (iterateFares.hasNext()) {
-            System.out.println((iterateFares.nextIndex() + 1) + ". " + iterateFares.next().getCabinClass().getCabinClassId().getCabinClassType().name() + 
-                    ": $" + iterateFares.next().getFareAmount().toString());
+            Fare fare = iterateFares.next();
+            System.out.println((iterateFares.nextIndex()) + ". " + fare.getCabinClass().getCabinClassId().getCabinClassType().name() + 
+                    ": $" + fare.getFareAmount().toString());
         }
         List<Fare> updatedFares = new ArrayList<>();
         boolean update = true;
@@ -444,9 +445,10 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("--- Delete Flight Schedule ---");
         ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
         while (iterateSchedules.hasNext()) {
-            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
-                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
-                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+            FlightSchedule flightSchedule = iterateSchedules.next();
+            System.out.println((iterateSchedules.nextIndex()) + ". " + flightSchedule.getFlight().getFlightCode() + 
+                    " Departure date/time: " + flightSchedule.getDepartureDateTime() +
+                    " Estimated duration: " + flightSchedule.getEstimatedDuration());
         }
         
         System.out.println("Enter the index of the flight schedule you would like to delete: ");
@@ -465,9 +467,10 @@ public class FlightSchedulePlanClient implements SystemClient {
         System.out.println("--- Update Flight Schedule Details ---");
         ListIterator<FlightSchedule> iterateSchedules = flightSchedulePlan.getFlightSchedules().listIterator();
         while (iterateSchedules.hasNext()) {
-            System.out.println((iterateSchedules.nextIndex() + 1) + ". " + iterateSchedules.next().getFlight().getFlightCode() + 
-                    " Departure date/time: " + iterateSchedules.next().getDepartureDateTime() +
-                    " Estimated duration: " + iterateSchedules.next().getEstimatedDuration());
+            FlightSchedule flightSchedule = iterateSchedules.next();
+            System.out.println((iterateSchedules.nextIndex()) + ". " + flightSchedule.getFlight().getFlightCode() + 
+                    " Departure date/time: " + flightSchedule.getDepartureDateTime() +
+                    " Estimated duration: " + flightSchedule.getEstimatedDuration());
         }
         
         List<FlightSchedule> updatedFlightSchedules = new ArrayList<>();
