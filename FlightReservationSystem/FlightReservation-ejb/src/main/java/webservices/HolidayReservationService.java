@@ -41,4 +41,7 @@ public interface HolidayReservationService {
 
     @WebMethod
     FlightReservationPayment getFlightReservationDetails(FlightReservationPayment flightReservationPayment) throws NotAuthenticatedException, InvalidEntityIdException;
+
+    @WebMethod
+    void logout() throws NotAuthenticatedException, InvalidEntityIdException;
 }

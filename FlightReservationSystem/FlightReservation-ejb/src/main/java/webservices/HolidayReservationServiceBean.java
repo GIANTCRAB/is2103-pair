@@ -145,6 +145,12 @@ public class HolidayReservationServiceBean implements HolidayReservationService 
         return null;
     }
 
+    @Override
+    public void logout() throws NotAuthenticatedException, InvalidEntityIdException {
+        this.getPartner();
+        this.setPartner(null);
+    }
+
     private Partner getPartner() throws InvalidEntityIdException, NotAuthenticatedException {
         final MessageContext mc = this.wsContext.getMessageContext();
         final HttpSession session = ((javax.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
