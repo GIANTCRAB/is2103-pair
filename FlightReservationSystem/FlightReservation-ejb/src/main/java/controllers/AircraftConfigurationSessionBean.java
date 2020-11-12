@@ -90,4 +90,13 @@ public class AircraftConfigurationSessionBean implements AircraftConfigurationBe
 
         return this.aircraftConfigurationService.getAircraftConfigurationByName(name);
     }
+
+    @Override
+    public void logout() throws NotAuthenticatedException {
+        if (loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        loggedInEmployee = null;
+    }
 }

@@ -21,4 +21,6 @@ public interface AircraftConfigurationBeanRemote {
     AircraftConfiguration getAircraftConfigurationById(Long id) throws NotAuthenticatedException;
 
     AircraftConfiguration getAircraftConfigurationByName(String name) throws NotAuthenticatedException;
+
+    void logout() throws NotAuthenticatedException;
 }
