@@ -8,7 +8,6 @@ import lombok.NonNull;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -20,7 +19,7 @@ public interface HolidayReservationService {
     @WebMethod
     HashSet<ArrayList<FlightSchedule>> searchFlight(@NonNull Airport departureAirport,
                                                     @NonNull Airport destinationAirport,
-                                                    @NonNull Date departureDate,
+                                                    @NonNull Long departureDate,
                                                     @NonNull Integer passengerCount,
                                                     Boolean directOnly,
                                                     CabinClassType cabinClassType) throws InvalidEntityIdException;
