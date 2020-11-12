@@ -9,6 +9,7 @@ import pojo.SeatInventory;
 import services.AuthService;
 import services.FlightScheduleService;
 import services.FlightService;
+import services.CabinClassService;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
@@ -24,6 +25,8 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
     FlightService flightService;
     @Inject
     FlightScheduleService flightScheduleService;
+    @Inject
+    CabinClassService cabinClassService;
 
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SALES_MANAGER;
 
@@ -40,35 +43,50 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
     }
 
     @Override
-    public List<FlightSchedule> getFlightSchedules(@NonNull String flightCode) throws NotAuthenticatedException, InvalidEntityIdException {
+    public List<FlightSchedule> getFlightSchedulesByFlightCode(@NonNull String flightCode) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
         final Flight managedFlight = this.flightService.getFlightByFlightCode(flightCode);
         final List<FlightSchedule> flightSchedules = managedFlight.getFlightSchedules();
         // Load data about flight reservations
-        flightSchedules.forEach(flightSchedule -> flightSchedule.getFlightReservations().size());
+        flightSchedules.forEach(flightSchedule -> {
+            flightSchedule.getFlightReservations().size();
+            flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().size();
+        });
 
         return flightSchedules;
     }
 
     @Override
     public FlightSchedule getFlightScheduleDetails(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException, InvalidEntityIdException {
-
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        
         final List<SeatInventory> seatInventories = new ArrayList<>();
 
         //TODO: think about seat taken logic by cabin
         final FlightSchedule managedFlightSchedule = this.flightScheduleService.findById(flightSchedule.getFlightScheduleId());
         managedFlightSchedule.getFlightReservations().size();
-        managedFlightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
-            final SeatInventory seatInventory = new SeatInventory();
-            seatInventory.setMaxSeats(cabinClass.getMaxCapacity());
-            seatInventory.setCabinClassType(cabinClass.getCabinClassId().getCabinClassType());
-        });
+//        managedFlightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
+//            final SeatInventory seatInventory = new SeatInventory();
+//            seatInventory.setMaxSeats(cabinClass.getMaxCapacity());
+//            seatInventory.setCabinClassType(cabinClass.getCabinClassId().getCabinClassType());
+//        });
+        managedFlightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().size();
         managedFlightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity();
-
-
+        
         return managedFlightSchedule;
+    }
+    
+    
+    @Override
+    public int getNoOfSeatsReservedForCabinClass(FlightSchedule flightSchedule,  CabinClassType cabinClassType) throws NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+        return this.cabinClassService.getSeatsReservedForCabinClass(flightSchedule, cabinClassType);
     }
 
     @Override
