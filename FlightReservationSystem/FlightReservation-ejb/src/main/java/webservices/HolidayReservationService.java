@@ -2,9 +2,11 @@ package webservices;
 
 import entities.*;
 import exceptions.IncorrectCredentialsException;
+import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
 import lombok.NonNull;
+import pojo.Passenger;
 import pojo.PossibleFlightSchedules;
 
 import javax.jws.WebMethod;
@@ -29,5 +31,14 @@ public interface HolidayReservationService {
                                @NonNull CabinClassType cabinClassType) throws InvalidEntityIdException;
 
     @WebMethod
+    FlightReservationPayment reserveFlightForPassengers(String creditCard,
+                                                        @NonNull FlightSchedule flightSchedule,
+                                                        @NonNull CabinClassType cabinClassType,
+                                                        @NonNull List<Passenger> passengers) throws NotAuthenticatedException, InvalidEntityIdException, InvalidConstraintException;
+
+    @WebMethod
     List<FlightReservation> getFlightReservations() throws InvalidEntityIdException, NotAuthenticatedException;
+
+    @WebMethod
+    FlightReservationPayment getFlightReservationDetails(FlightReservationPayment flightReservationPayment) throws NotAuthenticatedException, InvalidEntityIdException;
 }
