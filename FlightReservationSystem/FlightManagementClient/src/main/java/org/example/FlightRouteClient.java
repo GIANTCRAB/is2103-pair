@@ -91,13 +91,11 @@ public class FlightRouteClient implements SystemClient {
             final List<FlightRoute> flightRouteList = this.flightRouteBeanRemote.getFlightRoutes();
             for (FlightRoute flightRoute : flightRouteList) {
                 System.out.println(flightRoute.getOrigin().getIataCode() + " -> " + flightRoute.getDest().getIataCode());
-//                if(flightRoute.getReturnFlightRoute() != null) {
-//                    FlightRoute returnFlightRoute = flightRoute.getReturnFlightRoute();
-//                    System.out.println(returnFlightRoute.getOrigin().getIataCode() + " -> " + returnFlightRoute.getDest().getIataCode());
-//                }
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        } catch (InvalidEntityIdException e) {
+            System.out.println(e.getMessage());
         }
     }
 
