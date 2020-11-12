@@ -38,7 +38,7 @@ public class AircraftConfigurationClient implements SystemClient {
             System.out.println("1: Create Aircraft Configuration");
             System.out.println("2: View All Aircraft Configurations");
             System.out.println("3: View Aircraft Configuration Details");
-            System.out.println("4: Exit");
+            System.out.println("4: Logout");
 
             final int option = this.scanner.nextInt();
 
@@ -53,7 +53,7 @@ public class AircraftConfigurationClient implements SystemClient {
                     this.displayViewAircraftConfigurationDetailsMenu();
                     break;
                 default:
-                    System.out.println("Exiting...");
+                    this.displayLogoutMenu();
                     loop = false;
                     break;
             }
@@ -145,6 +145,15 @@ public class AircraftConfigurationClient implements SystemClient {
                                                                     "--------------------"));
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
+        }
+    }
+
+    private void displayLogoutMenu() {
+        try {
+            this.aircraftConfigurationBeanRemote.logout();
+            System.out.println("You have logged out successfully.");
+        } catch (NotAuthenticatedException e) {
+            System.out.println("You are not logged in.");
         }
     }
 }
