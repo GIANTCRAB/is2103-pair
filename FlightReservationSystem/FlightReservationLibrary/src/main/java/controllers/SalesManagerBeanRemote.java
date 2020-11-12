@@ -16,7 +16,7 @@ import java.util.List;
 public interface SalesManagerBeanRemote {
     Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
 
-    List<FlightSchedule> getFlightSchedules(@NonNull Flight flight) throws NotAuthenticatedException, InvalidEntityIdException;
+    List<FlightSchedule> getFlightSchedules(@NonNull String flightCode) throws NotAuthenticatedException, InvalidEntityIdException;
 
     FlightSchedule getFlightScheduleDetails(@NonNull FlightSchedule flightSchedule) throws NotAuthenticatedException, InvalidEntityIdException;
 
