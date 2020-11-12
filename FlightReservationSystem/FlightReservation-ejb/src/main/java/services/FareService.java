@@ -124,17 +124,17 @@ public class FareService {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void delete(Fare fare) {
         Fare managedFare = em.find(Fare.class, fare.getFareId());
-        CabinClass managedCabinClass = em.find(CabinClass.class, fare.getCabinClass().getCabinClassId());
-
-        managedCabinClass.getFares().remove(managedFare);
+        CabinClass cabinClass = em.find(CabinClass.class, fare.getCabinClass().getCabinClassId());
+        cabinClass.getFares().remove(managedFare);
+        
         em.remove(managedFare);
         em.flush();
     }
 
     public void updateFares(List<Fare> fares) {
-        for (Fare fare : fares) {
-            em.merge(fare);
+        for (Fare fare:fares) {
+            Fare managedFare = em.find(Fare.class, fare.getFareId());
+            managedFare.setFareAmount(fare.getFareAmount());
         }
-        em.flush();
     }
 }

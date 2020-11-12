@@ -75,15 +75,13 @@ public class FlightScheduleService {
     }
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) {
-        Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());
+    public void deleteFlightSchedule(FlightSchedule flightSchedule) {
         FlightSchedule managedFlightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
+        Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());
+
+        flight.getFlightSchedules().remove(flightSchedule);
         
-        flightSchedulePlan.getFlightSchedules().remove(managedFlightSchedule);
-        flight.getFlightSchedules().remove(managedFlightSchedule);
-        
-        em.merge(flightSchedulePlan);
-        em.remove(managedFlightSchedule);
+        em.remove(flightSchedule);
         em.flush();
     }
 
