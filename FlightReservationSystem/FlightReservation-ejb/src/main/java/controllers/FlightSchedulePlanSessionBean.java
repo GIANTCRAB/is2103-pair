@@ -86,19 +86,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
-        for (LocalDate date = departureDate.toLocalDate(); date.isBefore(recurrentEndDate.toLocalDate()); date = date.plusDays(nDays)) {
-            Date sqlDate = Date.valueOf(date);
-            flightSchedules.add(this.createFlightSchedule(flightCode, sqlDate, departureTime, estimatedDuration));
-        }
-        return flightSchedules;
-    }
-
-    @Override
     public FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
                                                             @NonNull Flight flight,
                                                             @NonNull Date departureDate,
