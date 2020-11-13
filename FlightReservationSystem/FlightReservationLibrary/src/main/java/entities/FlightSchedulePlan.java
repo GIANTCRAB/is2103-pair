@@ -29,9 +29,6 @@ public class FlightSchedulePlan implements Serializable {
     @NotNull
     private FlightSchedulePlanType flightSchedulePlanType = FlightSchedulePlanType.MULTIPLE;
 
-    @Column
-    private Date recurrentEndDate;
-
     @NotNull
     @Column(nullable = false)
     private Boolean enabled = true;
