@@ -184,6 +184,7 @@ public class ReservationClient implements SystemClient {
                             cabinClassTypeMap.put(cabinClass.getCabinClassId().getCabinClassType(), newSum);
                         }
                     } catch (InvalidEntityIdException e) {
+                        System.out.println("Cabin Class Type: " + cabinClass.getCabinClassId().getCabinClassType());
                         System.out.println(e.getMessage());
                     }
                 }
