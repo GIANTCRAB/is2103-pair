@@ -146,8 +146,57 @@ public class TestDataMigrationBean {
         this.cabinClassService.create(CabinClassType.J, 5, "2-2-2", aircraftConfiguration4);
         this.cabinClassService.create(CabinClassType.Y, 32, "3-4-3", aircraftConfiguration4);
 
+        // SIN, HKG
+        final FlightRoute sinHkgFR = this.flightRouteService.create(airport1, airport2);
+        // HKG, SIN
+        final FlightRoute hkgSinFR = this.flightRouteService.create(airport2, airport1);
+        // SIN, TPE
+        final FlightRoute sinTpeFR = this.flightRouteService.create(airport1, airport3);
+        // TPE, SIN
+        final FlightRoute tpeSinFR = this.flightRouteService.create(airport3, airport1);
+        // SIN, NRT
+        final FlightRoute sinNrtFR = this.flightRouteService.create(airport1, airport4);
+        // NRT, SIN
+        final FlightRoute nrtSinFR = this.flightRouteService.create(airport4, airport1);
+        // HKG, NRT
+        final FlightRoute hkgNrtFR = this.flightRouteService.create(airport2, airport4);
+        // NRT, HKG
+        final FlightRoute nrtHkgFR = this.flightRouteService.create(airport4, airport2);
+        // TPE, NRT
+        final FlightRoute tpeNrtFR = this.flightRouteService.create(airport3, airport4);
+        // NRT, TPE
+        final FlightRoute nrtTpeFR = this.flightRouteService.create(airport4, airport3);
+        // SIN, SYD
+        final FlightRoute sinSydFR = this.flightRouteService.create(airport1, airport5);
+        // SYD, SIN
+        final FlightRoute sydSinFR = this.flightRouteService.create(airport5, airport1);
+        // SYD, NRT
+        final FlightRoute sydNrtFR = this.flightRouteService.create(airport5, airport4);
+        // NRT, SYD
+        final FlightRoute nrtSydFR = this.flightRouteService.create(airport4, airport5);
 
+        this.flightService.create("ML111", sinHkgFR, aircraftConfiguration2);
+        this.flightService.create("ML112", hkgSinFR, aircraftConfiguration2);
 
+        this.flightService.create("ML211", sinTpeFR, aircraftConfiguration2);
+        this.flightService.create("ML212", tpeSinFR, aircraftConfiguration2);
 
+        this.flightService.create("ML311", sinNrtFR, aircraftConfiguration2);
+        this.flightService.create("ML312", nrtSinFR, aircraftConfiguration2);
+
+        this.flightService.create("ML411", hkgNrtFR, aircraftConfiguration2);
+        this.flightService.create("ML412", nrtHkgFR, aircraftConfiguration2);
+
+        this.flightService.create("ML511", tpeNrtFR, aircraftConfiguration2);
+        this.flightService.create("ML512", nrtTpeFR, aircraftConfiguration2);
+
+        this.flightService.create("ML611", sinSydFR, aircraftConfiguration2);
+        this.flightService.create("ML612", sydSinFR, aircraftConfiguration2);
+
+        this.flightService.create("ML621", sinSydFR, aircraftConfiguration3);
+        this.flightService.create("ML622", sydSinFR, aircraftConfiguration3);
+
+        this.flightService.create("ML711", sydNrtFR, aircraftConfiguration4);
+        this.flightService.create("ML712", nrtSydFR, aircraftConfiguration4);
     }
 }
