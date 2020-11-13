@@ -126,8 +126,7 @@ public class AircraftConfigurationClient implements SystemClient {
     
     private void displayViewAircraftConfigurationDetailsMenu() {
         System.out.println("*** View Aircraft Configuration Details ***");
-        System.out.println("Enter the ID of the aircraft configuration details you would like to view:");
-        //long aircraftConfigurationId = this.scanner.nextLong();
+        System.out.println("Enter the name of the aircraft configuration details you would like to view:");
         String aircraftConfigurationName = this.scanner.next();
 
         try {

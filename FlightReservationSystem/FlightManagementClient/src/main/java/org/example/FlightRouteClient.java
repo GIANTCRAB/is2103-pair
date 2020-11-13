@@ -70,17 +70,19 @@ public class FlightRouteClient implements SystemClient {
         try {
             if (roundTrip == 1) {
                 this.flightRouteBeanRemote.createRoundTrip(originCode, destinationCode);
+                System.out.println("Flight route with return successfully created!");
             } else {
                 this.flightRouteBeanRemote.create(originCode, destinationCode);
+                System.out.println("Flight route successfully created!");
             }
         } catch (InvalidConstraintException e) {
             this.displayConstraintErrorMessage(e);
         } catch (InvalidEntityIdException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (EntityAlreadyExistException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
 
