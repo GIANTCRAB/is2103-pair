@@ -21,6 +21,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import lombok.NonNull;
 import services.AuthService;
 import services.FareService;
 import services.FlightScheduleService;
@@ -95,6 +96,21 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             flightSchedules.add(this.createFlightSchedule(flightCode, sqlDate, departureTime, estimatedDuration));
         }
         return flightSchedules;
+    }
+
+    @Override
+    public FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
+                                                            @NonNull Flight flight,
+                                                            @NonNull Date departureDate,
+                                                            @NonNull Time departureTime,
+                                                            @NonNull Long estimatedDuration,
+                                                            @NonNull Date recurrentEndDate,
+                                                            Integer nDays) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        return this.flightSchedulePlanService.createRecurrentFlightSchedule(flightSchedulePlanType, flight, departureDate, departureTime, estimatedDuration, recurrentEndDate, nDays);
     }
 
     @Override
