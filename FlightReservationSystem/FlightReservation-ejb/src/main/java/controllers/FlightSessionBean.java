@@ -108,7 +108,7 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public Set<List<Flight>> getReturnFlights(Flight flight) throws NotAuthenticatedException {
+    public Set<List<Flight>> getReturnFlights(Flight flight) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }

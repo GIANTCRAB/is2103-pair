@@ -101,7 +101,9 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             throw new NotAuthenticatedException();
         }
 
-        return this.flightSchedulePlanService.createRecurrentFlightSchedule(flightSchedulePlanType, flight, departureDate, departureTime, estimatedDuration, recurrentEndDate, nDays);
+        final Flight managedFlight = this.flightService.findById(flight.getFlightId());
+
+        return this.flightSchedulePlanService.createRecurrentFlightSchedule(flightSchedulePlanType, managedFlight, departureDate, departureTime, estimatedDuration, recurrentEndDate, nDays);
     }
 
     @Override

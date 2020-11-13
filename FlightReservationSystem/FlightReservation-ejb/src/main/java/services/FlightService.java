@@ -1,9 +1,6 @@
 package services;
 
-import entities.Airport;
-import entities.Flight;
-import entities.FlightRoute;
-import entities.AircraftConfiguration;
+import entities.*;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import lombok.NonNull;
@@ -38,8 +35,14 @@ public class FlightService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
-    public Flight findById(Long id) {
-        return this.em.find(Flight.class, id);
+    public Flight findById(Long id) throws InvalidEntityIdException {
+        final Flight flight = this.em.find(Flight.class, id);
+
+        if (flight == null) {
+            throw new InvalidEntityIdException("Flight could not be found!");
+        }
+
+        return flight;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -48,7 +51,7 @@ public class FlightService {
         if (!this.flightRouteService.canAddFlights(flightRoute)) {
             throw new InvalidEntityIdException();
         }
-        
+
         Flight flight = new Flight();
         flight.setFlightCode(flightCode);
         flight.setFlightRoute(flightRoute);
@@ -94,8 +97,8 @@ public class FlightService {
             return null;
         }
     }
-    
-    
+
+
     public Flight getFlightByOriginDest(String origin, String destination) {
         TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.flightRouteId.originId =?1 AND f.flightRoute.flightRouteId.destId =?2", Flight.class)
                 .setParameter(1, origin)
@@ -106,7 +109,7 @@ public class FlightService {
             return null;
         }
     }
-    
+
     public Flight getFlightByOriginDestAndAircraftConfiguration(String origin, String destination, Long aircraftConfigurationId) {
         TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.flightRouteId.originId =?1 AND f.flightRoute.flightRouteId.destId =?2"
                 + " AND f.aircraftConfiguration.aircraftConfigurationId =?3", Flight.class)
@@ -234,13 +237,13 @@ public class FlightService {
     public void delete(Flight flight) {
         AircraftConfiguration aircraftConfiguration = em.find(AircraftConfiguration.class, flight.getAircraftConfiguration().getAircraftConfigurationId());
         FlightRoute flightRoute = em.find(FlightRoute.class, flight.getFlightRoute().getFlightRouteId());
-        
+
         aircraftConfiguration.getFlights().remove(flight);
         flightRoute.getFlights().remove(flight);
         em.remove(flight);
         em.flush();
     }
-    
+
     public void disable(Flight flight) {
         Flight managedFlight = em.find(Flight.class, flight.getFlightId());
         flight.setEnabled(false);

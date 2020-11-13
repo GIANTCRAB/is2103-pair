@@ -21,7 +21,7 @@ public interface FlightBeanRemote {
 
     List<Flight> getFlights() throws NotAuthenticatedException;
     
-    Set<List<Flight>> getReturnFlights (Flight flight) throws NotAuthenticatedException;
+    Set<List<Flight>> getReturnFlights (Flight flight) throws NotAuthenticatedException, InvalidEntityIdException;
     
     Flight getDirectReturnFlightByFlightCode(String flightCode) throws NotAuthenticatedException;
             
