@@ -232,6 +232,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         List<FlightSchedule> flightSchedules = flightSchedulePlan.getFlightSchedules();
         FlightSchedulePlanType flightSchedulePlanType = flightSchedulePlan.getFlightSchedulePlanType();
         List<FlightSchedule> returnFlightSchedules = new ArrayList<>();
+        final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
 
         switch (flightSchedulePlanType) {
             case SINGLE: {
@@ -243,9 +244,13 @@ public class FlightSchedulePlanClient implements SystemClient {
                 Time departureTime = Time.valueOf(flightSchedules.get(0).getTime().toLocalTime().plusMinutes(layoverDuration));
                 Long estimatedDuration = flightSchedules.get(0).getEstimatedDuration();
 
-                returnFlightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
-                FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanBeanRemote.create(flightSchedulePlanType, returnFlightSchedules);
-                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+                final FlightSchedule flightScheduleDraft = new FlightSchedule();
+                flightScheduleDraft.setFlight(flight);
+                flightScheduleDraft.setDate(departureDate);
+                flightScheduleDraft.setTime(departureTime);
+                flightScheduleDraft.setEstimatedDuration(estimatedDuration);
+                FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanBeanRemote.createFlightSchedulePlanAndFlightSchedule(flightScheduleDraft);;
+                this.displayEnterFareForCabinClass(flightCode, returnFlightSchedulePlan);
 
                 System.out.println("Return flight schedule plan created successfully!");
                 break;
