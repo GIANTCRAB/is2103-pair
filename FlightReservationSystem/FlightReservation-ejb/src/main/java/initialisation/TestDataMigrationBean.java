@@ -411,7 +411,7 @@ public class TestDataMigrationBean {
                 Integer.valueOf(3 * 60).longValue());
         final FlightSchedule flightSchedule6 = this.flightScheduleService.create(ml512,
                 Date.valueOf("2020-12-09"),
-                Time.valueOf("2:00:00"),
+                Time.valueOf("22:00:00"),
                 Integer.valueOf(3 * 60).longValue());
         flightScheduleList1.add(flightSchedule4);
         flightScheduleList1.add(flightSchedule5);
