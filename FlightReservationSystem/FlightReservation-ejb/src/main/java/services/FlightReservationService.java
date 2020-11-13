@@ -68,9 +68,14 @@ public class FlightReservationService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public List<FlightReservation> create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull List<Passenger> passengers) throws InvalidConstraintException, InvalidEntityIdException {
+        return this.create(flightSchedule, cabinClass, passengers, null);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public List<FlightReservation> create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull List<Passenger> passengers, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException, InvalidEntityIdException {
         final List<FlightReservation> flightReservations = new ArrayList<>();
         for (Passenger passenger : passengers) {
-            flightReservations.add(this.create(flightSchedule, cabinClass, passenger));
+            flightReservations.add(this.create(flightSchedule, cabinClass, passenger, flightReservationPayment));
         }
         return flightReservations;
     }
@@ -87,7 +92,7 @@ public class FlightReservationService {
 
         return query.getResultList();
     }
-    
+
     /**
      * Retrieve Flight Reservations and order them by the cabinClassType
      *

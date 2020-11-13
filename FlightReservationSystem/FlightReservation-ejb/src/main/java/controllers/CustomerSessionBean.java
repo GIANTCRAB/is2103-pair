@@ -44,8 +44,8 @@ public class CustomerSessionBean implements CustomerBeanRemote {
         cabinClassId.setCabinClassType(cabinClassType);
         cabinClassId.setAircraftConfigurationId(managedFlightSchedule.getFlight().getAircraftConfiguration().getAircraftConfigurationId());
         final CabinClass cabinClass = this.cabinClassService.findById(cabinClassId);
-        final List<FlightReservation> flightReservations = this.flightReservationService.create(managedFlightSchedule, cabinClass, passengers);
         final FlightReservationPayment flightReservationPayment = this.flightReservationPaymentService.create(creditCard, loggedInCustomer);
+        final List<FlightReservation> flightReservations = this.flightReservationService.create(managedFlightSchedule, cabinClass, passengers, flightReservationPayment);
         this.flightReservationPaymentService.associateFlightReservations(flightReservations, flightReservationPayment);
 
         // Load its flight reservations
