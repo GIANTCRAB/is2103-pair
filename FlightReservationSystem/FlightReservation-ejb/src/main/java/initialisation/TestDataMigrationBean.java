@@ -139,25 +139,29 @@ public class TestDataMigrationBean {
         aircraftType2.setMaxCapacity(400);
         this.em.persist(aircraftType2);
 
+        final List<CabinClass> cabinClassList = new ArrayList<>();
         final AircraftConfiguration aircraftConfiguration1 = this.aircraftConfigurationService.create("Boeing 737 All Economy", aircraftType1);
+        cabinClassList.add(this.cabinClassService.create(CabinClassType.Y, 30, "3-3", aircraftConfiguration1));
+        this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration1, cabinClassList);
 
-        this.cabinClassService.create(CabinClassType.Y, 30, "3-3", aircraftConfiguration1);
-
+        final List<CabinClass> cabinClassList2 = new ArrayList<>();
         final AircraftConfiguration aircraftConfiguration2 = this.aircraftConfigurationService.create("Boeing 737 Three Classes", aircraftType1);
+        cabinClassList2.add(this.cabinClassService.create(CabinClassType.F, 5, "1-1", aircraftConfiguration2));
+        cabinClassList2.add(this.cabinClassService.create(CabinClassType.J, 5, "2-2", aircraftConfiguration2));
+        cabinClassList2.add(this.cabinClassService.create(CabinClassType.Y, 25, "3-3", aircraftConfiguration2));
+        this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration2, cabinClassList2);
 
-        this.cabinClassService.create(CabinClassType.F, 5, "1-1", aircraftConfiguration2);
-        this.cabinClassService.create(CabinClassType.J, 5, "2-2", aircraftConfiguration2);
-        this.cabinClassService.create(CabinClassType.Y, 25, "3-3", aircraftConfiguration2);
-
+        final List<CabinClass> cabinClassList3 = new ArrayList<>();
         final AircraftConfiguration aircraftConfiguration3 = this.aircraftConfigurationService.create("Boeing 747 All Economy", aircraftType2);
+        cabinClassList3.add(this.cabinClassService.create(CabinClassType.Y, 38, "3-4-3", aircraftConfiguration3));
+        this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration3, cabinClassList3);
 
-        this.cabinClassService.create(CabinClassType.Y, 38, "3-4-3", aircraftConfiguration3);
-
+        final List<CabinClass> cabinClassList4 = new ArrayList<>();
         final AircraftConfiguration aircraftConfiguration4 = this.aircraftConfigurationService.create("Boeing 747 Three Classes", aircraftType2);
-
-        this.cabinClassService.create(CabinClassType.F, 5, "1-1", aircraftConfiguration4);
-        this.cabinClassService.create(CabinClassType.J, 5, "2-2-2", aircraftConfiguration4);
-        this.cabinClassService.create(CabinClassType.Y, 32, "3-4-3", aircraftConfiguration4);
+        cabinClassList4.add(this.cabinClassService.create(CabinClassType.F, 5, "1-1", aircraftConfiguration4));
+        cabinClassList4.add(this.cabinClassService.create(CabinClassType.J, 5, "2-2-2", aircraftConfiguration4));
+        cabinClassList4.add(this.cabinClassService.create(CabinClassType.Y, 32, "3-4-3", aircraftConfiguration4));
+        this.aircraftConfigurationService.associateWithCabinClass(aircraftConfiguration4, cabinClassList4);
 
         // SIN, HKG
         final FlightRoute sinHkgFR = this.flightRouteService.create(airport1, airport2);
@@ -228,24 +232,28 @@ public class TestDataMigrationBean {
                 Time.valueOf("9:00:00"),
                 Integer.valueOf(14 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(6500), cabinClass1, flightSchedulePlan1);
-        this.fareService.create("F002", BigDecimal.valueOf(6000), cabinClass1, flightSchedulePlan1);
-        this.fareService.create("J001", BigDecimal.valueOf(3500), cabinClass2, flightSchedulePlan1);
-        this.fareService.create("J002", BigDecimal.valueOf(3000), cabinClass2, flightSchedulePlan1);
-        this.fareService.create("Y001", BigDecimal.valueOf(1500), cabinClass3, flightSchedulePlan1);
-        this.fareService.create("Y002", BigDecimal.valueOf(1000), cabinClass3, flightSchedulePlan1);
+        final List<Fare> fares1 = new ArrayList<>();
+        fares1.add(this.fareService.create("F001", BigDecimal.valueOf(6500), cabinClass1, flightSchedulePlan1));
+        fares1.add(this.fareService.create("F002", BigDecimal.valueOf(6000), cabinClass1, flightSchedulePlan1));
+        fares1.add(this.fareService.create("J001", BigDecimal.valueOf(3500), cabinClass2, flightSchedulePlan1));
+        fares1.add(this.fareService.create("J002", BigDecimal.valueOf(3000), cabinClass2, flightSchedulePlan1));
+        fares1.add(this.fareService.create("Y001", BigDecimal.valueOf(1500), cabinClass3, flightSchedulePlan1));
+        fares1.add(this.fareService.create("Y002", BigDecimal.valueOf(1000), cabinClass3, flightSchedulePlan1));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan1, fares1);
         final FlightSchedulePlan flightSchedulePlan2 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                 ml712,
                 Date.valueOf("2020-12-02"),
                 Time.valueOf("1:00:00"),
                 Integer.valueOf(14 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(6500), cabinClass1, flightSchedulePlan2);
-        this.fareService.create("F002", BigDecimal.valueOf(6000), cabinClass1, flightSchedulePlan2);
-        this.fareService.create("J001", BigDecimal.valueOf(3500), cabinClass2, flightSchedulePlan2);
-        this.fareService.create("J002", BigDecimal.valueOf(3000), cabinClass2, flightSchedulePlan2);
-        this.fareService.create("Y001", BigDecimal.valueOf(1500), cabinClass3, flightSchedulePlan2);
-        this.fareService.create("Y002", BigDecimal.valueOf(1000), cabinClass3, flightSchedulePlan2);
+        final List<Fare> fares2 = new ArrayList<>();
+        fares2.add(this.fareService.create("F001", BigDecimal.valueOf(6500), cabinClass1, flightSchedulePlan2));
+        fares2.add(this.fareService.create("F002", BigDecimal.valueOf(6000), cabinClass1, flightSchedulePlan2));
+        fares2.add(this.fareService.create("J001", BigDecimal.valueOf(3500), cabinClass2, flightSchedulePlan2));
+        fares2.add(this.fareService.create("J002", BigDecimal.valueOf(3000), cabinClass2, flightSchedulePlan2));
+        fares2.add(this.fareService.create("Y001", BigDecimal.valueOf(1500), cabinClass3, flightSchedulePlan2));
+        fares2.add(this.fareService.create("Y002", BigDecimal.valueOf(1000), cabinClass3, flightSchedulePlan2));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan2, fares2);
 
         final CabinClassId cabinClassId2 = new CabinClassId();
         cabinClassId2.setCabinClassType(CabinClassType.F);
@@ -261,24 +269,28 @@ public class TestDataMigrationBean {
                 Time.valueOf("12:00:00"),
                 Integer.valueOf(8 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan3);
-        this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan3);
-        this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan3);
-        this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan3);
-        this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan3);
-        this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan3);
+        final List<Fare> fares3 = new ArrayList<>();
+        fares3.add(this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan3));
+        fares3.add(this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan3));
+        fares3.add(this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan3));
+        fares3.add(this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan3));
+        fares3.add(this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan3));
+        fares3.add(this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan3));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan3, fares3);
         final FlightSchedulePlan flightSchedulePlan4 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                 ml612,
                 Date.valueOf("2020-12-01"),
                 Time.valueOf("22:00:00"),
                 Integer.valueOf(8 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan4);
-        this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan4);
-        this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan4);
-        this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan4);
-        this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan4);
-        this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan4);
+        final List<Fare> fares4 = new ArrayList<>();
+        fares4.add(this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan4));
+        fares4.add(this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan4));
+        fares4.add(this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan4));
+        fares4.add(this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan4));
+        fares4.add(this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan4));
+        fares4.add(this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan4));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan4, fares4);
 
         final CabinClassId cabinClassId3 = new CabinClassId();
         cabinClassId3.setCabinClassType(CabinClassType.Y);
@@ -290,16 +302,20 @@ public class TestDataMigrationBean {
                 Time.valueOf("10:00:00"),
                 Integer.valueOf(8 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan5);
-        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan5);
+        final List<Fare> fares5 = new ArrayList<>();
+        fares5.add(this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan5));
+        fares5.add(this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan5));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan5, fares5);
         final FlightSchedulePlan flightSchedulePlan6 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                 ml622,
                 Date.valueOf("2020-12-01"),
                 Time.valueOf("20:00:00"),
                 Integer.valueOf(8 * 60).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan6);
-        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan6);
+        final List<Fare> fares6 = new ArrayList<>();
+        fares6.add(this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan6));
+        fares6.add(this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan6));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan6, fares6);
 
         final CabinClassId cabinClassId4 = new CabinClassId();
         cabinClassId4.setCabinClassType(CabinClassType.F);
@@ -315,24 +331,28 @@ public class TestDataMigrationBean {
                 Time.valueOf("10:00:00"),
                 Integer.valueOf(6 * 60 + 30).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan7);
-        this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan7);
-        this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan7);
-        this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan7);
-        this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan7);
-        this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan7);
+        final List<Fare> fares7 = new ArrayList<>();
+        fares7.add(this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan7));
+        fares7.add(this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan7));
+        fares7.add(this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan7));
+        fares7.add(this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan7));
+        fares7.add(this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan7));
+        fares7.add(this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan7));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan7, fares7);
         final FlightSchedulePlan flightSchedulePlan8 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                 ml312,
                 Date.valueOf("2020-12-01"),
                 Time.valueOf("19:30:00"),
                 Integer.valueOf(6 * 60 + 30).longValue(),
                 Date.valueOf("2020-12-31"));
-        this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan8);
-        this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan8);
-        this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan8);
-        this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan8);
-        this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan8);
-        this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan8);
+        final List<Fare> fares8 = new ArrayList<>();
+        fares8.add(this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan8));
+        fares8.add(this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan8));
+        fares8.add(this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan8));
+        fares8.add(this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan8));
+        fares8.add(this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan8));
+        fares8.add(this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan8));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan8, fares8);
 
         final CabinClassId cabinClassId5 = new CabinClassId();
         cabinClassId5.setCabinClassType(CabinClassType.F);
@@ -349,12 +369,14 @@ public class TestDataMigrationBean {
                 Integer.valueOf(4 * 60).longValue(),
                 Date.valueOf("2020-12-31"),
                 2);
-        this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan9);
-        this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan9);
-        this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan9);
-        this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan9);
-        this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan9);
-        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan9);
+        final List<Fare> fares9 = new ArrayList<>();
+        fares9.add(this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan9));
+        fares9.add(this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan9));
+        fares9.add(this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan9));
+        fares9.add(this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan9));
+        fares9.add(this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan9));
+        fares9.add(this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan9));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan9, fares9);
         final FlightSchedulePlan flightSchedulePlan10 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
                 ml412,
                 Date.valueOf("2020-12-01"),
@@ -362,12 +384,14 @@ public class TestDataMigrationBean {
                 Integer.valueOf(4 * 60).longValue(),
                 Date.valueOf("2020-12-31"),
                 2);
-        this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan10);
-        this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan10);
-        this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan10);
-        this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan10);
-        this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan10);
-        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan10);
+        final List<Fare> fares10 = new ArrayList<>();
+        fares10.add(this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan10));
+        fares10.add(this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan10));
+        fares10.add(this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan10));
+        fares10.add(this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan10));
+        fares10.add(this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan10));
+        fares10.add(this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan10));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan10, fares10);
 
         final CabinClassId cabinClassId6 = new CabinClassId();
         cabinClassId6.setCabinClassType(CabinClassType.F);
@@ -394,12 +418,14 @@ public class TestDataMigrationBean {
         flightScheduleList.add(flightSchedule2);
         flightScheduleList.add(flightSchedule3);
         final FlightSchedulePlan flightSchedulePlan11 = this.flightSchedulePlanService.create(FlightSchedulePlanType.MULTIPLE, flightScheduleList);
-        this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan11);
-        this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan11);
-        this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan11);
-        this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan11);
-        this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan11);
-        this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan11);
+        final List<Fare> fares11 = new ArrayList<>();
+        fares11.add(this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan11));
+        fares11.add(this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan11));
+        fares11.add(this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan11));
+        fares11.add(this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan11));
+        fares11.add(this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan11));
+        fares11.add(this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan11));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan11, fares11);
         final List<FlightSchedule> flightScheduleList1 = new ArrayList<>();
         final FlightSchedule flightSchedule4 = this.flightScheduleService.create(ml512,
                 Date.valueOf("2020-12-07"),
@@ -417,11 +443,13 @@ public class TestDataMigrationBean {
         flightScheduleList1.add(flightSchedule5);
         flightScheduleList1.add(flightSchedule6);
         final FlightSchedulePlan flightSchedulePlan12 = this.flightSchedulePlanService.create(FlightSchedulePlanType.MULTIPLE, flightScheduleList1);
-        this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan12);
-        this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan12);
-        this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan12);
-        this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan12);
-        this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan12);
-        this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan12);
+        final List<Fare> fares12 = new ArrayList<>();
+        fares12.add(this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan12));
+        fares12.add(this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan12));
+        fares12.add(this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan12));
+        fares12.add(this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan12));
+        fares12.add(this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan12));
+        fares12.add(this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan12));
+        flightSchedulePlanService.associateWithFares(flightSchedulePlan12, fares12);
     }
 }
