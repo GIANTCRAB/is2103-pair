@@ -68,26 +68,26 @@ public class FlightScheduleService {
         });
         return flightSchedules;
     }
-    
+
     public void updateFlightSchedules(List<FlightSchedule> flightSchedules) {
         flightSchedules.forEach(flightSchedule -> em.merge(flightSchedule));
         em.flush();
     }
-    
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteFlightSchedule(FlightSchedule flightSchedule) {
         FlightSchedule managedFlightSchedule = em.find(FlightSchedule.class, flightSchedule.getFlightScheduleId());
         Flight flight = em.find(Flight.class, flightSchedule.getFlight().getFlightId());
 
         flight.getFlightSchedules().remove(flightSchedule);
-        
+
         em.remove(flightSchedule);
         em.flush();
     }
 
     public List<FlightSchedule> getFlightSchedulesByFlightAndDate(String flightCode, Date startDate, Date endDate) {
         TypedQuery<FlightSchedule> searchQuery = em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flight.flightCode =:inFlightCode AND fs.date >= :date1 AND fs.date <= :date2"
-                                                                + " ORDER BY fs.date", FlightSchedule.class)
+                + " ORDER BY fs.date", FlightSchedule.class)
                 .setParameter("inFlightCode", flightCode)
                 .setParameter("date1", startDate)
                 .setParameter("date2", endDate);
@@ -101,6 +101,7 @@ public class FlightScheduleService {
 
     /**
      * Basic flight search that takes into account the flight, departure date and passengers
+     *
      * @param flight
      * @param departureDate
      * @param passengerCount
@@ -143,15 +144,13 @@ public class FlightScheduleService {
         flightSchedules.forEach(flightSchedule -> {
             final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
             // Get seats left
-            if(flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {
-                // Load flight schedule data
+            // Load flight schedule data
                 flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode();
                 flightSchedule.getFlight().getFlightRoute().getDest().getIataCode();
                 flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
                     cabinClass.getCabinClassId();
                 });
                 countFilteredFlightSchedules.add(flightSchedule);
-            }
         });
 
         return countFilteredFlightSchedules;
