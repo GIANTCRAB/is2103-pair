@@ -57,7 +57,10 @@ public class FlightScheduleService {
         em.persist(flightSchedule);
         em.flush();
 
-        flight.getFlightSchedules().add(flightSchedule);
+        final List<FlightSchedule> flightSchedules = flight.getFlightSchedules();
+        flightSchedules.add(flightSchedule);
+        flight.setFlightSchedules(flightSchedules);
+        this.em.merge(flight);
 
         return flightSchedule;
     }
