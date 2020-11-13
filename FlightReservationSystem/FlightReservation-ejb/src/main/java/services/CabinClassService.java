@@ -62,6 +62,7 @@ public class CabinClassService {
         return cabinClass;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public CabinClass create(CabinClass cabinClass, AircraftConfiguration aircraftConfiguration) throws InvalidConstraintException {
         return this.create(cabinClass.getTemporaryCabinClassType(),
                 cabinClass.getNoOfRows(),

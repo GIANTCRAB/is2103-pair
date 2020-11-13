@@ -1,5 +1,8 @@
 package exceptions;
 
+import javax.ejb.ApplicationException;
+
+@ApplicationException(rollback=true)
 public class EntityAlreadyExistException extends Exception {
 
     public EntityAlreadyExistException() {
