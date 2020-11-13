@@ -50,7 +50,7 @@ public class FlightSchedulePlanService {
         em.persist(flightSchedulePlan);
         flightSchedules.forEach(f -> {
             f.setFlightSchedulePlan(flightSchedulePlan);
-            em.persist(f);
+            em.merge(f);
         });
         em.flush();
 

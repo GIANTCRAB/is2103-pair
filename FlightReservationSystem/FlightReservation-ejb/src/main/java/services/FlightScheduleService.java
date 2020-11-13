@@ -61,6 +61,7 @@ public class FlightScheduleService {
         flightSchedules.add(flightSchedule);
         flight.setFlightSchedules(flightSchedules);
         this.em.merge(flight);
+        this.em.flush();
 
         return flightSchedule;
     }
