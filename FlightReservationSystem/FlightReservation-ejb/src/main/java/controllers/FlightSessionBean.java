@@ -160,12 +160,12 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException {
+    public void updateAircraftConfiguration(String flightCode, String aircraftConfigurationName) throws NotAuthenticatedException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
 
-        final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationById(aircraftConfigurationId);
+        final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationService.getAircraftConfigurationByName(aircraftConfigurationName);
 
         if (aircraftConfiguration != null) {
             this.flightService.updateAircraftConfiguration(flightCode, aircraftConfiguration);
