@@ -56,6 +56,8 @@ public class FlightScheduleService {
 
         em.persist(flightSchedule);
         em.flush();
+        
+        flight.getFlightSchedules().add(flightSchedule);
 
         return flightSchedule;
     }

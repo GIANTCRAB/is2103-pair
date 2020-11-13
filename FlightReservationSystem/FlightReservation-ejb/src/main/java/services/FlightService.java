@@ -94,10 +94,22 @@ public class FlightService {
     
     
     public Flight getFlightByOriginDest(String origin, String destination) {
-        TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f JOIN f.flightRoute fr"
-                + " WHERE fr.flightRouteId.originId =?1 AND fr.flightRouteId.destId =?2", Flight.class)
+        TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.flightRouteId.originId =?1 AND f.flightRoute.flightRouteId.destId =?2", Flight.class)
                 .setParameter(1, origin)
                 .setParameter(2, destination);
+        try {
+            return searchQuery.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    public Flight getFlightByOriginDestAndAircraftConfiguration(String origin, String destination, Long aircraftConfigurationId) {
+        TypedQuery<Flight> searchQuery = em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.flightRouteId.originId =?1 AND f.flightRoute.flightRouteId.destId =?2"
+                + " AND f.aircraftConfiguration.aircraftConfigurationId =?3", Flight.class)
+                .setParameter(1, origin)
+                .setParameter(2, destination)
+                .setParameter(3, aircraftConfigurationId);
         try {
             return searchQuery.getSingleResult();
         } catch (NoResultException e) {

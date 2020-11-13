@@ -130,8 +130,9 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     private FlightSchedulePlan getDirectReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException {
         String origin = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightRoute().getOrigin().getIataCode();
         String dest = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightRoute().getDest().getIataCode();
+        AircraftConfiguration aircraftConfiguration = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getAircraftConfiguration();
         try {
-            Flight returnFlight = this.flightService.getFlightByOriginDest(dest, origin);
+            Flight returnFlight = this.flightService.getFlightByOriginDestAndAircraftConfiguration(dest, origin, aircraftConfiguration.getAircraftConfigurationId());
             Date date = flightSchedulePlan.getFlightSchedules().get(0).getDate();
             Time time = flightSchedulePlan.getFlightSchedules().get(0).getTime();
             FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlansByFlightCodeAndDateTime(returnFlight.getFlightCode(), date, time).get(0);
