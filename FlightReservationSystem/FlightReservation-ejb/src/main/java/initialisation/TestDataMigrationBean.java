@@ -77,7 +77,8 @@ public class TestDataMigrationBean {
         this.em.persist(employee4);
 
         final Partner partner = new Partner();
-        partner.setUsername("Holiday.com");
+        partner.setUsername("holidaydotcom");
+        partner.setCompanyName("Holiday.com");
         partner.setPassword(this.passwordHash.generate("password".toCharArray()));
         this.em.persist(partner);
 
