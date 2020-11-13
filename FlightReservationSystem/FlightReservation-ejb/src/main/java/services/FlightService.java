@@ -48,7 +48,7 @@ public class FlightService {
         if (!this.flightRouteService.canAddFlights(flightRoute)) {
             throw new InvalidEntityIdException();
         }
-
+        
         Flight flight = new Flight();
         flight.setFlightCode(flightCode);
         flight.setFlightRoute(flightRoute);
@@ -84,12 +84,15 @@ public class FlightService {
     public Flight getFlightByFlightCode(String flightCode) {
         TypedQuery<Flight> query = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightCode = :inFlightCode", Flight.class)
                 .setParameter("inFlightCode", flightCode);
-        Flight flight = query.getSingleResult();
-        flight.getFlightRoute();
-        flight.getAircraftConfiguration();
-        flight.getAircraftConfiguration().getCabinClasses().size();
-
-        return flight;
+        try {
+            Flight flight = query.getSingleResult();
+            flight.getFlightRoute();
+            flight.getAircraftConfiguration();
+            flight.getAircraftConfiguration().getCabinClasses().size();
+            return flight;
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     
