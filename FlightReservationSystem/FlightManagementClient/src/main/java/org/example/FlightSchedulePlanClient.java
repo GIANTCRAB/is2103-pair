@@ -94,7 +94,9 @@ public class FlightSchedulePlanClient implements SystemClient {
                 final int option = scanner.nextInt();
                 if (option == 1) {
                     System.out.println("Creating flight schedule plan for return flight...");
-                    displayCreateReturnFlightSchedulePlan(newFlightSchedulePlan, returnFlight.getFlightCode());
+                    System.out.println("Enter return flight number: ");
+                    String returnFlightCode = scanner.next();
+                    displayCreateReturnFlightSchedulePlan(newFlightSchedulePlan, returnFlightCode);
                 }         
             }
         } catch (InvalidConstraintException e) {
