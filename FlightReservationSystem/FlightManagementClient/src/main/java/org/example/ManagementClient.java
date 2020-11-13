@@ -41,6 +41,7 @@ public class ManagementClient implements SystemClient {
     @Override
     public void runApp() {
         this.scanner = new Scanner(System.in);
+        this.scanner.useDelimiter("\n");
 
         boolean loop = true;
 
