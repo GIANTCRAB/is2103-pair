@@ -98,7 +98,10 @@ public class SalesManagerSessionBean implements SalesManagerBeanRemote {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        return this.fareService.findByFlightReservation(flightReservation);
+
+        final FlightReservation managedFlightReservation = this.flightReservationService.findById(flightReservation.getFlightReservationId());
+
+        return this.fareService.findByFlightReservation(managedFlightReservation);
     }
 
     @Override

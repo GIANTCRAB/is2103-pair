@@ -33,6 +33,16 @@ public class FlightReservationService {
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
+    public FlightReservation findById(Long id) throws InvalidEntityIdException {
+        final FlightReservation managedFlightReservation = this.em.find(FlightReservation.class, id);
+
+        if (managedFlightReservation == null) {
+            throw new InvalidEntityIdException("Flight reservation could not be found.");
+        }
+
+        return managedFlightReservation;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FlightReservation create(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass, @NonNull Passenger passenger, FlightReservationPayment flightReservationPayment) throws InvalidConstraintException, InvalidEntityIdException {
         final FlightReservation flightReservation = new FlightReservation();
