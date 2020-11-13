@@ -46,7 +46,9 @@ public class AircraftConfigurationService {
         for (CabinClass cabinClass : cabinClassList) {
             cabinClass.setAircraftConfiguration(aircraftConfiguration);
             aircraftConfiguration.getCabinClasses().add(cabinClass);
+            this.em.persist(cabinClass);
         }
+        this.em.persist(aircraftConfiguration);
 
         return aircraftConfiguration;
     }
