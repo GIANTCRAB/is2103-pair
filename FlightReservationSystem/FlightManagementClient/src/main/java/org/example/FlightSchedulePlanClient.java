@@ -232,7 +232,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                     System.out.println("Enter layover duration in minutes: ");
                     Long layoverDuration = scanner.nextLong();
                     Date departureDate = flightSchedules.get(i).getDate();
-                    Time departureTime = Time.valueOf(flightSchedules.get(0).getTime().toLocalTime().plusMinutes(layoverDuration));
+                    Time departureTime = Time.valueOf(flightSchedules.get(i).getTime().toLocalTime().plusMinutes(layoverDuration));
                     Long estimatedDuration = flightSchedules.get(i).getEstimatedDuration();
                     returnFlightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
                 }

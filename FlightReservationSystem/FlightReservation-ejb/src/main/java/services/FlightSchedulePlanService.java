@@ -126,7 +126,6 @@ public class FlightSchedulePlanService {
         return flightSchedulePlan;
     }
 
-    // Something wrong with this query
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
         Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f GROUP BY fsp.flightSchedulePlanId ORDER BY f.flightCode ASC, MIN(fs.date) DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
