@@ -44,6 +44,12 @@ public class AircraftConfigurationService {
         }
         
         for (CabinClass cabinClass : cabinClassList) {
+            final AircraftConfiguration oldAircraftConfig = cabinClass.getAircraftConfiguration();
+            if (oldAircraftConfig != null) {
+                // cabin class used to have old aircraft config
+                oldAircraftConfig.getCabinClasses().remove(cabinClass);
+                this.em.persist(oldAircraftConfig);
+            }
             cabinClass.setAircraftConfiguration(aircraftConfiguration);
             aircraftConfiguration.getCabinClasses().add(cabinClass);
             this.em.persist(cabinClass);
