@@ -65,12 +65,12 @@ public class FlightRouteService {
             final List<FlightRoute> originFlightRoutes = origin.getOriginFlightRoutes();
             originFlightRoutes.add(newFlightRoute);
             origin.setOriginFlightRoutes(originFlightRoutes);
-            this.em.persist(origin);
+            this.em.merge(origin);
 
             final List<FlightRoute> destFlightRoutes = destination.getDestFlightRoutes();
             destFlightRoutes.add(newFlightRoute);
             destination.setDestFlightRoutes(destFlightRoutes);
-            this.em.persist(destination);
+            this.em.merge(destination);
             this.em.flush();
 
             return newFlightRoute;
