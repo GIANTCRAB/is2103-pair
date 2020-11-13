@@ -16,6 +16,8 @@ import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 @Startup
 @Singleton
@@ -244,5 +246,182 @@ public class TestDataMigrationBean {
         this.fareService.create("J002", BigDecimal.valueOf(3000), cabinClass2, flightSchedulePlan2);
         this.fareService.create("Y001", BigDecimal.valueOf(1500), cabinClass3, flightSchedulePlan2);
         this.fareService.create("Y002", BigDecimal.valueOf(1000), cabinClass3, flightSchedulePlan2);
+
+        final CabinClassId cabinClassId2 = new CabinClassId();
+        cabinClassId2.setCabinClassType(CabinClassType.F);
+        cabinClassId2.setAircraftConfigurationId(aircraftConfiguration2.getAircraftConfigurationId());
+        final CabinClass cabinClass21 = this.cabinClassService.findById(cabinClassId2);
+        cabinClassId2.setCabinClassType(CabinClassType.J);
+        final CabinClass cabinClass22 = this.cabinClassService.findById(cabinClassId2);
+        cabinClassId2.setCabinClassType(CabinClassType.Y);
+        final CabinClass cabinClass23 = this.cabinClassService.findById(cabinClassId2);
+        final FlightSchedulePlan flightSchedulePlan3 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml611,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("12:00:00"),
+                Integer.valueOf(8 * 60).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan3);
+        this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan3);
+        this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan3);
+        this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan3);
+        this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan3);
+        this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan3);
+        final FlightSchedulePlan flightSchedulePlan4 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml612,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("22:00:00"),
+                Integer.valueOf(8 * 60).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("F001", BigDecimal.valueOf(3250), cabinClass21, flightSchedulePlan4);
+        this.fareService.create("F002", BigDecimal.valueOf(3000), cabinClass21, flightSchedulePlan4);
+        this.fareService.create("J001", BigDecimal.valueOf(1750), cabinClass22, flightSchedulePlan4);
+        this.fareService.create("J002", BigDecimal.valueOf(1500), cabinClass22, flightSchedulePlan4);
+        this.fareService.create("Y001", BigDecimal.valueOf(750), cabinClass23, flightSchedulePlan4);
+        this.fareService.create("Y002", BigDecimal.valueOf(500), cabinClass23, flightSchedulePlan4);
+
+        final CabinClassId cabinClassId3 = new CabinClassId();
+        cabinClassId3.setCabinClassType(CabinClassType.Y);
+        cabinClassId3.setAircraftConfigurationId(aircraftConfiguration3.getAircraftConfigurationId());
+        final CabinClass cabinClass31 = this.cabinClassService.findById(cabinClassId3);
+        final FlightSchedulePlan flightSchedulePlan5 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml621,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("10:00:00"),
+                Integer.valueOf(8 * 60).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan5);
+        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan5);
+        final FlightSchedulePlan flightSchedulePlan6 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml622,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("20:00:00"),
+                Integer.valueOf(8 * 60).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("Y001", BigDecimal.valueOf(700), cabinClass31, flightSchedulePlan6);
+        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass31, flightSchedulePlan6);
+
+        final CabinClassId cabinClassId4 = new CabinClassId();
+        cabinClassId4.setCabinClassType(CabinClassType.F);
+        cabinClassId4.setAircraftConfigurationId(aircraftConfiguration2.getAircraftConfigurationId());
+        final CabinClass cabinClass41 = this.cabinClassService.findById(cabinClassId4);
+        cabinClassId4.setCabinClassType(CabinClassType.J);
+        final CabinClass cabinClass42 = this.cabinClassService.findById(cabinClassId4);
+        cabinClassId4.setCabinClassType(CabinClassType.Y);
+        final CabinClass cabinClass43 = this.cabinClassService.findById(cabinClassId4);
+        final FlightSchedulePlan flightSchedulePlan7 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml311,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("10:00:00"),
+                Integer.valueOf(6 * 60 + 30).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan7);
+        this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan7);
+        this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan7);
+        this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan7);
+        this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan7);
+        this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan7);
+        final FlightSchedulePlan flightSchedulePlan8 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                ml312,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("19:30:00"),
+                Integer.valueOf(6 * 60 + 30).longValue(),
+                Date.valueOf("2020-12-31"));
+        this.fareService.create("F001", BigDecimal.valueOf(3350), cabinClass41, flightSchedulePlan8);
+        this.fareService.create("F002", BigDecimal.valueOf(3100), cabinClass41, flightSchedulePlan8);
+        this.fareService.create("J001", BigDecimal.valueOf(1850), cabinClass42, flightSchedulePlan8);
+        this.fareService.create("J002", BigDecimal.valueOf(1600), cabinClass42, flightSchedulePlan8);
+        this.fareService.create("Y001", BigDecimal.valueOf(850), cabinClass43, flightSchedulePlan8);
+        this.fareService.create("Y002", BigDecimal.valueOf(600), cabinClass43, flightSchedulePlan8);
+
+        final CabinClassId cabinClassId5 = new CabinClassId();
+        cabinClassId5.setCabinClassType(CabinClassType.F);
+        cabinClassId5.setAircraftConfigurationId(aircraftConfiguration2.getAircraftConfigurationId());
+        final CabinClass cabinClass51 = this.cabinClassService.findById(cabinClassId5);
+        cabinClassId5.setCabinClassType(CabinClassType.J);
+        final CabinClass cabinClass52 = this.cabinClassService.findById(cabinClassId5);
+        cabinClassId5.setCabinClassType(CabinClassType.Y);
+        final CabinClass cabinClass53 = this.cabinClassService.findById(cabinClassId5);
+        final FlightSchedulePlan flightSchedulePlan9 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
+                ml411,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("13:00:00"),
+                Integer.valueOf(4 * 60).longValue(),
+                Date.valueOf("2020-12-31"),
+                2);
+        this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan9);
+        this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan9);
+        this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan9);
+        this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan9);
+        this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan9);
+        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan9);
+        final FlightSchedulePlan flightSchedulePlan10 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
+                ml412,
+                Date.valueOf("2020-12-1"),
+                Time.valueOf("21:00:00"),
+                Integer.valueOf(4 * 60).longValue(),
+                Date.valueOf("2020-12-31"),
+                2);
+        this.fareService.create("F001", BigDecimal.valueOf(3150), cabinClass51, flightSchedulePlan10);
+        this.fareService.create("F002", BigDecimal.valueOf(2900), cabinClass51, flightSchedulePlan10);
+        this.fareService.create("J001", BigDecimal.valueOf(1650), cabinClass52, flightSchedulePlan10);
+        this.fareService.create("J002", BigDecimal.valueOf(1400), cabinClass52, flightSchedulePlan10);
+        this.fareService.create("Y001", BigDecimal.valueOf(650), cabinClass53, flightSchedulePlan10);
+        this.fareService.create("Y002", BigDecimal.valueOf(400), cabinClass53, flightSchedulePlan10);
+
+        final CabinClassId cabinClassId6 = new CabinClassId();
+        cabinClassId6.setCabinClassType(CabinClassType.F);
+        cabinClassId6.setAircraftConfigurationId(aircraftConfiguration2.getAircraftConfigurationId());
+        final CabinClass cabinClass61 = this.cabinClassService.findById(cabinClassId6);
+        cabinClassId6.setCabinClassType(CabinClassType.J);
+        final CabinClass cabinClass62 = this.cabinClassService.findById(cabinClassId6);
+        cabinClassId6.setCabinClassType(CabinClassType.Y);
+        final CabinClass cabinClass63 = this.cabinClassService.findById(cabinClassId6);
+        final List<FlightSchedule> flightScheduleList = new ArrayList<>();
+        final FlightSchedule flightSchedule1 = this.flightScheduleService.create(ml511,
+                Date.valueOf("2020-12-7"),
+                Time.valueOf("17:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        final FlightSchedule flightSchedule2 = this.flightScheduleService.create(ml511,
+                Date.valueOf("2020-12-8"),
+                Time.valueOf("17:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        final FlightSchedule flightSchedule3 = this.flightScheduleService.create(ml511,
+                Date.valueOf("2020-12-9"),
+                Time.valueOf("17:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        flightScheduleList.add(flightSchedule1);
+        flightScheduleList.add(flightSchedule2);
+        flightScheduleList.add(flightSchedule3);
+        final FlightSchedulePlan flightSchedulePlan11 = this.flightSchedulePlanService.create(FlightSchedulePlanType.MULTIPLE, flightScheduleList);
+        this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan11);
+        this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan11);
+        this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan11);
+        this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan11);
+        this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan11);
+        this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan11);
+        final List<FlightSchedule> flightScheduleList1 = new ArrayList<>();
+        final FlightSchedule flightSchedule4 = this.flightScheduleService.create(ml512,
+                Date.valueOf("2020-12-7"),
+                Time.valueOf("22:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        final FlightSchedule flightSchedule5 = this.flightScheduleService.create(ml512,
+                Date.valueOf("2020-12-8"),
+                Time.valueOf("22:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        final FlightSchedule flightSchedule6 = this.flightScheduleService.create(ml512,
+                Date.valueOf("2020-12-9"),
+                Time.valueOf("2:00:00"),
+                Integer.valueOf(3 * 60).longValue());
+        flightScheduleList1.add(flightSchedule4);
+        flightScheduleList1.add(flightSchedule5);
+        flightScheduleList1.add(flightSchedule6);
+        final FlightSchedulePlan flightSchedulePlan12 = this.flightSchedulePlanService.create(FlightSchedulePlanType.MULTIPLE, flightScheduleList1);
+        this.fareService.create("F001", BigDecimal.valueOf(3100), cabinClass61, flightSchedulePlan12);
+        this.fareService.create("F002", BigDecimal.valueOf(2850), cabinClass61, flightSchedulePlan12);
+        this.fareService.create("J001", BigDecimal.valueOf(1600), cabinClass62, flightSchedulePlan12);
+        this.fareService.create("J002", BigDecimal.valueOf(1350), cabinClass62, flightSchedulePlan12);
+        this.fareService.create("Y001", BigDecimal.valueOf(600), cabinClass63, flightSchedulePlan12);
+        this.fareService.create("Y002", BigDecimal.valueOf(350), cabinClass63, flightSchedulePlan12);
     }
 }
