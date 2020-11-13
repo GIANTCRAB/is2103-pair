@@ -99,7 +99,7 @@ public class FlightRouteService {
         // If flight route has flights, then disable it instead of deleting it
         if (flightRoute.getFlights().size() > 0) {
             flightRoute.setEnabled(false);
-            this.em.persist(flightRoute);
+            this.em.merge(flightRoute);
         } else {
             this.em.remove(flightRoute);
         }

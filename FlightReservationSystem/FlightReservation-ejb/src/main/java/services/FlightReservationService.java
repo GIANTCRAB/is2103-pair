@@ -66,7 +66,7 @@ public class FlightReservationService {
         final List<FlightReservation> flightReservationList = flightSchedule.getFlightReservations();
         flightReservationList.add(flightReservation);
         flightSchedule.setFlightReservations(flightReservationList);
-        this.em.persist(flightSchedule);
+        this.em.merge(flightSchedule);
 
         return flightReservation;
     }
