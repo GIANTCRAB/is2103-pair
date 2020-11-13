@@ -67,9 +67,9 @@ public class FlightReservationPaymentService {
         final List<FlightReservation> existingFlightReservations = flightReservationPayment.getFlightReservations();
         flightReservations.forEach(flightReservation -> {
             flightReservation.setFlightReservationPayment(flightReservationPayment);
-            this.em.persist(flightReservation);
+            this.em.merge(flightReservation);
             existingFlightReservations.add(flightReservation);
         });
-        this.em.persist(flightReservationPayment);
+        this.em.merge(flightReservationPayment);
     }
 }
