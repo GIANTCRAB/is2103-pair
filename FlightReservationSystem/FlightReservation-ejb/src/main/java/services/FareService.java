@@ -46,10 +46,14 @@ public class FareService {
 
         em.persist(fare);
 
-        cabinClass.getFares().add(fare);
-        em.persist(cabinClass);
-        flightSchedulePlan.getFares().add(fare);
-        em.persist(flightSchedulePlan);
+        final List<Fare> fares = cabinClass.getFares();
+        fares.add(fare);
+        cabinClass.setFares(fares);
+        em.merge(cabinClass);
+        final List<Fare> flightSchedulePlanFares = flightSchedulePlan.getFares();
+        flightSchedulePlanFares.add(fare);
+        flightSchedulePlan.setFares(flightSchedulePlanFares);
+        em.merge(flightSchedulePlan);
 
         return fare;
     }
