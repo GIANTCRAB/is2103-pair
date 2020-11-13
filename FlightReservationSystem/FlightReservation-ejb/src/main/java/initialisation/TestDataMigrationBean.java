@@ -69,11 +69,11 @@ public class TestDataMigrationBean {
         this.em.persist(employee3);
 
         final Employee employee4 = new Employee();
-        employee4.setFirstName("Schedule");
+        employee4.setFirstName("Sales");
         employee4.setLastName("Manager");
-        employee4.setUsername("schedulemanager");
+        employee4.setUsername("salesmanager");
         employee4.setPassword(this.passwordHash.generate("password".toCharArray()));
-        employee4.setEmployeeRole(EmployeeRole.SCHEDULE_MANAGER);
+        employee4.setEmployeeRole(EmployeeRole.SALES_MANAGER);
         this.em.persist(employee4);
 
         final Partner partner = new Partner();
