@@ -68,20 +68,38 @@ public class VisitorSessionBean implements VisitorBeanRemote {
             if (cabinClassType != null) {
                 // The flight schedule MUST have the cabin class
                 for (List<Flight> possibleFlight : possibleFlights) {
+                    boolean incomplete = false;
                     final List<FlightSchedule> searchResult = new ArrayList<>();
                     for (Flight flightPathNode : possibleFlight) {
-                        searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount, cabinClassType));
+                        final List<FlightSchedule> flightSchedules = this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount, cabinClassType);
+                        if (flightSchedules.size() > 0) {
+                            searchResult.addAll(flightSchedules);
+                        } else {
+                            incomplete = true;
+                            break;
+                        }
                     }
-                    possibleFlightSchedules.add(searchResult);
+                    if (!incomplete) {
+                        possibleFlightSchedules.add(searchResult);
+                    }
                 }
             } else {
                 // Basic search only
                 for (List<Flight> possibleFlight : possibleFlights) {
+                    boolean incomplete = false;
                     final List<FlightSchedule> searchResult = new ArrayList<>();
                     for (Flight flightPathNode : possibleFlight) {
-                        searchResult.addAll(this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount));
+                        final List<FlightSchedule> flightSchedules = this.flightScheduleService.searchFlightSchedules(flightPathNode, departureDate, passengerCount);
+                        if (flightSchedules.size() > 0) {
+                            searchResult.addAll(flightSchedules);
+                        } else {
+                            incomplete = true;
+                            break;
+                        }
                     }
-                    possibleFlightSchedules.add(searchResult);
+                    if (!incomplete) {
+                        possibleFlightSchedules.add(searchResult);
+                    }
                 }
             }
         }
