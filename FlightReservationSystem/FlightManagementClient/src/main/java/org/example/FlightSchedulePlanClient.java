@@ -117,6 +117,7 @@ public class FlightSchedulePlanClient implements SystemClient {
         FlightSchedulePlan flightSchedulePlan = null;
 
         List<FlightSchedule> flightSchedules = new ArrayList<>();
+        final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
 
         switch (option) {
             case 1: {
@@ -127,8 +128,12 @@ public class FlightSchedulePlanClient implements SystemClient {
                 System.out.println("Enter estimated flight duration in minutes:");
                 Long estimatedDuration = scanner.nextLong();
 
-                flightSchedules.add(this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration));
-                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.SINGLE, flightSchedules);
+                final FlightSchedule flightScheduleDraft = new FlightSchedule();
+                flightScheduleDraft.setFlight(flight);
+                flightScheduleDraft.setDate(departureDate);
+                flightScheduleDraft.setTime(departureTime);
+                flightScheduleDraft.setEstimatedDuration(estimatedDuration);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.createFlightSchedulePlanAndFlightSchedule(flightScheduleDraft);
                 this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
                 System.out.println("Flight schedule plan created successfully!");
@@ -145,7 +150,6 @@ public class FlightSchedulePlanClient implements SystemClient {
                     Time departureTime = Time.valueOf(scanner.next() + ":00");
                     System.out.println("Enter estimated flight duration in minutes:");
                     Long estimatedDuration = scanner.nextLong();
-                    final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
                     final FlightSchedule flightScheduleDraft = new FlightSchedule();
                     flightScheduleDraft.setFlight(flight);
                     flightScheduleDraft.setDate(departureDate);
@@ -175,7 +179,6 @@ public class FlightSchedulePlanClient implements SystemClient {
                 Date endDate = Date.valueOf(scanner.next());
 
 
-                final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
                 if (flight != null) {
                     flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
                             flight,
@@ -202,7 +205,6 @@ public class FlightSchedulePlanClient implements SystemClient {
                 System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
                 Date endDate = Date.valueOf(scanner.next());
 
-                final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
                 if (flight != null) {
                     flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                             flight,

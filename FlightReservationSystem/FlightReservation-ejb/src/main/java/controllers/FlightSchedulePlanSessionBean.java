@@ -107,12 +107,11 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedulePlan createFlightSchedulePlanAndFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
-                                                                        @NonNull FlightSchedule flightScheduleDraft) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException {
+    public FlightSchedulePlan createFlightSchedulePlanAndFlightSchedule(@NonNull FlightSchedule flightScheduleDraft) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException {
         final List<FlightSchedule> flightSchedules = new ArrayList<>();
         flightSchedules.add(flightScheduleDraft);
 
-        return this.createFlightSchedulePlanAndFlightSchedule(flightSchedulePlanType, flightSchedules);
+        return this.createFlightSchedulePlanAndFlightSchedule(FlightSchedulePlanType.SINGLE, flightSchedules);
     }
 
     @Override
