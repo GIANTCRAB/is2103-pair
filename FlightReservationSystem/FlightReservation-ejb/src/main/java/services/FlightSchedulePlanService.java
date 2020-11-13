@@ -49,8 +49,15 @@ public class FlightSchedulePlanService {
 
         em.persist(flightSchedulePlan);
         flightSchedules.forEach(f -> {
+            if(f.getFlightSchedulePlan() != null) {
+                FlightSchedulePlan oldFlightSchedulePlan = f.getFlightSchedulePlan();
+                List<FlightSchedule> oldFlightSchedules = oldFlightSchedulePlan.getFlightSchedules();
+                oldFlightSchedules.remove(f);
+                oldFlightSchedulePlan.setFlightSchedules(oldFlightSchedules);
+                em.merge(oldFlightSchedulePlan);
+            }
             f.setFlightSchedulePlan(flightSchedulePlan);
-            em.persist(f);
+            em.merge(f);
         });
         em.flush();
 
