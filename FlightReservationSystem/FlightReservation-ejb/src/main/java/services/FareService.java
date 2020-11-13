@@ -45,6 +45,7 @@ public class FareService {
         }
 
         em.persist(fare);
+        em.flush();
 
         final List<Fare> fares = cabinClass.getFares();
         fares.add(fare);
