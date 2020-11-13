@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolation;
@@ -84,7 +85,11 @@ public class FareService {
                     .setMaxResults(1);
 
         }
-        return query.getSingleResult();
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new InvalidEntityIdException("Fare does not exists.");
+        }
     }
 
     public Fare findByScheduleAndCabinClass(@NonNull FlightSchedule flightSchedule, @NonNull CabinClass cabinClass) throws InvalidEntityIdException {
