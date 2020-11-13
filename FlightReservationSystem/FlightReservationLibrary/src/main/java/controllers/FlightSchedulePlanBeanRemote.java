@@ -1,10 +1,6 @@
 package controllers;
 
-import entities.Employee;
-import entities.Fare;
-import entities.FlightSchedule;
-import entities.FlightSchedulePlan;
-import entities.FlightSchedulePlanType;
+import entities.*;
 import exceptions.EntityAlreadyExistException;
 import exceptions.EntityInUseException;
 import exceptions.EntityIsDisabledException;
@@ -12,6 +8,7 @@ import exceptions.IncorrectCredentialsException;
 import exceptions.InvalidConstraintException;
 import exceptions.InvalidEntityIdException;
 import exceptions.NotAuthenticatedException;
+import lombok.NonNull;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -22,11 +19,17 @@ import javax.ejb.Remote;
 public interface FlightSchedulePlanBeanRemote {
     Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
 
-    FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException;
+    FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException;
 
     FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
 
-    List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
+    FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
+                                                     @NonNull Flight flight,
+                                                     @NonNull Date departureDate,
+                                                     @NonNull Time departureTime,
+                                                     @NonNull Long estimatedDuration,
+                                                     @NonNull Date recurrentEndDate,
+                                                     Integer nDays) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
 
     FlightSchedulePlan getFlightSchedulePlanById(Long id) throws NotAuthenticatedException, InvalidEntityIdException;
 

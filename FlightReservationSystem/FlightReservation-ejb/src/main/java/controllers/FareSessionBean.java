@@ -11,7 +11,9 @@ import java.util.List;
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 import services.AuthService;
+import services.CabinClassService;
 import services.FareService;
+import services.FlightSchedulePlanService;
 
 @Stateful
 public class FareSessionBean implements FareBeanRemote {
@@ -20,6 +22,10 @@ public class FareSessionBean implements FareBeanRemote {
     FareService fareService;
     @Inject
     AuthService authService;
+    @Inject
+    CabinClassService cabinClassService;
+    @Inject
+    FlightSchedulePlanService flightSchedulePlanService;
 
     private final EmployeeRole PERMISSION_REQUIRED = EmployeeRole.SCHEDULE_MANAGER;
 
@@ -36,12 +42,15 @@ public class FareSessionBean implements FareBeanRemote {
     }
     
     @Override
-    public Fare create(String fareBasisCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException, InvalidConstraintException {
+    public Fare create(String fareBasisCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        
-        return this.fareService.create(fareBasisCode, fareAmount, cabinClass, flightSchedulePlan);
+
+        final CabinClass managedCabinClass = this.cabinClassService.findById(cabinClass.getCabinClassId());
+        final FlightSchedulePlan managedFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlan.getFlightSchedulePlanId());
+
+        return this.fareService.create(fareBasisCode, fareAmount, managedCabinClass, managedFlightSchedulePlan);
     }
     
     @Override

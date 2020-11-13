@@ -21,6 +21,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import lombok.NonNull;
 import services.AuthService;
 import services.FareService;
 import services.FlightScheduleService;
@@ -56,12 +57,16 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException {
+    public FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
+        final List<FlightSchedule> managedFlightSchedules = new ArrayList<>();
+        for (FlightSchedule flightSchedule: flightSchedules) {
+            managedFlightSchedules.add(this.flightScheduleService.findById(flightSchedule.getFlightScheduleId()));
+        }
 
-        return this.flightSchedulePlanService.create(flightSchedulePlanType, flightSchedules);
+        return this.flightSchedulePlanService.create(flightSchedulePlanType, managedFlightSchedules);
     }
 
     @Override
@@ -85,16 +90,18 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public List<FlightSchedule> createRecurrentFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration, Date recurrentEndDate, int nDays) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
+    public FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
+                                                            @NonNull Flight flight,
+                                                            @NonNull Date departureDate,
+                                                            @NonNull Time departureTime,
+                                                            @NonNull Long estimatedDuration,
+                                                            @NonNull Date recurrentEndDate,
+                                                            Integer nDays) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
-        for (LocalDate date = departureDate.toLocalDate(); date.isBefore(recurrentEndDate.toLocalDate()); date = date.plusDays(nDays)) {
-            Date sqlDate = Date.valueOf(date);
-            flightSchedules.add(this.createFlightSchedule(flightCode, sqlDate, departureTime, estimatedDuration));
-        }
-        return flightSchedules;
+
+        return this.flightSchedulePlanService.createRecurrentFlightSchedule(flightSchedulePlanType, flight, departureDate, departureTime, estimatedDuration, recurrentEndDate, nDays);
     }
 
     @Override

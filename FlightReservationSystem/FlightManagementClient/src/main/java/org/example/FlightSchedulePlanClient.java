@@ -169,8 +169,14 @@ public class FlightSchedulePlanClient implements SystemClient {
                 Date endDate = Date.valueOf(scanner.next());
 
 
-                flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, nDays);
-                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_N_DAYS, flightSchedules);
+                final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
+                        flight,
+                        departureDate,
+                        departureTime,
+                        estimatedDuration,
+                        endDate,
+                        nDays);
                 this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
                 System.out.println("Flight schedule plan created successfully!");
@@ -186,9 +192,14 @@ public class FlightSchedulePlanClient implements SystemClient {
                 System.out.println("Enter the end date for the schedule plan in YYYY-MM-DD:");
                 Date endDate = Date.valueOf(scanner.next());
 
-
-                flightSchedules = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration, endDate, 7);
-                flightSchedulePlan = this.flightSchedulePlanBeanRemote.create(FlightSchedulePlanType.RECURRENT_WEEKLY, flightSchedules);
+                final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
+                flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                        flight,
+                        departureDate,
+                        departureTime,
+                        estimatedDuration,
+                        endDate,
+                        null);
                 this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
                 System.out.println("Flight schedule plan created successfully!");
@@ -269,7 +280,7 @@ public class FlightSchedulePlanClient implements SystemClient {
             }
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
-        } catch (InvalidConstraintException e) {
+        } catch (InvalidConstraintException | InvalidEntityIdException e) {
             System.out.println(e.getMessage());
         }
     }
