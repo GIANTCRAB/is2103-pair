@@ -129,9 +129,10 @@ public class FlightSessionBean implements FlightBeanRemote {
         Flight flight = this.flightService.getFlightByFlightCode(flightCode);
         String origin = flight.getFlightRoute().getOrigin().getIataCode();
         String destination = flight.getFlightRoute().getDest().getIataCode();
+        AircraftConfiguration aircraftConfiguration = flight.getAircraftConfiguration();
         
         try {
-            Flight returnFlight = this.flightService.getFlightByOriginDest(destination, origin);
+            Flight returnFlight = this.flightService.getFlightByOriginDestAndAircraftConfiguration(destination, origin, aircraftConfiguration.getAircraftConfigurationId());
             return returnFlight;
         } catch (NoResultException e) {
             return null;
