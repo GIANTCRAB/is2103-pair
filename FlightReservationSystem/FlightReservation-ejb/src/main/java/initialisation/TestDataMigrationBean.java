@@ -194,8 +194,8 @@ public class TestDataMigrationBean {
         final Flight ml211 = this.flightService.create("ML211", sinTpeFR, aircraftConfiguration2);
         final Flight ml212 = this.flightService.create("ML212", tpeSinFR, aircraftConfiguration2);
 
-        final Flight ml311 = this.flightService.create("ML311", sinNrtFR, aircraftConfiguration2);
-        final Flight ml312 = this.flightService.create("ML312", nrtSinFR, aircraftConfiguration2);
+        final Flight ml311 = this.flightService.create("ML311", sinNrtFR, aircraftConfiguration4);
+        final Flight ml312 = this.flightService.create("ML312", nrtSinFR, aircraftConfiguration4);
 
         final Flight ml411 = this.flightService.create("ML411", hkgNrtFR, aircraftConfiguration2);
         final Flight ml412 = this.flightService.create("ML412", nrtHkgFR, aircraftConfiguration2);
@@ -206,8 +206,8 @@ public class TestDataMigrationBean {
         final Flight ml611 = this.flightService.create("ML611", sinSydFR, aircraftConfiguration2);
         final Flight ml612 = this.flightService.create("ML612", sydSinFR, aircraftConfiguration2);
 
-        final Flight ml621 = this.flightService.create("ML621", sinSydFR, aircraftConfiguration3);
-        final Flight ml622 = this.flightService.create("ML622", sydSinFR, aircraftConfiguration3);
+        final Flight ml621 = this.flightService.create("ML621", sinSydFR, aircraftConfiguration1);
+        final Flight ml622 = this.flightService.create("ML622", sydSinFR, aircraftConfiguration1);
 
         final Flight ml711 = this.flightService.create("ML711", sydNrtFR, aircraftConfiguration4);
         final Flight ml712 = this.flightService.create("ML712", nrtSydFR, aircraftConfiguration4);
