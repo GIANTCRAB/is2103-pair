@@ -247,9 +247,11 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     
     private boolean checkExistingFlightSchedules(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) {
         LocalDateTime arrivalDateTime = LocalDateTime.of(departureDate.toLocalDate(), departureTime.toLocalTime().plusMinutes(estimatedDuration));
+        LocalDateTime departureDateTime = LocalDateTime.of(departureDate.toLocalDate(), departureTime.toLocalTime());
+        
         List<FlightSchedule> sameDateFlightSchedules = this.flightScheduleService.getFlightSchedulesByFlightAndDate(flightCode, departureDate, departureDate);
         for (FlightSchedule flightSchedule : sameDateFlightSchedules) {
-             if (!flightSchedule.getArrivalDateTime().toLocalDateTime().isAfter(arrivalDateTime.plusHours(2))) {
+             if (!flightSchedule.getDepartureDateTime().toLocalDateTime().isAfter(arrivalDateTime.plusHours(2)) || !departureDateTime.isAfter(flightSchedule.getArrivalDateTime().toLocalDateTime().plusHours(2))) {
                  return false;
              }
         }
