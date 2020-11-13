@@ -31,6 +31,9 @@ public interface FlightSchedulePlanBeanRemote {
                                                      @NonNull Date recurrentEndDate,
                                                      Integer nDays) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException;
 
+    FlightSchedulePlan createFlightSchedulePlanAndFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
+                                                                 @NonNull List<FlightSchedule> flightSchedulesDraft) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException;
+
     FlightSchedulePlan getFlightSchedulePlanById(Long id) throws NotAuthenticatedException, InvalidEntityIdException;
 
     List<FlightSchedulePlan> getFlightSchedulePlans() throws NotAuthenticatedException;
