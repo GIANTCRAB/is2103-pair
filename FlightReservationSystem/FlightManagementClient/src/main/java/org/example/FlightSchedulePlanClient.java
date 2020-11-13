@@ -170,16 +170,20 @@ public class FlightSchedulePlanClient implements SystemClient {
 
 
                 final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
-                flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
-                        flight,
-                        departureDate,
-                        departureTime,
-                        estimatedDuration,
-                        endDate,
-                        nDays);
-                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+                if (flight != null) {
+                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_N_DAYS,
+                            flight,
+                            departureDate,
+                            departureTime,
+                            estimatedDuration,
+                            endDate,
+                            nDays);
+                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
-                System.out.println("Flight schedule plan created successfully!");
+                    System.out.println("Flight schedule plan created successfully!");
+                } else {
+                    System.out.println("Flight with " + flightCode + " could not be found!");
+                }
                 break;
             }
             case 4: {                    
@@ -193,16 +197,21 @@ public class FlightSchedulePlanClient implements SystemClient {
                 Date endDate = Date.valueOf(scanner.next());
 
                 final Flight flight = this.flightBeanRemote.getFlightByFlightCode(flightCode);
-                flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
-                        flight,
-                        departureDate,
-                        departureTime,
-                        estimatedDuration,
-                        endDate,
-                        null);
-                this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
+                if (flight != null) {
+                    flightSchedulePlan = this.flightSchedulePlanBeanRemote.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
+                            flight,
+                            departureDate,
+                            departureTime,
+                            estimatedDuration,
+                            endDate,
+                            null);
+                    this.displayEnterFareForCabinClass(flightCode, flightSchedulePlan);
 
-                System.out.println("Flight schedule plan created successfully!");
+                    System.out.println("Flight schedule plan created successfully!");
+                } else {
+                    System.out.println("Flight with " + flightCode + " could not be found!");
+                }
+
                 break;
             }
             default:
