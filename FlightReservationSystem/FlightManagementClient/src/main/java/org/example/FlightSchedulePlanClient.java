@@ -237,11 +237,12 @@ public class FlightSchedulePlanClient implements SystemClient {
             case MULTIPLE:
             case RECURRENT_N_DAYS:
             case RECURRENT_WEEKLY: {
+                System.out.println("Enter layover duration in minutes: ");
+                Long layoverDuration = scanner.nextLong();
+                
                 int noOfSchedules = flightSchedules.size();
-
+                
                 for (int i = 0; i < noOfSchedules; i++) {
-                    System.out.println("Enter layover duration in minutes: ");
-                    Long layoverDuration = scanner.nextLong();
                     Date departureDate = flightSchedules.get(i).getDate();
                     Time departureTime = Time.valueOf(flightSchedules.get(i).getTime().toLocalTime().plusMinutes(layoverDuration));
                     Long estimatedDuration = flightSchedules.get(i).getEstimatedDuration();

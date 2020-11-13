@@ -30,7 +30,8 @@ public class FareService {
 
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
-
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Fare create(String fareBasisCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan flightSchedulePlan) throws InvalidConstraintException {
         Fare fare = new Fare();
         fare.setFareBasisCode(fareBasisCode);

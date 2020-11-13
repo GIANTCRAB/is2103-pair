@@ -112,7 +112,8 @@ public class FlightService {
                 + " AND f.aircraftConfiguration.aircraftConfigurationId =?3", Flight.class)
                 .setParameter(1, origin)
                 .setParameter(2, destination)
-                .setParameter(3, aircraftConfigurationId);
+                .setParameter(3, aircraftConfigurationId)
+                .setMaxResults(1);
         try {
             return searchQuery.getSingleResult();
         } catch (NoResultException e) {
