@@ -282,7 +282,7 @@ public class TestDataMigrationBean {
 
         final CabinClassId cabinClassId3 = new CabinClassId();
         cabinClassId3.setCabinClassType(CabinClassType.Y);
-        cabinClassId3.setAircraftConfigurationId(aircraftConfiguration3.getAircraftConfigurationId());
+        cabinClassId3.setAircraftConfigurationId(aircraftConfiguration1.getAircraftConfigurationId());
         final CabinClass cabinClass31 = this.cabinClassService.findById(cabinClassId3);
         final FlightSchedulePlan flightSchedulePlan5 = this.flightSchedulePlanService.createRecurrentFlightSchedule(FlightSchedulePlanType.RECURRENT_WEEKLY,
                 ml621,
@@ -303,7 +303,7 @@ public class TestDataMigrationBean {
 
         final CabinClassId cabinClassId4 = new CabinClassId();
         cabinClassId4.setCabinClassType(CabinClassType.F);
-        cabinClassId4.setAircraftConfigurationId(aircraftConfiguration2.getAircraftConfigurationId());
+        cabinClassId4.setAircraftConfigurationId(aircraftConfiguration4.getAircraftConfigurationId());
         final CabinClass cabinClass41 = this.cabinClassService.findById(cabinClassId4);
         cabinClassId4.setCabinClassType(CabinClassType.J);
         final CabinClass cabinClass42 = this.cabinClassService.findById(cabinClassId4);
