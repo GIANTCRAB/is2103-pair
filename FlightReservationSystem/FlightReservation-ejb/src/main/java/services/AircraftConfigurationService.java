@@ -15,6 +15,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 @LocalBean
 @Stateless
@@ -79,9 +80,10 @@ public class AircraftConfigurationService {
     }
     
     public AircraftConfiguration getAircraftConfigurationByName(String name) {
-        final Query searchQuery = this.em.createQuery("SELECT ac FROM AircraftConfiguration ac WHERE ac.aircraftConfigurationName = :name")
-                .setParameter("name", name);
-        AircraftConfiguration aircraftConfiguration = (AircraftConfiguration) searchQuery.getSingleResult();
+        final TypedQuery<AircraftConfiguration> searchQuery = this.em.createQuery("SELECT ac FROM AircraftConfiguration ac WHERE ac.aircraftConfigurationName LIKE :name", AircraftConfiguration.class)
+                .setParameter("name", "%" + name + "%")
+                .setMaxResults(1);
+        AircraftConfiguration aircraftConfiguration = searchQuery.getSingleResult();
         aircraftConfiguration.getCabinClasses().size();
 
         return aircraftConfiguration;
