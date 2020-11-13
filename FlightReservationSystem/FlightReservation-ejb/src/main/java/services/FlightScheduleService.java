@@ -56,7 +56,7 @@ public class FlightScheduleService {
 
         em.persist(flightSchedule);
         em.flush();
-        
+
         flight.getFlightSchedules().add(flightSchedule);
 
         return flightSchedule;
@@ -146,13 +146,15 @@ public class FlightScheduleService {
         flightSchedules.forEach(flightSchedule -> {
             final Integer seatsTaken = flightSchedule.getFlightReservations().size() + passengerCount;
             // Get seats left
-            // Load flight schedule data
+            if (flightSchedule.getFlight().getAircraftConfiguration().getTotalCabinClassCapacity() >= seatsTaken) {
+                // Load flight schedule data
                 flightSchedule.getFlight().getFlightRoute().getOrigin().getIataCode();
                 flightSchedule.getFlight().getFlightRoute().getDest().getIataCode();
                 flightSchedule.getFlight().getAircraftConfiguration().getCabinClasses().forEach(cabinClass -> {
                     cabinClass.getCabinClassId();
                 });
                 countFilteredFlightSchedules.add(flightSchedule);
+            }
         });
 
         return countFilteredFlightSchedules;
