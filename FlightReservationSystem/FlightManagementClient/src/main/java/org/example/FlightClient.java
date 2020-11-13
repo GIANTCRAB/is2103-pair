@@ -110,6 +110,8 @@ public class FlightClient implements SystemClient {
             System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
+        } catch (EntityAlreadyExistException e) {
+            System.out.println(e.getMessage());
         }
     }
 

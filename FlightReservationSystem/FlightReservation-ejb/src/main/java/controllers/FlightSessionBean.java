@@ -59,7 +59,7 @@ public class FlightSessionBean implements FlightBeanRemote {
     }
 
     @Override
-    public Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityIsDisabledException {
+    public Flight create(String flightCode, String origin, String destination, Long aircraftConfigurationId) throws InvalidConstraintException, InvalidEntityIdException, NotAuthenticatedException, EntityIsDisabledException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -70,6 +70,10 @@ public class FlightSessionBean implements FlightBeanRemote {
 
         if (!flightRoute.getEnabled()) {
             throw new EntityIsDisabledException("Selected flight route is disabled.");
+        }
+        
+        if (this.flightService.getFlightByFlightCode(flightCode) != null ) {
+            throw new EntityAlreadyExistException("Flight code is already in use.");
         }
         
         if (aircraftConfiguration == null) {

@@ -128,8 +128,12 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             Flight returnFlight = this.flightService.getFlightByOriginDestAndAircraftConfiguration(dest, origin, aircraftConfiguration.getAircraftConfigurationId());
             Date date = flightSchedulePlan.getFlightSchedules().get(0).getDate();
             Time time = flightSchedulePlan.getFlightSchedules().get(0).getTime();
-            FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlansByFlightCodeAndDateTime(returnFlight.getFlightCode(), date, time).get(0);
-            return returnFlightSchedulePlan;
+            List<FlightSchedulePlan> returnFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlansByFlightCodeAndDateTime(returnFlight.getFlightCode(), date, time);
+            if (!returnFlightSchedulePlan.isEmpty()) {
+                return returnFlightSchedulePlan.get(0);
+            } else {
+                return null;
+            }
         } catch (NoResultException e) {
             return null;
         }
