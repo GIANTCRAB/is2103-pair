@@ -140,7 +140,10 @@ public class FlightSchedulePlanService {
     
     public List<FlightSchedulePlan> getFlightSchedulePlansByFlightCodeAndDateTime(String flightCode, Date date, Time time) {
         Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f WHERE f.flightCode = :inFlightCode AND fs.date >= :inDate AND fs.time >= :inTime GROUP BY fsp.flightSchedulePlanId ORDER BY MIN(fs.time) ASC", FlightSchedulePlan.class)
-                .setParameter("inFlightCode", flightCode);
+                .setParameter("inFlightCode", flightCode)
+                .setParameter("inDate", date)
+                .setParameter("inTime", time);
+        
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(flightSchedulePlan -> {
             flightSchedulePlan.getFlightSchedules().size();
