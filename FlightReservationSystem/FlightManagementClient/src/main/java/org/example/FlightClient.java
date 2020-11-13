@@ -107,7 +107,7 @@ public class FlightClient implements SystemClient {
         } catch (InvalidEntityIdException e) {
             e.printStackTrace();
         } catch (EntityIsDisabledException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -181,21 +181,22 @@ public class FlightClient implements SystemClient {
                     System.out.println("Flight route does not exist!");
                 }
             } else if (updateOption == 2) {
-                System.out.println("Enter the ID of the new aircraft configuration: ");
-                Long aircraftConfigurationId = scanner.nextLong();
+                System.out.println("Enter the name of the new aircraft configuration: ");
+                //Long aircraftConfigurationId = scanner.nextLong();
+                String aircraftConfigurationName = scanner.next();
                 this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationId);
                 System.out.println("Flight updated successfully!");
             } else {
                 System.out.println("Invalid input. Please try again.");
             }
         } catch (EntityAlreadyExistException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         } catch (InvalidEntityIdException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         } catch (EntityIsDisabledException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
     }
     

@@ -95,13 +95,13 @@ public class AircraftConfigurationClient implements SystemClient {
                 final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.createConfiguration(aircraftConfigurationName, aircraftTypeId, cabinClassList);
                 System.out.println("Aircraft configuration created successfully with ID " + aircraftConfiguration.getAircraftConfigurationId());
             } catch (NotAuthenticatedException e) {
-                e.printStackTrace();
+                System.out.println("You do not have permission to do this!");
             } catch (InvalidConstraintException e) {
                 this.displayConstraintErrorMessage(e);
             } catch (InvalidEntityIdException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             } catch (MaximumCapacityExceededException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         } else {
             System.out.println("Invalid number of cabin classes");
@@ -127,11 +127,12 @@ public class AircraftConfigurationClient implements SystemClient {
     private void displayViewAircraftConfigurationDetailsMenu() {
         System.out.println("*** View Aircraft Configuration Details ***");
         System.out.println("Enter the ID of the aircraft configuration details you would like to view:");
-        long aircraftConfigurationId = this.scanner.nextLong();
+        //long aircraftConfigurationId = this.scanner.nextLong();
+        String aircraftConfigurationName = this.scanner.next();
 
         try {
-            // 
-            final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.getAircraftConfigurationById(aircraftConfigurationId);
+             
+            final AircraftConfiguration aircraftConfiguration = this.aircraftConfigurationBeanRemote.getAircraftConfigurationByName(aircraftConfigurationName);
             final List<CabinClass> cabinClassList = aircraftConfiguration.getCabinClasses();
             
             System.out.println("Viewing details for aircraft configuration: " + aircraftConfiguration.getAircraftConfigurationName() + "\n");
