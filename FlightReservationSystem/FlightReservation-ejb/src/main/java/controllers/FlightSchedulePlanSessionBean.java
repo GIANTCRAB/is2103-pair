@@ -1,12 +1,6 @@
 package controllers;
 
-import entities.Employee;
-import entities.EmployeeRole;
-import entities.Fare;
-import entities.Flight;
-import entities.FlightSchedule;
-import entities.FlightSchedulePlan;
-import entities.FlightSchedulePlanType;
+import entities.*;
 import exceptions.EntityAlreadyExistException;
 import exceptions.EntityInUseException;
 import exceptions.EntityIsDisabledException;
@@ -19,7 +13,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
