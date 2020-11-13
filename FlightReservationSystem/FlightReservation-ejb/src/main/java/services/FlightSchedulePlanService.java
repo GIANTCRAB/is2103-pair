@@ -120,6 +120,8 @@ public class FlightSchedulePlanService {
         flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> {
             flightSchedule.getFlight();
             flightSchedule.getFlight().getFlightRoute();
+            flightSchedule.getFlight().getFlightRoute().getOrigin();
+            flightSchedule.getFlight().getFlightRoute().getDest();
             flightSchedule.getFlight().getAircraftConfiguration();
             flightSchedule.getFlightReservations().size();
         });
@@ -128,6 +130,17 @@ public class FlightSchedulePlanService {
 
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
         Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f GROUP BY fsp.flightSchedulePlanId ORDER BY f.flightCode ASC, MIN(fs.date) DESC", FlightSchedulePlan.class);
+        List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
+        flightSchedulePlans.forEach(flightSchedulePlan -> {
+            flightSchedulePlan.getFlightSchedules().size();
+            flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> flightSchedule.getFlight());
+        });
+        return flightSchedulePlans;
+    }
+    
+    public List<FlightSchedulePlan> getFlightSchedulePlansByFlightCodeAndDateTime(String flightCode, Date date, Time time) {
+        Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f WHERE f.flightCode = :inFlightCode AND fs.date >= :inDate AND fs.time >= :inTime GROUP BY fsp.flightSchedulePlanId ORDER BY MIN(fs.time) ASC", FlightSchedulePlan.class)
+                .setParameter("inFlightCode", flightCode);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(flightSchedulePlan -> {
             flightSchedulePlan.getFlightSchedules().size();

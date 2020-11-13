@@ -29,7 +29,7 @@ public interface FlightBeanRemote {
     
     void updateFlightRoute(String flightCode, String newOrigin, String newDestination) throws NotAuthenticatedException, InvalidEntityIdException, EntityAlreadyExistException, EntityIsDisabledException;
     
-    void updateAircraftConfiguration(String flightCode, Long aircraftConfigurationId) throws NotAuthenticatedException, InvalidEntityIdException;
+    void updateAircraftConfiguration(String flightCode, String aircraftConfigurationName) throws NotAuthenticatedException, InvalidEntityIdException;
 
     String deleteFlight(String flightCode) throws NotAuthenticatedException;
 

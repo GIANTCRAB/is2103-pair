@@ -26,6 +26,7 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import services.AuthService;
 import services.FareService;
@@ -109,7 +110,7 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             throw new NotAuthenticatedException();
         }
 
-        return this.flightSchedulePlanService.getFlightSchedulePlans();
+        return sortFlightSchedulePlans(this.flightSchedulePlanService.getFlightSchedulePlans());
     }
 
     @Override
@@ -124,6 +125,36 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             throw new InvalidEntityIdException("Invalid flight schedule plan ID.");
         }
         return flightSchedulePlan;
+    }
+   
+    private FlightSchedulePlan getDirectReturnFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws NotAuthenticatedException {
+        String origin = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightRoute().getOrigin().getIataCode();
+        String dest = flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightRoute().getDest().getIataCode();
+        try {
+            Flight returnFlight = this.flightService.getFlightByOriginDest(dest, origin);
+            Date date = flightSchedulePlan.getFlightSchedules().get(0).getDate();
+            Time time = flightSchedulePlan.getFlightSchedules().get(0).getTime();
+            FlightSchedulePlan returnFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlansByFlightCodeAndDateTime(returnFlight.getFlightCode(), date, time).get(0);
+            return returnFlightSchedulePlan;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    private List<FlightSchedulePlan> sortFlightSchedulePlans(List<FlightSchedulePlan> flightSchedulePlans) throws NotAuthenticatedException {
+        List<FlightSchedulePlan> sortedFlightSchedulePlans = new ArrayList<>();
+        for (FlightSchedulePlan flightSchedulePlan : flightSchedulePlans) {
+            if(!sortedFlightSchedulePlans.contains(flightSchedulePlan)) {
+                sortedFlightSchedulePlans.add(flightSchedulePlan);
+            }
+            
+            FlightSchedulePlan returnFlightSchedulePlan = getDirectReturnFlightSchedulePlan(flightSchedulePlan);
+
+            if(returnFlightSchedulePlan != null && !sortedFlightSchedulePlans.contains(returnFlightSchedulePlan)) {
+                sortedFlightSchedulePlans.add(returnFlightSchedulePlan);
+            }
+        }
+        return sortedFlightSchedulePlans;
     }
 
     @Override

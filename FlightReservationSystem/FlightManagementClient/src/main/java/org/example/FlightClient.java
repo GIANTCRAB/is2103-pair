@@ -184,7 +184,7 @@ public class FlightClient implements SystemClient {
                 System.out.println("Enter the name of the new aircraft configuration: ");
                 //Long aircraftConfigurationId = scanner.nextLong();
                 String aircraftConfigurationName = scanner.next();
-                this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationId);
+                this.flightBeanRemote.updateAircraftConfiguration(flightCode, aircraftConfigurationName);
                 System.out.println("Flight updated successfully!");
             } else {
                 System.out.println("Invalid input. Please try again.");
