@@ -20,8 +20,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Startup
-@Singleton
 public class DataMigrationBean {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;

@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import services.*;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 
+@Startup
+@Singleton
 public class TestDataMigrationBean {
     @PersistenceContext(unitName = "frs")
     private EntityManager em;
