@@ -267,9 +267,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                 break;
             }
 
-            case MULTIPLE: {
-
-            }
+            case MULTIPLE:
             case RECURRENT_N_DAYS:
             case RECURRENT_WEEKLY: {
                 System.out.println("Enter layover duration in minutes: ");
