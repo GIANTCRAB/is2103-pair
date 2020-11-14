@@ -88,7 +88,7 @@ public class FlightSchedulePlanClient implements SystemClient {
             FlightSchedulePlan newFlightSchedulePlan = createFlightSchedulePlan(flightCode);
 
             Flight returnFlight = this.flightBeanRemote.getDirectReturnFlightByFlightCode(flightCode);
-            if (returnFlight != null) {
+            if (returnFlight != null && newFlightSchedulePlan != null) {
                 System.out.println("A return flight exists. Create a flight schedule plan for return flight?");
                 System.out.println("1: Yes, 2: No");
                 final int option = scanner.nextInt();
