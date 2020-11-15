@@ -57,20 +57,11 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
-    public FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-        final List<FlightSchedule> managedFlightSchedules = new ArrayList<>();
-        for (FlightSchedule flightSchedule: flightSchedules) {
-            managedFlightSchedules.add(this.flightScheduleService.findById(flightSchedule.getFlightScheduleId()));
-        }
-
-        return this.flightSchedulePlanService.create(flightSchedulePlanType, managedFlightSchedules);
-    }
-
-    @Override
-    public FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
+    public FlightSchedule createFlightSchedule(String flightCode,
+                                               FlightSchedulePlan flightSchedulePlan,
+                                               Date departureDate,
+                                               Time departureTime,
+                                               Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
         }
@@ -85,8 +76,10 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
         if (!checkExistingFlightSchedules(flightCode, departureDate, departureTime, estimatedDuration)) {
             throw new EntityAlreadyExistException("An overlapping flight schedule already exists.");
         }
-        
-        return this.flightScheduleService.create(flight, departureDate, departureTime, estimatedDuration);
+
+        FlightSchedulePlan managedFlightSchedulePlan = this.flightSchedulePlanService.getFlightSchedulePlanById(flightSchedulePlan.getFlightSchedulePlanId());
+
+        return this.flightScheduleService.create(flight, managedFlightSchedulePlan, departureDate, departureTime, estimatedDuration);
     }
 
     @Override
@@ -121,14 +114,13 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             throw new NotAuthenticatedException();
         }
 
-        List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+        final FlightSchedulePlan newFlightSchedulePlan = this.flightSchedulePlanService.create(flightSchedulePlanType);
         for (FlightSchedule flightSchedule: flightSchedulesDraft) {
             final Flight managedFlight = this.flightService.findById(flightSchedule.getFlight().getFlightId());
-            final FlightSchedule createdFlightSchedule = flightScheduleService.create(managedFlight, flightSchedule.getDate(), flightSchedule.getTime(), flightSchedule.getEstimatedDuration());
-            newFlightSchedules.add(createdFlightSchedule);
+            flightScheduleService.create(managedFlight, newFlightSchedulePlan, flightSchedule.getDate(), flightSchedule.getTime(), flightSchedule.getEstimatedDuration());
         }
 
-        return this.flightSchedulePlanService.create(flightSchedulePlanType, newFlightSchedules);
+        return this.flightSchedulePlanService.getFlightSchedulePlanById(newFlightSchedulePlan.getFlightSchedulePlanId());
     }
 
     @Override
@@ -212,14 +204,6 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
             throw new NotAuthenticatedException();
         }
         this.flightScheduleService.updateFlightSchedules(flightSchedules);
-    }
-    
-    @Override
-    public void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException {
-        if (this.loggedInEmployee == null) {
-            throw new NotAuthenticatedException();
-        }
-        this.flightSchedulePlanService.addFlightSchedules(flightSchedulePlan, flightSchedules);
     }
     
     @Override
