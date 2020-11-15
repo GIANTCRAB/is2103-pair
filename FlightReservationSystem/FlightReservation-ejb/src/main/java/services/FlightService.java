@@ -197,11 +197,6 @@ public class FlightService {
     public List<Flight> getFlightsForOrigin(@NonNull Airport origin) {
         TypedQuery<Flight> flightTypedQuery = this.em.createQuery("SELECT f FROM Flight f WHERE f.flightRoute.origin.iataCode = ?1", Flight.class)
                 .setParameter(1, origin.getIataCode());
-        /**
-         final List<Flight> flightList = new ArrayList<>();
-         origin.getOriginFlightRoutes().forEach(flightRoute -> flightList.addAll(flightRoute.getFlights()));
-
-         return flightList;**/
 
         final List<Flight> flightList = flightTypedQuery.getResultList();
         // Force entities to be loaded

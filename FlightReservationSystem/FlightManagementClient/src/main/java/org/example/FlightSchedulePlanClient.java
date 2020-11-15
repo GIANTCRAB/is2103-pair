@@ -94,6 +94,7 @@ public class FlightSchedulePlanClient implements SystemClient {
                 final int option = scanner.nextInt();
                 if (option == 1) {
                     System.out.println("Creating flight schedule plan for return flight...");
+                }
             }
         } catch (InvalidConstraintException e) {
             displayConstraintErrorMessage(e);
@@ -245,7 +246,6 @@ public class FlightSchedulePlanClient implements SystemClient {
 
         switch (flightSchedulePlanType) {
             case SINGLE: {
-                // Assume that return flight schedules don't happen the next day
                 System.out.println("Enter layover duration in minutes: ");
                 Long layoverDuration = scanner.nextLong();
 
@@ -331,10 +331,8 @@ public class FlightSchedulePlanClient implements SystemClient {
             for (FlightSchedulePlan flightSchedulePlan : flightSchedulePlanList) {
                 System.out.println("Flight schedule plan: " + flightSchedulePlan.getFlightSchedulePlanId() + " Type: " + flightSchedulePlan.getFlightSchedulePlanType().toString());
                 System.out.println("\tFlight number: " + flightSchedulePlan.getFlightSchedules().get(0).getFlight().getFlightCode());
-                // Not sure why getDepartureDateTime() returns null
                 flightSchedulePlan.getFlightSchedules().forEach(flightSchedule -> System.out.println("\tDeparture date: " + flightSchedule.getDate() + " Departure time: " + flightSchedule.getTime()));
             }
-            // Print return flight schedule plan
         } catch (NotAuthenticatedException e) {
             System.out.println("You do not have permission to do this!");
         }
