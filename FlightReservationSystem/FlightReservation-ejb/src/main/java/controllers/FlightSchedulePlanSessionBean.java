@@ -107,6 +107,31 @@ public class FlightSchedulePlanSessionBean implements FlightSchedulePlanBeanRemo
     }
 
     @Override
+    public FlightSchedulePlan createFlightSchedulePlanAndFlightSchedule(@NonNull FlightSchedule flightScheduleDraft) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException {
+        final List<FlightSchedule> flightSchedules = new ArrayList<>();
+        flightSchedules.add(flightScheduleDraft);
+
+        return this.createFlightSchedulePlanAndFlightSchedule(FlightSchedulePlanType.SINGLE, flightSchedules);
+    }
+
+    @Override
+    public FlightSchedulePlan createFlightSchedulePlanAndFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
+                                                                        @NonNull List<FlightSchedule> flightSchedulesDraft) throws InvalidConstraintException, NotAuthenticatedException, InvalidEntityIdException {
+        if (this.loggedInEmployee == null) {
+            throw new NotAuthenticatedException();
+        }
+
+        List<FlightSchedule> newFlightSchedules = new ArrayList<>();
+        for (FlightSchedule flightSchedule: flightSchedulesDraft) {
+            final Flight managedFlight = this.flightService.findById(flightSchedule.getFlight().getFlightId());
+            final FlightSchedule createdFlightSchedule = flightScheduleService.create(managedFlight, flightSchedule.getDate(), flightSchedule.getTime(), flightSchedule.getEstimatedDuration());
+            newFlightSchedules.add(createdFlightSchedule);
+        }
+
+        return this.flightSchedulePlanService.create(flightSchedulePlanType, newFlightSchedules);
+    }
+
+    @Override
     public List<FlightSchedulePlan> getFlightSchedulePlans() throws NotAuthenticatedException {
         if (this.loggedInEmployee == null) {
             throw new NotAuthenticatedException();
