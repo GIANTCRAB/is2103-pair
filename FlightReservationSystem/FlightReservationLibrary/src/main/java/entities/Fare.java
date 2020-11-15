@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,6 +34,7 @@ public class Fare implements Serializable {
 
     @NotNull
     @Column(nullable = false)
+    @Min(0)
     private BigDecimal fareAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
