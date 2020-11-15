@@ -19,9 +19,7 @@ import javax.ejb.Remote;
 public interface FlightSchedulePlanBeanRemote {
     Employee login(String username, String password) throws IncorrectCredentialsException, InvalidEntityIdException;
 
-    FlightSchedulePlan create(FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException, InvalidConstraintException, InvalidEntityIdException;
-
-    FlightSchedule createFlightSchedule(String flightCode, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
+    FlightSchedule createFlightSchedule(String flightCode, FlightSchedulePlan flightSchedulePlan, Date departureDate, Time departureTime, Long estimatedDuration) throws NotAuthenticatedException, InvalidConstraintException, EntityIsDisabledException, InvalidEntityIdException, EntityAlreadyExistException;
 
     FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
                                                      @NonNull Flight flight,
@@ -45,8 +43,6 @@ public interface FlightSchedulePlanBeanRemote {
     void updateFares(List<Fare> fares) throws NotAuthenticatedException;
     
     void updateFlightSchedules(List<FlightSchedule> flightSchedules) throws NotAuthenticatedException;
-    
-    void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) throws NotAuthenticatedException;
     
     void deleteFlightSchedule(FlightSchedulePlan flightSchedulePlan, FlightSchedule flightSchedule) throws NotAuthenticatedException, EntityInUseException;
 

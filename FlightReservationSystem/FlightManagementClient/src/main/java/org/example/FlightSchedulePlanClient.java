@@ -460,7 +460,6 @@ public class FlightSchedulePlanClient implements SystemClient {
             if (!flight.getEnabled()) {
                 System.out.println("Selected flight is disabled.");
             } else {
-                List<FlightSchedule> newFlightSchedules = new ArrayList<>();
                 boolean add = true;
 
                 while (add) {
@@ -470,15 +469,13 @@ public class FlightSchedulePlanClient implements SystemClient {
                     Time departureTime = Time.valueOf(scanner.next() + ":00");
                     System.out.println("Enter estimated flight duration in minutes:");
                     Long estimatedDuration = scanner.nextLong();
-                    FlightSchedule flightSchedule = this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, departureDate, departureTime, estimatedDuration);
-                    newFlightSchedules.add(flightSchedule);
+                    this.flightSchedulePlanBeanRemote.createFlightSchedule(flightCode, flightSchedulePlan, departureDate, departureTime, estimatedDuration);
                     System.out.println("Add another flight schedule? (1: Yes, 2: No)");
                     int option = scanner.nextInt();
                     if (option == 2) {
                         add = false;
                     }
                 }
-                this.flightSchedulePlanBeanRemote.addFlightSchedules(flightSchedulePlan, newFlightSchedules);
                 System.out.println("Flight schedule(s) added successfully!\n");
             }
         } catch (NotAuthenticatedException e) {

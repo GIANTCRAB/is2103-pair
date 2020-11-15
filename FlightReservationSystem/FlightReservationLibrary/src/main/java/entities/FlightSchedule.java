@@ -46,9 +46,9 @@ public class FlightSchedule implements Serializable {
     @JoinColumn(nullable = false)
     private Flight flight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private FlightSchedulePlan flightSchedulePlan = null;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private FlightSchedulePlan flightSchedulePlan;
 
     @OneToMany(mappedBy = "flightSchedule")
     private List<FlightReservation> flightReservations = new ArrayList<>();

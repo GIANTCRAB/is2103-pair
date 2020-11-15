@@ -43,9 +43,14 @@ public class FlightScheduleService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedule create(@NonNull Flight flight, @NonNull Date departureDate, @NonNull Time departureTime, @NonNull Long estimatedDuration) throws InvalidConstraintException {
+    public FlightSchedule create(@NonNull Flight flight,
+                                 @NonNull FlightSchedulePlan flightSchedulePlan,
+                                 @NonNull Date departureDate,
+                                 @NonNull Time departureTime,
+                                 @NonNull Long estimatedDuration) throws InvalidConstraintException {
         final FlightSchedule flightSchedule = new FlightSchedule();
         flightSchedule.setFlight(flight);
+        flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
         flightSchedule.setDepartureDateTime(departureDate, departureTime);
         flightSchedule.setEstimatedDuration(estimatedDuration);
 
@@ -57,10 +62,15 @@ public class FlightScheduleService {
         em.persist(flightSchedule);
         em.flush();
 
-        final List<FlightSchedule> flightSchedules = flight.getFlightSchedules();
-        flightSchedules.add(flightSchedule);
-        flight.setFlightSchedules(flightSchedules);
+        final List<FlightSchedule> flightFlightSchedules = flight.getFlightSchedules();
+        flightFlightSchedules.add(flightSchedule);
+        flight.setFlightSchedules(flightFlightSchedules);
         this.em.merge(flight);
+
+        final List<FlightSchedule> flightSchedulePlanFlightSchedules = flightSchedulePlan.getFlightSchedules();
+        flightSchedulePlanFlightSchedules.add(flightSchedule);
+        flightSchedulePlan.setFlightSchedules(flightSchedulePlanFlightSchedules);
+        this.em.merge(flightSchedulePlan);
 
         return flightSchedule;
     }

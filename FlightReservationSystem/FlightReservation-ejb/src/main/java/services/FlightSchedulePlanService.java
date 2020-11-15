@@ -6,7 +6,6 @@ import exceptions.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.LocalBean;
@@ -16,7 +15,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -37,29 +35,14 @@ public class FlightSchedulePlanService {
     private final Validator validator = validatorFactory.getValidator();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType, List<FlightSchedule> flightSchedules) throws InvalidConstraintException {
+    public FlightSchedulePlan create(@NonNull FlightSchedulePlanType flightSchedulePlanType) throws InvalidConstraintException {
         final FlightSchedulePlan flightSchedulePlan = new FlightSchedulePlan();
         flightSchedulePlan.setFlightSchedulePlanType(flightSchedulePlanType);
-        flightSchedulePlan.setFlightSchedules(flightSchedules);
-
         Set<ConstraintViolation<FlightSchedulePlan>> violations = this.validator.validate(flightSchedulePlan);
         if (!violations.isEmpty()) {
             throw new InvalidConstraintException(violations.toString());
         }
-
         em.persist(flightSchedulePlan);
-        flightSchedules.forEach(f -> {
-            if(f.getFlightSchedulePlan() != null) {
-                FlightSchedulePlan oldFlightSchedulePlan = f.getFlightSchedulePlan();
-                List<FlightSchedule> oldFlightSchedules = oldFlightSchedulePlan.getFlightSchedules();
-                oldFlightSchedules.remove(f);
-                oldFlightSchedulePlan.setFlightSchedules(oldFlightSchedules);
-                em.merge(oldFlightSchedulePlan);
-            }
-            f.setFlightSchedulePlan(flightSchedulePlan);
-            em.merge(f);
-        });
-        em.flush();
 
         return flightSchedulePlan;
     }
@@ -80,12 +63,13 @@ public class FlightSchedulePlanService {
             throw new InvalidEntityIdException("Not recurrent schedule type!");
         }
 
-        final List<FlightSchedule> flightSchedules = new ArrayList<>();
+        final FlightSchedulePlan newFlightSchedulePlan = this.create(flightSchedulePlanType);
+
         for (LocalDate date = departureDate.toLocalDate(); date.isBefore(recurrentEndDate.toLocalDate()); date = date.plusDays(nDays)) {
             Date sqlDate = Date.valueOf(date);
-            flightSchedules.add(this.flightScheduleService.create(flight, sqlDate, departureTime, estimatedDuration));
+            this.flightScheduleService.create(flight, newFlightSchedulePlan, sqlDate, departureTime, estimatedDuration);
         }
-        return this.create(flightSchedulePlanType, flightSchedules);
+        return newFlightSchedulePlan;
     }
 
     public FlightSchedulePlan createRecurrentFlightSchedule(@NonNull FlightSchedulePlanType flightSchedulePlanType,
@@ -98,28 +82,19 @@ public class FlightSchedulePlanService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan associateWithFares(@NonNull FlightSchedulePlan flightSchedulePlan, List<Fare> fares) {
+    public FlightSchedulePlan associateWithFares(@NonNull FlightSchedulePlan flightSchedulePlan, @NonNull List<Fare> fares) {
         flightSchedulePlan.setFares(fares);
         em.merge(flightSchedulePlan);
         em.flush();
         return flightSchedulePlan;
     }
 
-    public void addFlightSchedules(FlightSchedulePlan flightSchedulePlan, List<FlightSchedule> flightSchedules) {
-
-        flightSchedules.forEach(flightSchedule -> {
-            flightSchedulePlan.getFlightSchedules().add(flightSchedule);
-            flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
-            em.merge(flightSchedule);
-        });
-
-        em.merge(flightSchedulePlan);
-        em.flush();
-    }
-
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightSchedulePlan getFlightSchedulePlanById(Long id) {
-        FlightSchedulePlan flightSchedulePlan = em.find(FlightSchedulePlan.class, id);
+    public FlightSchedulePlan getFlightSchedulePlanById(Long id) throws InvalidEntityIdException {
+        final FlightSchedulePlan flightSchedulePlan = em.find(FlightSchedulePlan.class, id);
+        if (flightSchedulePlan == null) {
+            throw new InvalidEntityIdException("Flight Schedule Plan could not be found!");
+        }
         flightSchedulePlan.getFlightSchedules();
         flightSchedulePlan.getFares();
         flightSchedulePlan.getFares().forEach(fare -> fare.getCabinClass());
@@ -136,7 +111,7 @@ public class FlightSchedulePlanService {
     }
 
     public List<FlightSchedulePlan> getFlightSchedulePlans() {
-        Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f GROUP BY fsp.flightSchedulePlanId ORDER BY f.flightCode ASC, MIN(fs.date) DESC", FlightSchedulePlan.class);
+        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f GROUP BY fsp.flightSchedulePlanId ORDER BY f.flightCode ASC, MIN(fs.date) DESC", FlightSchedulePlan.class);
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(flightSchedulePlan -> {
             flightSchedulePlan.getFlightSchedules().size();
@@ -144,13 +119,13 @@ public class FlightSchedulePlanService {
         });
         return flightSchedulePlans;
     }
-    
+
     public List<FlightSchedulePlan> getFlightSchedulePlansByFlightCodeAndDateTime(String flightCode, Date date, Time time) {
-        Query searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f WHERE f.flightCode = :inFlightCode AND fs.date >= :inDate AND fs.time >= :inTime GROUP BY fsp.flightSchedulePlanId ORDER BY MIN(fs.time) ASC", FlightSchedulePlan.class)
+        TypedQuery<FlightSchedulePlan> searchQuery = em.createQuery("SELECT fsp from FlightSchedulePlan fsp JOIN fsp.flightSchedules fs JOIN fs.flight f WHERE f.flightCode = :inFlightCode AND fs.date >= :inDate AND fs.time >= :inTime GROUP BY fsp.flightSchedulePlanId ORDER BY MIN(fs.time) ASC", FlightSchedulePlan.class)
                 .setParameter("inFlightCode", flightCode)
                 .setParameter("inDate", date)
                 .setParameter("inTime", time);
-        
+
         List<FlightSchedulePlan> flightSchedulePlans = searchQuery.getResultList();
         flightSchedulePlans.forEach(flightSchedulePlan -> {
             flightSchedulePlan.getFlightSchedules().size();
