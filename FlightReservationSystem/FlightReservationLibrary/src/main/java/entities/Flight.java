@@ -31,9 +31,6 @@ public class Flight implements Serializable {
     @Column(length = 32, nullable = false, unique = true)
     @NotNull
     private String flightCode;
-
-    @Column
-    private BigDecimal totalAmountPaid;
     
     @NotNull
     @Column(nullable = false)
